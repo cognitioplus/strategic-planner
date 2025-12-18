@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Planner</title>
+    
+    <link rel="manifest" id="manifest-placeholder">
+    <meta name="theme-color" content="#1e293b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        @media print {
+            body * { visibility: hidden; }
+            .printable-content, .printable-content * { visibility: visible; }
+            .printable-content { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
+            .no-print { display: none !important; }
+        }
+
+        .input-field {
+            @apply w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm;
+        }
+        .btn-primary {
+            @apply flex items-center justify-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-semibold shadow-sm disabled:opacity-50;
+        }
+        .ai-badge {
+            @apply bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase flex items-center gap-1;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        const apiKey = ""; // Set by environment
+
+        const Icon = ({ path, size = 20, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {path}
+            </svg>
+        );
+
+        const Icons = {
+            LayoutDashboard: (props) => <Icon {...props} path={<><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></>} />,
+            ClipboardList: (props) => <Icon {...props} path={<><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M12 11h4" /><path d="M12 16h4" /><path d="M8 11h.01" /><path d="M8 16h.01" /></>} />,
+            Users: (props) => <Icon {...props} path={<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></>} />,
+            Target: (props) => <Icon {...props} path={<><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></>} />,
+            PieChart: (props) => <Icon {...props} path={<><path d="M21.21 15.89A10 10 0 1 1 8 2.83" /><path d="M22 12A10 10 0 0 0 12 2v10z" /></>} />,
+            FileText: (props) => <Icon {...props} path={<><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></>} />,
+            Plus: (props) => <Icon {...props} path={<><path d="M5 12h14" /><path d="M12 5v14" /></>} />,
+            Trash2: (props) => <Icon {...props} path={<><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></>} />,
+            Pencil: (props) => <Icon {...props} path={<><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></>} />,
+            Menu: (props) => <Icon {...props} path={<><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></>} />,
+            X: (props) => <Icon {...props} path={<><path d="M18 6 6 18" /><path d="m6 6 12 12" /></>} />,
+            Sparkles: (props) => <Icon {...props} path={<><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /><path d="M5 3v4" /><path d="M3 5h4" /><path d="M21 17v4" /><path d="M19 19h4" /></>} />,
+            Check: (props) => <Icon {...props} path={<><polyline points="20 6 9 17 4 12" /></>} />,
+            DollarSign: (props) => <Icon {...props} path={<><line x1="12" x2="12" y1="2" y2="22" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></>} />
+        };
+
+        const DataService = {
+            get: (key) => JSON.parse(localStorage.getItem(key)) || [],
+            set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
+            add: (collection, item) => {
+                const current = DataService.get(collection);
+                const newItem = { ...item, id: Date.now().toString(), createdAt: new Date().toISOString() };
+                const updated = [newItem, ...current];
+                DataService.set(collection, updated);
+                return updated;
+            },
+            update: (collection, id, updates) => {
+                const current = DataService.get(collection);
+                const updated = current.map(item => item.id === id ? { ...item, ...updates } : item);
+                DataService.set(collection, updated);
+                return updated;
+            },
+            delete: (collection, id) => {
+                const current = DataService.get(collection);
+                const updated = current.filter(item => item.id !== id);
+                DataService.set(collection, updated);
+                return updated;
+            }
+        };
+
+        const AIService = {
+            async generate(userPrompt, systemPrompt, schema) {
+                let retries = 0;
+                while (retries < 5) {
+                    try {
+                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: userPrompt }] }],
+                                systemInstruction: { parts: [{ text: systemPrompt }] },
+                                generationConfig: {
+                                    responseMimeType: "application/json",
+                                    responseSchema: schema
+                                }
+                            })
+                        });
+                        const data = await response.json();
+                        return JSON.parse(data.candidates[0].content.parts[0].text);
+                    } catch (e) {
+                        retries++;
+                        await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
+                    }
+                }
+                throw new Error("AI Service failed after retries.");
+            }
+        };
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+            
+            const [paps, setPaps] = useState([]);
+            const [team, setTeam] = useState([]);
+            const [swot, setSwot] = useState([]);
+            const [bsc, setBsc] = useState([]);
+            const [loading, setLoading] = useState(true);
+
+            useEffect(() => {
+                setPaps(DataService.get('strat_paps'));
+                setTeam(DataService.get('strat_team'));
+                setSwot(DataService.get('strat_swot'));
+                setBsc(DataService.get('strat_bsc'));
+                setLoading(false);
+            }, []);
+
+            const stats = useMemo(() => ({
+                totalBudget: paps.reduce((acc, curr) => acc + (parseFloat(curr.budget) || 0), 0),
+                totalProjects: paps.length,
+                teamSize: team.length,
+                completionRate: paps.length > 0 ? Math.round((paps.filter(p => p.status === 'Completed').length / paps.length) * 100) : 0
+            }), [paps, team]);
+
+            const handleNav = (tab) => {
+                setActiveTab(tab);
+                setIsSidebarOpen(false);
+                window.scrollTo(0,0);
+            };
+
+            if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
+
+            return (
+                <div className="flex h-screen bg-slate-100 overflow-hidden font-sans">
+                    <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0`}>
+                        <div className="p-6 border-b border-slate-700 flex justify-between items-center">
+                            <div><h1 className="text-xl font-bold text-blue-400"></h1><p className="text-xs text-slate-400">Strategic Planner Pro</p></div>
+                            <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-slate-400"><Icons.X /></button>
+                        </div>
+                        <nav className="p-4 space-y-2">
+                            <NavButton active={activeTab === 'dashboard'} onClick={() => handleNav('dashboard')} icon={<Icons.LayoutDashboard />}>Dashboard</NavButton>
+                            <NavButton active={activeTab === 'swot'} onClick={() => handleNav('swot')} icon={<Icons.Target />}>SWOT Analysis</NavButton>
+                            <NavButton active={activeTab === 'bsc'} onClick={() => handleNav('bsc')} icon={<Icons.PieChart />}>Balanced Scorecard</NavButton>
+                            <NavButton active={activeTab === 'paps'} onClick={() => handleNav('paps')} icon={<Icons.ClipboardList />}>PAPs Management</NavButton>
+                            <NavButton active={activeTab === 'team'} onClick={() => handleNav('team')} icon={<Icons.Users />}>Team & Governance</NavButton>
+                            <NavButton active={activeTab === 'report'} onClick={() => handleNav('report')} icon={<Icons.FileText />}>Strategic Plan View</NavButton>
+                        </nav>
+                    </aside>
+
+                    <main className="flex-1 overflow-auto">
+                        <header className="md:hidden bg-white p-4 shadow-sm flex items-center justify-between sticky top-0 z-20">
+                            <h2 className="font-semibold text-sm">TESDA (WS/HRDC)</h2>
+                            <button onClick={() => setIsSidebarOpen(true)}><Icons.Menu /></button>
+                        </header>
+                        <div className="p-6 md:p-10 max-w-7xl mx-auto pb-20">
+                            {activeTab === 'dashboard' && <DashboardView stats={stats} paps={paps} swot={swot} bsc={bsc} />}
+                            {activeTab === 'paps' && <PapsManager paps={paps} onAdd={(v)=>setPaps(DataService.add('strat_paps',v))} onUpdate={(id,v)=>setPaps(DataService.update('strat_paps',id,v))} onDelete={(id)=>setPaps(DataService.delete('strat_paps',id))} />}
+                            {activeTab === 'team' && <TeamManager team={team} onAdd={(v)=>setTeam(DataService.add('strat_team',v))} onUpdate={(id,v)=>setTeam(DataService.update('strat_team',id,v))} onDelete={(id)=>setTeam(DataService.delete('strat_team',id))} />}
+                            {activeTab === 'swot' && <SwotManager swot={swot} onAdd={(v)=>setSwot(DataService.add('strat_swot',v))} onUpdate={(id,v)=>setSwot(DataService.update('strat_swot',id,v))} onDelete={(id)=>setSwot(DataService.delete('strat_swot',id))} />}
+                            {activeTab === 'bsc' && <BscManager bsc={bsc} swot={swot} onAdd={(v)=>setBsc(DataService.add('strat_bsc',v))} onUpdate={(id,v)=>setBsc(DataService.update('strat_bsc',id,v))} onDelete={(id)=>setBsc(DataService.delete('strat_bsc',id))} />}
+                            {activeTab === 'report' && <StrategicPlanReport paps={paps} team={team} swot={swot} bsc={bsc} />}
+                        </div>
+                    </main>
+                </div>
+            );
+        }
+
+        const NavButton = ({ active, onClick, icon, children }) => (
+            <button onClick={onClick} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${active ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800'}`}>
+                {icon}<span className="font-medium">{children}</span>
+            </button>
+        );
+
+        const DashboardView = ({ stats, paps, swot, bsc }) => (
+            <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <StatCard title="Budget Requirement" value={new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(stats.totalBudget)} icon={<Icons.DollarSign className="text-emerald-500" />} />
+                    <StatCard title="Planned PAPs" value={stats.totalProjects} icon={<Icons.ClipboardList className="text-blue-500" />} />
+                    <StatCard title="SWOT Insights" value={swot.length} icon={<Icons.Target className="text-purple-500" />} />
+                    <StatCard title="BSC Objectives" value={bsc.length} icon={<Icons.PieChart className="text-orange-500" />} />
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h3 className="font-bold mb-4 flex items-center gap-2"><Icons.PieChart size={18} /> Budget by Unit</h3>
+                        <div className="space-y-3">
+                            {Array.from(new Set(paps.map(p => p.unit))).map(unit => {
+                                const total = paps.filter(p => p.unit === unit).reduce((s,p)=>s+parseFloat(p.budget||0),0);
+                                const percentage = stats.totalBudget > 0 ? (total / stats.totalBudget) * 100 : 0;
+                                return (
+                                    <div key={unit}>
+                                        <div className="flex justify-between text-xs mb-1">
+                                            <span className="font-semibold">{unit}</span>
+                                            <span>{total.toLocaleString()}</span>
+                                        </div>
+                                        <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                            <div className="bg-blue-500 h-full" style={{ width: `${percentage}%` }}></div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const StatCard = ({ title, value, icon }) => (
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
+                <div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{title}</p><h3 className="text-2xl font-black mt-1">{value}</h3></div>
+                <div className="p-3 bg-slate-50 rounded-xl">{icon}</div>
+            </div>
+        );
+
+        const PapsManager = ({ paps, onAdd, onUpdate, onDelete }) => {
+            const [form, setForm] = useState({ unit: '', name: '', pap: '', kpi: '', target: '', timeline: '', budget: '', accountable: '' });
+            const [editing, setEditing] = useState(null);
+            const formRef = useRef();
+
+            const submit = (e) => {
+                e.preventDefault();
+                editing ? onUpdate(editing, form) : onAdd(form);
+                setForm({ unit: '', name: '', pap: '', kpi: '', target: '', timeline: '', budget: '', accountable: '' });
+                setEditing(null);
+            };
+
+            const edit = (p) => { setEditing(p.id); setForm(p); formRef.current.scrollIntoView({ behavior: 'smooth' }); };
+
+            return (
+                <div className="space-y-6">
+                    <div ref={formRef} className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <h3 className="font-bold mb-4 text-blue-800">{editing ? 'Edit PAP' : 'Add New PAP Entry'}</h3>
+                        <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <input className="input-field" placeholder="Unit/Office" value={form.unit} onChange={e=>setForm({...form, unit: e.target.value})} required />
+                            <input className="input-field" placeholder="Submitted By" value={form.name} onChange={e=>setForm({...form, name: e.target.value})} required />
+                            <input className="input-field md:col-span-2" placeholder="Program/Activity/Project" value={form.pap} onChange={e=>setForm({...form, pap: e.target.value})} required />
+                            <input className="input-field md:col-span-2" placeholder="Key Performance Indicator" value={form.kpi} onChange={e=>setForm({...form, kpi: e.target.value})} required />
+                            <input className="input-field" placeholder="Target" value={form.target} onChange={e=>setForm({...form, target: e.target.value})} required />
+                            <input className="input-field" placeholder="Timeline" value={form.timeline} onChange={e=>setForm({...form, timeline: e.target.value})} required />
+                            <input className="input-field" type="number" placeholder="Budget (PHP)" value={form.budget} onChange={e=>setForm({...form, budget: e.target.value})} required />
+                            <input className="input-field" placeholder="Accountable" value={form.accountable} onChange={e=>setForm({...form, accountable: e.target.value})} required />
+                            <div className="md:col-span-4 flex justify-end space-x-2">
+                                {editing && <button type="button" onClick={()=>{setEditing(null); setForm({ unit: '', name: '', pap: '', kpi: '', target: '', timeline: '', budget: '', accountable: '' });}} className="px-4 py-2 text-slate-500 text-sm">Discard</button>}
+                                <button type="submit" className="btn-primary">{editing ? 'Update Record' : 'Create Record'}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+                        <table className="w-full text-sm text-left">
+                            <thead className="bg-slate-50 border-b text-slate-500 font-bold"><tr><th className="p-4">UNIT</th><th className="p-4">ACTIVITY</th><th className="p-4">KPI/TARGET</th><th className="p-4 text-right">BUDGET</th><th className="p-4 text-right">ACTIONS</th></tr></thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {paps.map(p => (
+                                    <tr key={p.id} className="hover:bg-blue-50/30 transition-colors">
+                                        <td className="p-4"><span className="px-2 py-1 bg-slate-100 rounded text-[10px] font-bold uppercase">{p.unit}</span></td>
+                                        <td className="p-4"><div className="font-bold text-slate-700">{p.pap}</div><div className="text-[10px] text-slate-400 mt-0.5">{p.accountable}</div></td>
+                                        <td className="p-4"><div>{p.kpi}</div><div className="text-xs text-blue-600 font-bold bg-blue-50 inline-block px-2 py-0.5 rounded mt-1">{p.target}</div></td>
+                                        <td className="p-4 text-right font-mono text-slate-600">{parseFloat(p.budget||0).toLocaleString()}</td>
+                                        <td className="p-4 text-right space-x-3">
+                                            <button onClick={()=>edit(p)} className="text-slate-400 hover:text-blue-600 transition-colors"><Icons.Pencil size={18}/></button>
+                                            <button onClick={()=>onDelete(p.id)} className="text-slate-400 hover:text-red-600 transition-colors"><Icons.Trash2 size={18}/></button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        };
+
+        const TeamManager = ({ team, onAdd, onUpdate, onDelete }) => {
+            const [form, setForm] = useState({ name: '', designation: '', functions: '' });
+            const [editing, setEditing] = useState(null);
+            const formRef = useRef();
+
+            const submit = (e) => {
+                e.preventDefault();
+                editing ? onUpdate(editing, form) : onAdd(form);
+                setForm({ name: '', designation: '', functions: '' });
+                setEditing(null);
+            };
+
+            const edit = (m) => { setEditing(m.id); setForm(m); formRef.current.scrollIntoView({ behavior: 'smooth' }); };
+
+            return (
+                <div className="space-y-6">
+                    <div ref={formRef} className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <h3 className="font-bold mb-4">{editing ? 'Update Member Profile' : 'Register New Member'}</h3>
+                        <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input className="input-field" placeholder="Full Name" value={form.name} onChange={e=>setForm({...form, name: e.target.value})} required />
+                            <input className="input-field" placeholder="Designation" value={form.designation} onChange={e=>setForm({...form, designation: e.target.value})} required />
+                            <input className="input-field" placeholder="Core Functions" value={form.functions} onChange={e=>setForm({...form, functions: e.target.value})} required />
+                            <div className="md:col-span-3 flex justify-end space-x-2">
+                                {editing && <button type="button" onClick={()=>{setEditing(null); setForm({name:'', designation:'', functions:''});}} className="px-4 text-sm">Cancel</button>}
+                                <button type="submit" className="btn-primary">{editing ? 'Update' : 'Add to Team'}</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {team.map(m => (
+                            <div key={m.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group relative">
+                                <div className="font-black text-slate-800 text-lg">{m.name}</div>
+                                <div className="text-[10px] text-blue-600 font-bold uppercase tracking-widest mt-1">{m.designation}</div>
+                                <p className="text-sm mt-3 text-slate-500 leading-relaxed border-t pt-3">{m.functions}</p>
+                                <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onClick={()=>edit(m)} className="text-slate-400 hover:text-blue-600"><Icons.Pencil size={16}/></button>
+                                    <button onClick={()=>onDelete(m.id)} className="text-slate-400 hover:text-red-600"><Icons.Trash2 size={16}/></button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const SwotManager = ({ swot, onAdd, onUpdate, onDelete }) => {
+            const [form, setForm] = useState({ type: 'Strength', description: '' });
+            const [editing, setEditing] = useState(null);
+            const [generatingStrategies, setGeneratingStrategies] = useState(false);
+            const [strategies, setStrategies] = useState(null);
+            const formRef = useRef();
+
+            const submit = (e) => {
+                e.preventDefault();
+                editing ? onUpdate(editing, form) : onAdd(form);
+                setForm({ ...form, description: '' });
+                setEditing(null);
+            };
+
+            const edit = (s) => { setEditing(s.id); setForm(s); formRef.current.scrollIntoView({ behavior: 'smooth' }); };
+
+            const handleGenerateStrategies = async () => {
+                if (swot.length < 2) {
+                    alert("Add at least 2 SWOT items to generate strategies.");
+                    return;
+                }
+                setGeneratingStrategies(true);
+                try {
+                    const prompt = `Based on the following SWOT items for TESDA (WS/HRDC):
+                    Strengths: ${swot.filter(s=>s.type==='Strength').map(s=>s.description).join('; ')}
+                    Weaknesses: ${swot.filter(s=>s.type==='Weakness').map(s=>s.description).join('; ')}
+                    Opportunities: ${swot.filter(s=>s.type==='Opportunity').map(s=>s.description).join('; ')}
+                    Threats: ${swot.filter(s=>s.type==='Threat').map(s=>s.description).join('; ')}
+                    
+                    Generate 4 Strategic Options:
+                    1. SO (Strength-Opportunity): Use strengths to capitalize on opportunities.
+                    2. ST (Strength-Threat): Use strengths to mitigate threats.
+                    3. WO (Weakness-Opportunity): Overcome weaknesses by taking advantage of opportunities.
+                    4. WT (Weakness-Threat): Minimize weaknesses and avoid threats.`;
+
+                    const system = "You are a strategic management expert for a TVET (Technical Vocational Education and Training) agency. Provide concise, actionable strategic options in a structured format.";
+                    const schema = {
+                        type: "OBJECT",
+                        properties: {
+                            so: { type: "STRING" },
+                            st: { type: "STRING" },
+                            wo: { type: "STRING" },
+                            wt: { type: "STRING" }
+                        }
+                    };
+                    const result = await AIService.generate(prompt, system, schema);
+                    setStrategies(result);
+                } catch (e) {
+                    console.error(e);
+                } finally {
+                    setGeneratingStrategies(false);
+                }
+            };
+
+            const displayLabel = (type) => type === 'Opportunity' ? 'Opportunities' : `${type}s`;
+
+            return (
+                <div className="space-y-6">
+                    <div ref={formRef} className="bg-white p-6 rounded-xl border border-slate-200 shadow-md">
+                        <form onSubmit={submit} className="flex flex-col md:flex-row gap-4">
+                            <select className="input-field md:w-48" value={form.type} onChange={e=>setForm({...form, type: e.target.value})}>
+                                {['Strength', 'Weakness', 'Opportunity', 'Threat'].map(t=><option key={t} value={t}>{t === 'Opportunity' ? 'Opportunity' : t}</option>)}
+                            </select>
+                            <input className="input-field flex-1" placeholder="Enter SWOT detail..." value={form.description} onChange={e=>setForm({...form, description: e.target.value})} required />
+                            <div className="flex gap-2">
+                                <button type="submit" className="btn-primary whitespace-nowrap">{editing ? 'Update' : 'Add Item'}</button>
+                                {editing && <button type="button" onClick={()=>{setEditing(null); setForm({type:'Strength', description:''});}} className="px-4 text-slate-400"><Icons.X /></button>}
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {['Strength', 'Weakness', 'Opportunity', 'Threat'].map(type => (
+                            <div key={type} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                <h4 className={`p-4 font-black uppercase text-xs border-b tracking-widest ${
+                                    type === 'Strength' ? 'bg-emerald-50 text-emerald-700' : 
+                                    type === 'Weakness' ? 'bg-orange-50 text-orange-700' : 
+                                    type === 'Opportunity' ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700'
+                                }`}>{displayLabel(type)}</h4>
+                                <ul className="p-4 space-y-2 max-h-[300px] overflow-auto">
+                                    {swot.filter(s => s.type === type).length === 0 && <li className="text-slate-300 text-sm italic">No items added yet.</li>}
+                                    {swot.filter(s => s.type === type).map(s => (
+                                        <li key={s.id} className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm flex justify-between items-start group">
+                                            <span className="leading-relaxed">{s.description}</span>
+                                            <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">
+                                                <button onClick={()=>edit(s)} className="p-1 hover:bg-white rounded text-blue-500"><Icons.Pencil size={14}/></button>
+                                                <button onClick={()=>onDelete(s.id)} className="p-1 hover:bg-white rounded text-red-500"><Icons.Trash2 size={14}/></button>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="pt-6 border-t border-slate-200">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                                Strategic Options Analysis
+                                <span className="ai-badge"><Icons.Sparkles size={10}/> AI Assisted</span>
+                            </h3>
+                            <button 
+                                onClick={handleGenerateStrategies} 
+                                disabled={generatingStrategies}
+                                className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-700 disabled:opacity-50 transition-all"
+                            >
+                                {generatingStrategies ? <><span className="animate-spin text-lg">◌</span> Generating...</> : <><Icons.Sparkles size={14}/> Generate Strategies</>}
+                            </button>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {generatingStrategies ? (
+                                Array(4).fill(0).map((_, i) => <div key={i} className="h-32 shimmer rounded-xl border"></div>)
+                            ) : strategies ? (
+                                <>
+                                    <StrategyCard label="SO Strategy (Maxi-Maxi)" desc={strategies.so} color="emerald" />
+                                    <StrategyCard label="ST Strategy (Maxi-Mini)" desc={strategies.st} color="red" />
+                                    <StrategyCard label="WO Strategy (Mini-Maxi)" desc={strategies.wo} color="blue" />
+                                    <StrategyCard label="WT Strategy (Mini-Mini)" desc={strategies.wt} color="slate" />
+                                </>
+                            ) : (
+                                <div className="md:col-span-2 p-10 bg-slate-50 border border-dashed rounded-xl text-center text-slate-400 italic">
+                                    Enter SWOT items above then click "Generate Strategies" to automate strategic trajectory mapping.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const StrategyCard = ({ label, desc, color }) => (
+            <div className={`p-5 rounded-xl border bg-white border-l-4 border-l-${color}-500 shadow-sm`}>
+                <h5 className="font-bold text-xs uppercase text-slate-400 tracking-wider mb-2">{label}</h5>
+                <p className="text-sm text-slate-700 leading-relaxed font-medium italic">"{desc}"</p>
+            </div>
+        );
+
+        const BscManager = ({ bsc, swot, onAdd, onUpdate, onDelete }) => {
+            const [form, setForm] = useState({ perspective: 'Stakeholder', objective: '', measure: '', relatedSwot: '' });
+            const [editing, setEditing] = useState(null);
+            const [suggesting, setSuggesting] = useState(false);
+            const formRef = useRef();
+
+            const submit = (e) => {
+                e.preventDefault();
+                editing ? onUpdate(editing, form) : onAdd(form);
+                setForm({ perspective: 'Stakeholder', objective: '', measure: '', relatedSwot: '' });
+                setEditing(null);
+            };
+
+            const edit = (b) => { setEditing(b.id); setForm(b); formRef.current.scrollIntoView({ behavior: 'smooth' }); };
+
+            const handleAISuggest = async () => {
+                if (!form.objective || form.objective.length < 5) return;
+                setSuggesting(true);
+                try {
+                    const prompt = `Strategic Objective: "${form.objective}"
+                    Categorize this into one of: Stakeholder, Internal Process, Learning & Growth, or Financial. 
+                    Also provide a specific KPI measure for it.`;
+                    
+                    const system = "You are a performance management expert. Help categorize balanced scorecard objectives.";
+                    const schema = {
+                        type: "OBJECT",
+                        properties: {
+                            perspective: { type: "STRING", enum: ["Stakeholder", "Internal Process", "Learning & Growth", "Financial"] },
+                            measure: { type: "STRING" }
+                        }
+                    };
+                    const result = await AIService.generate(prompt, system, schema);
+                    setForm({ ...form, perspective: result.perspective, measure: result.measure });
+                } catch (e) {
+                    console.error(e);
+                } finally {
+                    setSuggesting(false);
+                }
+            };
+
+            return (
+                <div className="space-y-6">
+                    <div ref={formRef} className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <h3 className="font-black text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            {editing ? 'Update Perspective Objective' : 'New Strategic Perspective Entry'}
+                        </h3>
+                        <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="md:col-span-2 relative">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">Strategic Objective</label>
+                                <div className="flex gap-2">
+                                    <input className="input-field" placeholder="What do we want to achieve?" value={form.objective} onChange={e=>setForm({...form, objective: e.target.value})} onBlur={handleAISuggest} required />
+                                    <button type="button" onClick={handleAISuggest} disabled={suggesting} className="p-2 px-3 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-all">
+                                        {suggesting ? <span className="animate-spin text-lg block">◌</span> : <Icons.Sparkles size={18} />}
+                                    </button>
+                                </div>
+                                {suggesting && <div className="absolute -bottom-4 left-1 text-[9px] text-purple-500 font-bold animate-pulse">AI Categorizing...</div>}
+                            </div>
+                            
+                            <div>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">Perspective</label>
+                                <select className="input-field" value={form.perspective} onChange={e=>setForm({...form, perspective: e.target.value})}>
+                                    {['Stakeholder', 'Internal Process', 'Learning & Growth', 'Financial'].map(p=><option key={p} value={p}>{p}</option>)}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">Linked SWOT Insight</label>
+                                <select className="input-field" value={form.relatedSwot} onChange={e=>setForm({...form, relatedSwot: e.target.value})}>
+                                    <option value="">None</option>
+                                    {swot.map(s => <option key={s.id} value={s.description}>{s.type}: {s.description.substring(0,30)}...</option>)}
+                                </select>
+                            </div>
+
+                            <div className="md:col-span-2">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">Key Performance Measure (KPI)</label>
+                                <input className="input-field" placeholder="How will we measure success?" value={form.measure} onChange={e=>setForm({...form, measure: e.target.value})} required />
+                            </div>
+
+                            <div className="md:col-span-2 flex justify-end space-x-2 pt-2">
+                                {editing && <button type="button" onClick={()=>{setEditing(null); setForm({perspective:'Stakeholder', objective:'', measure:'', relatedSwot:''});}} className="px-4 text-sm font-bold text-slate-400">Discard Changes</button>}
+                                <button type="submit" className="btn-primary">{editing ? 'Save Changes' : 'Confirm Entry'}</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {['Stakeholder', 'Internal Process', 'Learning & Growth', 'Financial'].map(p => (
+                            <div key={p} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                <h4 className="px-4 py-3 bg-slate-50 font-black text-xs text-slate-600 border-b flex justify-between uppercase tracking-tighter">
+                                    {p} Perspective
+                                    <span className="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">{bsc.filter(b => b.perspective === p).length}</span>
+                                </h4>
+                                <div className="p-4 space-y-3 min-h-[100px]">
+                                    {bsc.filter(b => b.perspective === p).length === 0 && <p className="text-slate-300 text-sm italic py-4">No objectives assigned.</p>}
+                                    {bsc.filter(b => b.perspective === p).map(b => (
+                                        <div key={b.id} className="p-3 bg-white border border-slate-100 rounded-lg group relative hover:border-blue-200 transition-colors">
+                                            <div className="font-bold text-sm text-slate-800 leading-snug">{b.objective}</div>
+                                            <div className="text-[10px] text-blue-500 font-bold mt-2 border-t pt-2 uppercase flex items-center gap-1">
+                                                <Icons.Activity size={10} /> KPI: {b.measure}
+                                            </div>
+                                            <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button onClick={()=>edit(b)} className="p-1 text-slate-400 hover:text-blue-500"><Icons.Pencil size={12}/></button>
+                                                <button onClick={()=>onDelete(b.id)} className="p-1 text-slate-400 hover:text-red-500"><Icons.Trash2 size={12}/></button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const StrategicPlanReport = ({ paps, team, swot, bsc }) => (
+            <div className="bg-white p-10 shadow-2xl printable-content mx-auto max-w-5xl border border-slate-200 rounded-xl">
+                <div className="flex justify-between items-start border-b-2 border-slate-900 pb-8 mb-8">
+                    <div className="flex gap-4 items-center">
+                        <div className="w-16 h-16 bg-blue-600 rounded flex items-center justify-center text-white font-black text-2xl">T</div>
+                        <div>
+                            <h1 className="text-3xl font-black uppercase tracking-tighter text-slate-900">Strategic Plan 2026-2030</h1>
+                            <p className="text-blue-600 font-bold tracking-[0.2em] text-sm mt-1 uppercase">TESDA (WS/HRDC) Operational Roadmap</p>
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Document Status</p>
+                        <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-black uppercase mt-1 inline-block border border-emerald-200">Official Draft</span>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-12">
+                    <section>
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="w-8 h-8 bg-slate-900 rounded flex items-center justify-center text-white"><Icons.PieChart size={16}/></div>
+                            <h2 className="text-xl font-black uppercase tracking-tight text-slate-900">Strategy Map Summary</h2>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {['Stakeholder', 'Internal Process', 'Learning & Growth', 'Financial'].map(p => (
+                                <div key={p} className="p-4 bg-slate-50 border rounded-lg">
+                                    <h3 className="font-black text-[10px] uppercase text-slate-400 mb-3 tracking-widest border-b pb-2">{p}</h3>
+                                    {bsc.filter(b=>b.perspective===p).map(b=><div key={b.id} className="text-[10px] font-bold mb-2 leading-tight">• {b.objective}</div>)}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section>
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="w-8 h-8 bg-slate-900 rounded flex items-center justify-center text-white"><Icons.Target size={16}/></div>
+                            <h2 className="text-xl font-black uppercase tracking-tight text-slate-900">Situational Analysis (SWOT)</h2>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            {['Strength', 'Weakness', 'Opportunity', 'Threat'].map(t => (
+                                <div key={t} className="p-5 border bg-white rounded-lg">
+                                    <h3 className="font-black text-xs uppercase text-slate-900 mb-3 border-b-2 pb-1 inline-block">{t === 'Opportunity' ? 'Opportunities' : `${t}s`}</h3>
+                                    {swot.filter(s=>s.type===t).map(s=><div key={s.id} className="text-[11px] text-slate-600 mb-1.5 leading-relaxed">• {s.description}</div>)}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section>
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="w-8 h-8 bg-slate-900 rounded flex items-center justify-center text-white"><Icons.ClipboardList size={16}/></div>
+                            <h2 className="text-xl font-black uppercase tracking-tight text-slate-900">FY 2026 Program of Activities</h2>
+                        </div>
+                        <div className="overflow-hidden border rounded-lg">
+                            <table className="w-full text-[10px] border-collapse">
+                                <thead>
+                                    <tr className="bg-slate-900 text-white font-bold text-left">
+                                        <th className="p-2">UNIT</th>
+                                        <th className="p-2">PAP DESCRIPTION</th>
+                                        <th className="p-2">KEY TARGETS & TIMELINE</th>
+                                        <th className="p-2 text-right">BUDGET (PHP)</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y">
+                                    {paps.map(p => (
+                                        <tr key={p.id} className="hover:bg-slate-50">
+                                            <td className="p-2 font-black align-top uppercase">{p.unit}</td>
+                                            <td className="p-2 align-top"><div className="font-bold">{p.pap}</div><div className="text-[9px] text-slate-400 mt-0.5 italic">{p.accountable}</div></td>
+                                            <td className="p-2 align-top"><div>{p.kpi}: <span className="font-black">{p.target}</span></div><div className="text-[9px] text-blue-600 mt-1 uppercase font-bold">Timeline: {p.timeline}</div></td>
+                                            <td className="p-2 text-right align-top font-black tabular-nums">{parseFloat(p.budget||0).toLocaleString()}</td>
+                                        </tr>
+                                    ))}
+                                    <tr className="bg-slate-50 font-black">
+                                        <td colSpan="3" className="p-2 text-right">TOTAL BUDGET REQUIREMENT</td>
+                                        <td className="p-2 text-right text-lg tabular-nums">PHP {paps.reduce((acc,p)=>acc+parseFloat(p.budget||0),0).toLocaleString()}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
+                <div className="mt-16 pt-8 border-t flex justify-between items-center text-[10px] text-slate-400 font-black uppercase tracking-widest">
+                    <div>© 2025 Cognitio+</div>
+                    <div className="no-print">
+                        <button onClick={()=>window.print()} className="btn-primary py-3 px-10 text-xs shadow-xl">Download Official PDF</button>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
