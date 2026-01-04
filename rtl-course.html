@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Leadership for Resilient Organizations</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts: Montserrat & Open Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Config for Branding -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#2D3E50',
+                        orange: '#E67E22',
+                        mist: '#ECF0F1',
+                        slate: '#34495E'
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        header: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Chart Container Styling - Mandatory Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Tailwind max-w-2xl equiv approx */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Print styles for Action Plan */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-area, #printable-area * {
+                visibility: visible;
+            }
+            #printable-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+
+    <!-- 
+    Placeholder Comments:
+    
+    <!-- Chosen Palette: Navy Blue (#2D3E50) as primary, Resilience Orange (#E67E22) as accent, Mist Gray (#ECF0F1) for backgrounds. Matches source requirements. -->
+
+    <!-- Application Structure Plan:
+         Designed as a classic LMS interface. 
+         - Left Sidebar: Linear navigation menu (Modules 0-8) with progress indicators (locked/unlocked states) and a Resource Center.
+         - Top Header: Branding and Course Progress bar.
+         - Main Content Area: Dynamic container that renders specific module content.
+         - Logic: 'Next' logic unlocks subsequent modules. User inputs (Goal, Option Storm, Compass) are stored in a central JS state object to be recalled in the Final Action Plan.
+         - Justification: This structure mimics standard SCORM/LMS players (like Articulate/Rise) familiar to the target audience (SME/NGO leaders), reducing cognitive load and focusing on the content.
+    -->
+
+    <!-- Visualization & Content Choices:
+         - Module 3 (Validation Compass): Radar Chart. Goal: Inform/Compare. Interaction: Sliders update chart. Justification: Visualizes the "shape" of a decision across 3 axes (Values, Impact, Feasibility).
+         - Module 5 (Team Audit): Bar Chart. Goal: Inform. Interaction: Static data visualization of survey results. Justification: Quickly shows gaps in communication flow.
+         - Module 6 (Data Simulation): Line Chart. Goal: Change/Decide. Interaction: Simulates incoming weather data. Justification: Mimics a real-time dashboard (PAGASA style) to force a decision under pressure.
+         - Module 8 (Action Plan): HTML Generation. Goal: Organize/Synthesize. Interaction: Read-only summary of user inputs. Justification: Provides the "takeaway" artifact promised in the course.
+         - No SVG or Mermaid used. All icons are Unicode or CSS shapes. All charts are Chart.js.
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    -->
+</head>
+<body class="bg-gray-50 text-slate-800 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-navy text-white h-16 flex items-center justify-between px-6 shadow-md z-20 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="h-8 w-8 bg-orange rounded flex items-center justify-center font-bold text-white">R</div>
+            <h1 class="font-header font-bold text-lg md:text-xl tracking-wide">Real-Time Leadership <span class="hidden md:inline font-normal text-gray-300">| Resilient Organizations</span></h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-sm text-gray-300 hidden sm:block">Progress</div>
+            <div class="w-32 h-2 bg-slate-700 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-orange w-0 transition-all duration-500"></div>
+            </div>
+            <div id="user-avatar" class="h-8 w-8 bg-slate-600 rounded-full flex items-center justify-center text-xs border border-slate-500">ME</div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="flex flex-1 overflow-hidden relative">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 absolute md:relative z-10 h-full -translate-x-full md:translate-x-0">
+            <div class="p-4 border-b border-gray-100 bg-gray-50">
+                <h2 class="font-header font-bold text-navy text-sm uppercase tracking-wider mb-2">Modules</h2>
+                <p class="text-xs text-gray-500">Complete sequentially to unlock.</p>
+            </div>
+            
+            <nav class="flex-1 overflow-y-auto py-2" id="module-nav">
+                <!-- Nav items generated by JS -->
+            </nav>
+
+            <div class="p-4 border-t border-gray-200 bg-mist">
+                <h3 class="font-header font-bold text-navy text-xs uppercase mb-3">Resource Center</h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                    <li class="flex items-center gap-2 cursor-pointer hover:text-orange transition"><span class="text-orange">📄</span> Mastering Checklist</li>
+                    <li class="flex items-center gap-2 cursor-pointer hover:text-orange transition"><span class="text-orange">📝</span> Option Storm</li>
+                    <li class="flex items-center gap-2 cursor-pointer hover:text-orange transition"><span class="text-orange">🧭</span> Validation Compass</li>
+                    <li class="flex items-center gap-2 cursor-pointer hover:text-orange transition"><span class="text-orange">💬</span> MOVE Builder</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="menu-toggle" class="absolute top-4 left-4 md:hidden z-30 bg-navy text-white p-2 rounded shadow">
+            ☰
+        </button>
+
+        <!-- Content Area -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-8 relative" id="main-content">
+            <!-- Content Injected via JS -->
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm min-h-[500px] flex items-center justify-center">
+                <p class="text-gray-400">Loading Course Content...</p>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Hidden Printable Area -->
+    <div id="printable-area" class="hidden bg-white p-10">
+        <!-- Injected Action Plan -->
+    </div>
+
+    <script>
+        // --- DATA & STATE ---
+        const modules = [
+            {
+                id: 0,
+                title: "Orientation & Baseline",
+                shortTitle: "0. Orientation",
+                locked: false,
+                completed: false,
+                type: "intro",
+                content: {
+                    heading: "Welcome to Real-Time Leadership",
+                    intro: "This MOVE-based learning journey is designed for leaders in climate-vulnerable regions. Before we begin, we need to establish your baseline.",
+                    elements: [
+                        { type: "text", text: "In fast-moving environments, leaders don't need more theory. You need practical, real-time practices to stay calm and make data-informed decisions." },
+                        { type: "input", id: "user_intention", label: "Goal Setting: What is your primary leadership intention for this course?", placeholder: "e.g., To remain calm during early-warning phases..." },
+                        { type: "link", text: "Take Pre-Course Assessment (Opens in new tab)", url: "https://asilva777.github.io/realtime-leadership-assessment-/" }
+                    ]
+                }
+            },
+            {
+                id: 1,
+                title: "Module 1: Mastering the Moment (M)",
+                shortTitle: "1. Mastering (M)",
+                locked: true,
+                completed: false,
+                type: "lesson",
+                content: {
+                    heading: "The Power of the Pause",
+                    intro: "The 'M' in MOVE stands for Make Sense. It starts with mastering the moment by overcoming the urge to react immediately.",
+                    elements: [
+                        { type: "scenario", title: "Scenario: The Red Alert", text: "You receive conflicting reports about flood levels. Your phone is ringing off the hook. Your team looks panic-stricken. What is your first move?", options: ["Issue an immediate evacuation order based on gut feeling.", "Pause for 60 seconds to regulate your nervous system and verify sources.", "Delegate the decision to a junior staff member."] },
+                        { type: "reflection", id: "mod1_reflection", label: "Identify a recent moment where you 'reacted' instead of 'responded'.", placeholder: "I snapped at a colleague when..." }
+                    ]
+                }
+            },
+            {
+                id: 2,
+                title: "Module 2: Opening Options (O)",
+                shortTitle: "2. Opening Options (O)",
+                locked: true,
+                completed: false,
+                type: "activity",
+                content: {
+                    heading: "Divergent Thinking",
+                    intro: "Avoid binary 'Do this OR that' thinking. Open options to find Path A, Path B, and Path C.",
+                    elements: [
+                        { type: "text", text: "Use the inputs below to 'Option Storm' a current challenge you are facing." },
+                        { type: "input", id: "opt_a", label: "Path A (The Obvious Choice)", placeholder: "We wait for help..." },
+                        { type: "input", id: "opt_b", label: "Path B (The Opposite Choice)", placeholder: "We act immediately with zero resources..." },
+                        { type: "input", id: "opt_c", label: "Path C (The Creative Hybrid)", placeholder: "We mobilize community volunteers to bridge the gap..." }
+                    ]
+                }
+            },
+            {
+                id: 3,
+                title: "Module 3: Validating What Matters (V)",
+                shortTitle: "3. Validating (V)",
+                locked: true,
+                completed: false,
+                type: "tool",
+                content: {
+                    heading: "The Validation Compass",
+                    intro: "Validate your best option against your Values, the potential Impact, and Feasibility. Use the sliders below to visualize your decision's profile.",
+                    elements: [
+                        { type: "chart_compass" }
+                    ]
+                }
+            },
+            {
+                id: 4,
+                title: "Module 4: Engaging & Executing (E)",
+                shortTitle: "4. Engaging (E)",
+                locked: true,
+                completed: false,
+                type: "activity",
+                content: {
+                    heading: "Clarity & Compassion",
+                    intro: "Execution fails without engagement. Draft a message to your team regarding the decision you validated in Module 3.",
+                    elements: [
+                        { type: "draft_compare", id: "move_msg", label: "Draft your team update:" },
+                    ]
+                }
+            },
+            {
+                id: 5,
+                title: "Module 5: Distributed Team Rhythm",
+                shortTitle: "5. Team Rhythm",
+                locked: true,
+                completed: false,
+                type: "audit",
+                content: {
+                    heading: "Resilience Rhythms",
+                    intro: "Resilience isn't just about the leader; it's about the team's rhythm. How does your communication flow?",
+                    elements: [
+                        { type: "chart_survey" }
+                    ]
+                }
+            },
+            {
+                id: 6,
+                title: "Module 6: Data-Informed Decisions",
+                shortTitle: "6. Data & Decisions",
+                locked: true,
+                completed: false,
+                type: "simulation",
+                content: {
+                    heading: "Simulation: The Go/No-Go Call",
+                    intro: "Analyze the incoming weather data simulation below. You must decide whether to deploy resources based on 'Good Enough' data.",
+                    elements: [
+                        { type: "chart_weather" }
+                    ]
+                }
+            },
+            {
+                id: 7,
+                title: "Module 7: Leadership Stamina",
+                shortTitle: "7. Stamina",
+                locked: true,
+                completed: false,
+                type: "checklist",
+                content: {
+                    heading: "Micro-Restoration",
+                    intro: "Leadership is a marathon of moments. Select 3 micro-habits you commit to for the next 30 days.",
+                    elements: [
+                        { type: "checkboxes", options: ["2-minute Box Breathing", "No screens 30 mins before bed", "Daily gratitude log", "Hydration alarm", "Weekly nature walk"] }
+                    ]
+                }
+            },
+            {
+                id: 8,
+                title: "Module 8: Capstone Action Plan",
+                shortTitle: "8. Action Plan",
+                locked: true,
+                completed: false,
+                type: "capstone",
+                content: {
+                    heading: "Your Real-Time Leadership Plan",
+                    intro: "Congratulations. You have completed the MOVE framework journey. Review your generated action plan below.",
+                    elements: [
+                        { type: "summary_view" }
+                    ]
+                }
+            }
+        ];
+
+        const state = {
+            currentModuleIndex: 0,
+            answers: {
+                user_intention: "",
+                mod1_reflection: "",
+                opt_a: "",
+                opt_b: "",
+                opt_c: "",
+                move_msg: "",
+                compass_values: 50,
+                compass_impact: 50,
+                compass_feasibility: 50,
+                habits: []
+            },
+            charts: {}
+        };
+
+        // --- CORE FUNCTIONS ---
+
+        function init() {
+            renderNav();
+            renderModule(0);
+            updateProgress();
+
+            document.getElementById('menu-toggle').addEventListener('click', () => {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('-translate-x-full');
+            });
+        }
+
+        function updateProgress() {
+            const progress = ((state.currentModuleIndex) / (modules.length - 1)) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        function renderNav() {
+            const nav = document.getElementById('module-nav');
+            nav.innerHTML = '';
+            modules.forEach((mod, index) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-4 py-3 text-sm flex items-center justify-between border-l-4 transition-all ${
+                    index === state.currentModuleIndex 
+                        ? 'bg-orange/10 border-orange text-navy font-bold' 
+                        : mod.locked 
+                            ? 'border-transparent text-gray-400 cursor-not-allowed' 
+                            : 'border-transparent text-slate-600 hover:bg-gray-50'
+                }`;
+                
+                const statusIcon = mod.locked ? '🔒' : (mod.completed ? '✅' : '○');
+                
+                btn.innerHTML = `
+                    <span>${mod.shortTitle}</span>
+                    <span class="text-xs">${statusIcon}</span>
+                `;
+                
+                if (!mod.locked) {
+                    btn.onclick = () => renderModule(index);
+                }
+                nav.appendChild(btn);
+            });
+        }
+
+        function renderModule(index) {
+            state.currentModuleIndex = index;
+            const mod = modules[index];
+            const container = document.getElementById('main-content');
+            
+            // Layout Skeleton for Module
+            let html = `
+                <div class="max-w-4xl mx-auto fade-in pb-20">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-10">
+                        <span class="text-orange font-bold text-xs uppercase tracking-widest mb-2 block">Module ${index}</span>
+                        <h2 class="font-header text-3xl font-bold text-navy mb-4">${mod.content.heading}</h2>
+                        <p class="text-slate-600 mb-8 text-lg leading-relaxed border-l-4 border-orange pl-4">${mod.content.intro}</p>
+                        
+                        <div class="space-y-8">
+            `;
+
+            // Render Elements
+            mod.content.elements.forEach(el => {
+                if (el.type === 'text') {
+                    html += `<p class="text-slate-700">${el.text}</p>`;
+                } else if (el.type === 'link') {
+                    html += `<a href="${el.url}" target="_blank" class="inline-block bg-navy text-white px-4 py-2 rounded hover:bg-slate-700 transition">🔗 ${el.text}</a>`;
+                } else if (el.type === 'input') {
+                    html += `
+                        <div class="space-y-2">
+                            <label class="font-bold text-navy block">${el.label}</label>
+                            <input type="text" id="${el.id}" value="${state.answers[el.id] || ''}" 
+                                class="w-full border border-gray-300 rounded p-3 focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange transition"
+                                placeholder="${el.placeholder}" oninput="updateState('${el.id}', this.value)">
+                        </div>`;
+                } else if (el.type === 'scenario') {
+                    html += `
+                        <div class="bg-mist p-6 rounded-lg border border-gray-200">
+                            <h3 class="font-bold text-navy mb-2">📢 ${el.title}</h3>
+                            <p class="mb-4 text-sm">${el.text}</p>
+                            <div class="space-y-2">
+                                ${el.options.map(opt => `<button class="w-full text-left p-3 bg-white border border-gray-300 rounded hover:bg-orange hover:text-white hover:border-orange transition text-sm" onclick="this.classList.add('bg-navy', 'text-white', 'border-navy'); this.classList.remove('bg-white', 'text-slate-800'); alert('Choice recorded. Notice how your body felt making that choice.')">${opt}</button>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else if (el.type === 'reflection') {
+                    html += `
+                        <div class="space-y-2">
+                            <label class="font-bold text-navy block">🤔 Reflection: ${el.label}</label>
+                            <textarea id="${el.id}" class="w-full border border-gray-300 rounded p-3 h-24 focus:outline-none focus:border-orange" placeholder="${el.placeholder}" oninput="updateState('${el.id}', this.value)">${state.answers[el.id] || ''}</textarea>
+                        </div>
+                    `;
+                } else if (el.type === 'chart_compass') {
+                    html += `
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="flex justify-between text-sm font-bold text-navy">Values Alignment <span id="val_v">50</span></label>
+                                    <input type="range" min="0" max="100" value="${state.answers.compass_values}" class="w-full accent-orange" oninput="updateCompass('compass_values', this.value, 'val_v')">
+                                </div>
+                                <div>
+                                    <label class="flex justify-between text-sm font-bold text-navy">Positive Impact <span id="val_i">50</span></label>
+                                    <input type="range" min="0" max="100" value="${state.answers.compass_impact}" class="w-full accent-orange" oninput="updateCompass('compass_impact', this.value, 'val_i')">
+                                </div>
+                                <div>
+                                    <label class="flex justify-between text-sm font-bold text-navy">Feasibility <span id="val_f">50</span></label>
+                                    <input type="range" min="0" max="100" value="${state.answers.compass_feasibility}" class="w-full accent-orange" oninput="updateCompass('compass_feasibility', this.value, 'val_f')">
+                                </div>
+                                <p class="text-xs text-gray-500 italic">Adjust sliders to see the shape of your decision.</p>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="compassChart"></canvas>
+                            </div>
+                        </div>
+                    `;
+                } else if (el.type === 'draft_compare') {
+                    html += `
+                        <div class="space-y-4">
+                            <label class="font-bold text-navy block">${el.label}</label>
+                            <textarea id="${el.id}" class="w-full border border-gray-300 rounded p-3 h-32 focus:outline-none focus:border-orange" oninput="updateState('${el.id}', this.value)">${state.answers[el.id] || ''}</textarea>
+                            <button onclick="document.getElementById('best-practice').classList.remove('hidden')" class="bg-slate-200 text-navy px-4 py-2 rounded font-bold text-sm hover:bg-slate-300">Compare with Best Practice</button>
+                            <div id="best-practice" class="hidden bg-green-50 border border-green-200 p-4 rounded text-sm text-green-900">
+                                <strong>MOVE Best Practice:</strong> "Team, based on [Data], we are pivoting to [Action]. I know this is a shift from [Previous Plan], but it honors our value of [Value]. I need everyone to [Specific Request] by [Time]. Questions?"
+                            </div>
+                        </div>
+                    `;
+                } else if (el.type === 'chart_survey') {
+                    html += `
+                        <div class="flex flex-col gap-4">
+                            <div class="chart-container">
+                                <canvas id="surveyChart"></canvas>
+                            </div>
+                            <p class="text-center text-xs text-gray-500">Based on typical SME resilience audits.</p>
+                        </div>
+                    `;
+                } else if (el.type === 'chart_weather') {
+                    html += `
+                        <div class="bg-slate-900 p-4 rounded-xl text-white">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-mono text-orange">WARNING SYSTEM: ACTIVE</h3>
+                                <div class="animate-pulse h-3 w-3 bg-red-500 rounded-full"></div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="weatherChart"></canvas>
+                            </div>
+                            <div class="mt-4 flex gap-4 justify-center">
+                                <button onclick="alert('Decision Logged: WAITING. Risk: Data suggests storm intensification.')" class="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded font-mono">WAIT FOR DATA</button>
+                                <button onclick="alert('Decision Logged: ACTING. Rationale: Precautionary principle applied.')" class="bg-orange hover:bg-red-600 px-6 py-2 rounded font-mono font-bold">ACT NOW</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (el.type === 'checkboxes') {
+                    html += `
+                        <div class="space-y-2">
+                            ${el.options.map((opt, i) => `
+                                <label class="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-gray-50">
+                                    <input type="checkbox" class="accent-orange w-5 h-5" onchange="toggleHabit('${opt}')" ${state.answers.habits.includes(opt) ? 'checked' : ''}>
+                                    <span>${opt}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    `;
+                } else if (el.type === 'summary_view') {
+                    html += `
+                        <div class="bg-mist p-8 rounded-lg border border-gray-200 space-y-6">
+                            <div class="border-b border-gray-300 pb-4">
+                                <h3 class="font-bold text-xl text-navy">Leadership Intention</h3>
+                                <p class="text-lg font-serif italic text-orange">"${state.answers.user_intention || 'Not set'}"</p>
+                            </div>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-white p-4 rounded shadow-sm">
+                                    <h4 class="font-bold text-xs text-gray-500 uppercase">Path A</h4>
+                                    <p>${state.answers.opt_a || '-'}</p>
+                                </div>
+                                <div class="bg-white p-4 rounded shadow-sm">
+                                    <h4 class="font-bold text-xs text-gray-500 uppercase">Path B</h4>
+                                    <p>${state.answers.opt_b || '-'}</p>
+                                </div>
+                                <div class="bg-white p-4 rounded shadow-sm border-2 border-orange">
+                                    <h4 class="font-bold text-xs text-orange uppercase">Path C (Creative)</h4>
+                                    <p>${state.answers.opt_c || '-'}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-navy">Validation Score</h3>
+                                <p class="text-sm">Values: ${state.answers.compass_values} | Impact: ${state.answers.compass_impact} | Feasibility: ${state.answers.compass_feasibility}</p>
+                            </div>
+                            <button onclick="window.print()" class="w-full bg-navy text-white py-3 rounded font-bold hover:bg-slate-700 transition">🖨️ Print Action Plan</button>
+                        </div>
+                    `;
+                }
+            });
+
+            // Footer Navigation
+            html += `
+                        <div class="mt-12 flex justify-between border-t border-gray-100 pt-6">
+                            <button onclick="renderModule(${index - 1})" class="text-slate-500 hover:text-navy font-semibold ${index === 0 ? 'invisible' : ''}">← Previous</button>
+                            ${index < modules.length - 1 
+                                ? `<button onclick="completeAndNext(${index})" class="bg-orange text-white px-6 py-2 rounded shadow hover:bg-orange/90 font-bold transition">Complete & Continue →</button>`
+                                : `<button onclick="alert('Course Completed! Badge Issued.')" class="bg-green-600 text-white px-6 py-2 rounded shadow hover:bg-green-700 font-bold transition">Finish Course</button>`
+                            }
+                        </div>
+                    </div>
+                </div>
+                </div> <!-- End Max-W -->
+            `;
+
+            container.innerHTML = html;
+            updateProgress();
+            renderNav();
+
+            // Initialize Charts if needed
+            if (mod.type === 'tool') initCompassChart();
+            if (mod.type === 'audit') initSurveyChart();
+            if (mod.type === 'simulation') initWeatherChart();
+        }
+
+        function updateState(key, value) {
+            state.answers[key] = value;
+        }
+
+        function toggleHabit(habit) {
+            const habits = state.answers.habits;
+            if (habits.includes(habit)) {
+                state.answers.habits = habits.filter(h => h !== habit);
+            } else {
+                state.answers.habits.push(habit);
+            }
+        }
+
+        function completeAndNext(currentIndex) {
+            modules[currentIndex].completed = true;
+            if (currentIndex + 1 < modules.length) {
+                modules[currentIndex + 1].locked = false;
+                renderModule(currentIndex + 1);
+            }
+        }
+
+        // --- CHART FUNCTIONS ---
+
+        function updateCompass(key, value, displayId) {
+            state.answers[key] = value;
+            document.getElementById(displayId).innerText = value;
+            if (state.charts.compass) {
+                const data = [state.answers.compass_values, state.answers.compass_impact, state.answers.compass_feasibility];
+                state.charts.compass.data.datasets[0].data = data;
+                state.charts.compass.update();
+            }
+        }
+
+        function initCompassChart() {
+            const ctx = document.getElementById('compassChart').getContext('2d');
+            state.charts.compass = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Values Alignment', 'Positive Impact', 'Feasibility'],
+                    datasets: [{
+                        label: 'Decision Profile',
+                        data: [state.answers.compass_values, state.answers.compass_impact, state.answers.compass_feasibility],
+                        backgroundColor: 'rgba(230, 126, 34, 0.4)',
+                        borderColor: '#E67E22',
+                        pointBackgroundColor: '#2D3E50',
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function initSurveyChart() {
+            const ctx = document.getElementById('surveyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Clarity', 'Speed', 'Empathy', 'Feedback Loop'],
+                    datasets: [
+                        {
+                            label: 'Your Team (Self-Audit)',
+                            data: [65, 40, 80, 55],
+                            backgroundColor: '#E67E22'
+                        },
+                        {
+                            label: 'Resilient Benchmark',
+                            data: [90, 85, 85, 90],
+                            backgroundColor: '#ECF0F1'
+                        }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+        }
+
+        function initWeatherChart() {
+            const ctx = document.getElementById('weatherChart').getContext('2d');
+            
+            // Generate trend data
+            const labels = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00'];
+            const windData = [45, 50, 48, 65, 72, 85];
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Wind Speed (km/h)',
+                        data: windData,
+                        borderColor: '#E67E22',
+                        backgroundColor: 'rgba(230, 126, 34, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: 'white' } }
+                    },
+                    scales: {
+                        y: { 
+                            grid: { color: '#4b5563' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        x: {
+                            grid: { color: '#4b5563' },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Start App
+        init();
+
+    </script>
+</body>
+</html>
