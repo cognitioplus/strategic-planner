@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#1e293b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Strategic Planner - Universal Edition</title>
+<title>Strategic Planner</title>
 <link rel="preconnect" href="https://unpkg.com">
 <style>
 /* CSS Reset & Base Styles */
@@ -541,48 +541,63 @@ Sparkles: (props) => <Icon {...props} ariaLabel="AI" path={<><path d="M10 5.026a
 Loader: (props) => <Icon {...props} ariaLabel="Loading" path={<><path d="M12 2v4" /><path d="M12 18v4" /><path d="m4.93 4.93 2.83 2.83" /><path d="m16.24 16.24 2.83 2.83" /><path d="M2 12h4" /><path d="M18 12h4" /><path d="m6.93 19.07 2.83-2.83" /><path d="m19.07 6.93-2.83 2.83" /></>} />,
 };
 
-// --- Claude AI Service ---
-const ClaudeAIService = {
-  endpoint: 'https://api.anthropic.com/v1/messages',
-  defaultModel: 'claude-3-5-sonnet-20241022',
-  defaultMaxTokens: 1024,
-  defaultTemperature: 0.7,
+// --- AI SERVICE (OpenAI ChatGPT) ---
+const openaiApiKey = ""; // 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
 
-  async sendMessage(prompt, apiKey, options = {}) {
-    if (!apiKey) {
-      throw new Error('API key is required');
+const AIService = {
+  async generate(userPrompt, systemPrompt, schema) {
+    let retries = 0;
+    const maxRetries = 5;
+
+    // Clarify JSON structure in the prompt since OpenAI doesn't enforce schemas client-side
+    const jsonFormatInstruction = 
+      `Respond ONLY with a valid JSON object matching this structure: ${JSON.stringify(schema, null, 2)}. ` +
+      `Do not include markdown, explanations, or any text outside the JSON.`;
+
+    const messages = [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt + "\n\n" + jsonFormatInstruction }
+    ];
+
+    while (retries < maxRetries) {
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${openaiApiKey}`
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini", // or "gpt-4o" for higher quality
+            messages: messages,
+            temperature: 0.3,
+            max_tokens: 1000,
+            response_format: { type: "json_object" } // Enforces JSON output
+          })
+        });
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({}));
+          throw new Error(`OpenAI API error: ${response.status} ${error.error?.message || "Unknown error"}`);
+        }
+
+        const data = await response.json();
+        const content = data.choices[0]?.message?.content;
+
+        if (!content) {
+          throw new Error("No response content from OpenAI");
+        }
+
+        const parsed = JSON.parse(content);
+        return parsed;
+
+      } catch (e) {
+        console.warn(`AI retry ${retries + 1}/${maxRetries}:`, e.message);
+        retries++;
+        if (retries >= maxRetries) throw new Error(`AI Service failed after ${maxRetries} retries: ${e.message}`);
+        await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
+      }
     }
-
-    const {
-      model = this.defaultModel,
-      maxTokens = this.defaultMaxTokens,
-      temperature = this.defaultTemperature,
-      systemMessage = "You are a strategic planning assistant. Provide concise, actionable insights for business strategy, goal setting, and planning."
-    } = options;
-
-    const response = await fetch(this.endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: maxTokens,
-        temperature,
-        system: systemMessage,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(`API Error: ${response.status} - ${errorData.error?.message || response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data.content[0]?.text || '';
   }
 };
 
