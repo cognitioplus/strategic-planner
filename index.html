@@ -542,14 +542,15 @@ Loader: (props) => <Icon {...props} ariaLabel="Loading" path={<><path d="M12 2v4
 };
 
 // --- AI SERVICE (OpenAI ChatGPT) ---
-const openaiApiKey = ""; // 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
-
 const AIService = {
-  async generate(userPrompt, systemPrompt, schema) {
+  async generate(userPrompt, systemPrompt, schema, apiKey) {
+    if (!apiKey) {
+      throw new Error("API key is required");
+    }
+
     let retries = 0;
     const maxRetries = 5;
 
-    // Clarify JSON structure in the prompt since OpenAI doesn't enforce schemas client-side
     const jsonFormatInstruction = 
       `Respond ONLY with a valid JSON object matching this structure: ${JSON.stringify(schema, null, 2)}. ` +
       `Do not include markdown, explanations, or any text outside the JSON.`;
@@ -565,14 +566,14 @@ const AIService = {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${openaiApiKey}`
+            "Authorization": `Bearer ${apiKey}`
           },
           body: JSON.stringify({
-            model: "gpt-4o-mini", // or "gpt-4o" for higher quality
+            model: "gpt-4o-mini",
             messages: messages,
             temperature: 0.3,
             max_tokens: 1000,
-            response_format: { type: "json_object" } // Enforces JSON output
+            response_format: { type: "json_object" }
           })
         });
 
