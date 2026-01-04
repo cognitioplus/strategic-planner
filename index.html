@@ -3,60 +3,282 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Strategic Planner</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Strategic Planner — Alvin Silva</title>
+  <meta name="description" content="Strategic planning tool for organizations focused on resilience, climate adaptation, and disaster risk reduction.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --blue-400: #60a5fa;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb;
+      --emerald-500: #10b981;
+      --purple-500: #a855f7;
+      --orange-500: #f97316;
+      --white: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--slate-100);
+      color: var(--slate-800);
+      line-height: 1.5;
+    }
+
+    .hidden { display: none; }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .flex-1 { flex: 1 1 0%; }
+    .h-screen { height: 100vh; }
+    .w-full { width: 100%; }
+    .w-64 { width: 16rem; }
+    .w-5 { width: 1.25rem; }
+    .h-5 { height: 1.25rem; }
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+    .text-sm { font-size: 0.875rem; }
+    .text-xs { font-size: 0.75rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .font-bold { font-weight: 700; }
+    .font-medium { font-weight: 500; }
+    .text-white { color: var(--white); }
+    .text-slate-300 { color: var(--slate-300); }
+    .text-slate-400 { color: var(--slate-400); }
+    .text-slate-600 { color: var(--slate-600); }
+    .text-slate-800 { color: var(--slate-800); }
+    .text-blue-400 { color: var(--blue-400); }
+    .text-emerald-500 { color: var(--emerald-500); }
+    .text-blue-500 { color: var(--blue-500); }
+    .text-purple-500 { color: var(--purple-500); }
+    .text-orange-500 { color: var(--orange-500); }
+    .bg-slate-900 { background-color: var(--slate-900); }
+    .bg-white { background-color: var(--white); }
+    .bg-slate-50 { background-color: var(--slate-50); }
+    .bg-blue-600 { background-color: var(--blue-600); }
+    .rounded-lg { border-radius: 0.5rem; }
+    .rounded-xl { border-radius: 0.75rem; }
+    .border { border-width: 1px; }
+    .border-slate-200 { border-color: var(--slate-200); }
+    .border-slate-700 { border-color: var(--slate-700); }
+    .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .overflow-hidden { overflow: hidden; }
+    .overflow-auto { overflow: auto; }
+    .sticky { position: sticky; }
+    .fixed { position: fixed; }
+    .relative { position: relative; }
+    .top-0 { top: 0; }
+    .left-0 { left: 0; }
+    .z-20 { z-index: 20; }
+    .z-50 { z-index: 50; }
+    .inset-y-0 { top: 0; bottom: 0; }
+    .transform { transform: translate(var(--tw-translate-x), var(--tw-translate-y)); }
+    .transition-transform { transition: transform 0.3s ease; }
+    .space-y-2 > * + * { margin-top: 0.5rem; }
+    .space-y-6 > * + * { margin-top: 1.5rem; }
+    .uppercase { text-transform: uppercase; }
+    .tracking-wider { letter-spacing: 0.05em; }
+
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      background: none;
+      border: none;
+      text-align: left;
+      color: var(--slate-300);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover:not(.active) {
+      background-color: var(--slate-800);
+    }
+
+    .nav-btn.active {
+      background-color: var(--blue-600);
+      color: var(--white);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      border: 1px solid var(--slate-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--slate-400);
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin-top: 0.25rem;
+    }
+
+    .stat-icon {
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+    }
+
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .grid {
+      display: grid;
+    }
+
+    .grid-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    @media (min-width: 768px) {
+      .md\\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .md\\:relative {
+        position: relative;
+      }
+      .md\\:translate-x-0 {
+        --tw-translate-x: 0px !important;
+        transform: translateX(0);
+      }
+      .md\\:hidden {
+        display: none;
+      }
+      .md\\:p-10 {
+        padding: 2.5rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .lg\\:grid-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .gap-6 {
+      gap: 1.5rem;
+    }
+
+    .lucide {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .sidebar-open .sidebar-mobile {
+      transform: translateX(0);
+    }
+
+    .max-w-7xl {
+      max-width: 80rem;
+    }
+
+    .mx-auto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .pb-20 {
+      padding-bottom: 5rem;
+    }
+  </style>
 </head>
-<body class="bg-slate-100">
+<body>
   <!-- Loading Screen -->
-  <div id="loading" class="flex items-center justify-center h-screen bg-slate-100 hidden">
+  <div id="loading" class="flex items-center justify-center h-screen bg-slate-100">
     <div class="text-center">
       <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
       <p class="text-slate-600 font-medium">Loading Strategic Planner...</p>
     </div>
   </div>
 
-  <!-- Main App (initially hidden) -->
+  <!-- Main App (hidden until loaded) -->
   <div id="app" class="flex h-screen overflow-hidden hidden">
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0">
+    <aside id="sidebar" class="sidebar-mobile fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0">
       <div class="p-6 border-b border-slate-700 flex justify-between items-center">
         <div>
           <h1 class="text-xl font-bold text-blue-400">Strategic Planner</h1>
           <p class="text-xs text-slate-400">Production Edition</p>
         </div>
         <button id="close-sidebar" class="md:hidden text-slate-400 hover:text-white" aria-label="Close menu">
-          <i data-lucide="x" class="lucide w-5 h-5"></i>
+          <i data-lucide="x" class="lucide"></i>
         </button>
       </div>
       <nav class="p-4 space-y-2">
-        <button class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 text-left" data-tab="dashboard">
-          <i data-lucide="layout-dashboard" class="lucide w-5 h-5"></i>
+        <button class="nav-btn active" data-tab="dashboard">
+          <i data-lucide="layout-dashboard" class="lucide"></i>
           <span>Dashboard</span>
         </button>
-        <button class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 text-left" data-tab="swot">
-          <i data-lucide="target" class="lucide w-5 h-5"></i>
+        <button class="nav-btn" data-tab="swot">
+          <i data-lucide="target" class="lucide"></i>
           <span>SWOT Analysis</span>
         </button>
-        <button class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 text-left" data-tab="bsc">
-          <i data-lucide="pie-chart" class="lucide w-5 h-5"></i>
+        <button class="nav-btn" data-tab="bsc">
+          <i data-lucide="pie-chart" class="lucide"></i>
           <span>Balanced Scorecard</span>
         </button>
-        <button class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 text-left" data-tab="paps">
-          <i data-lucide="clipboard-list" class="lucide w-5 h-5"></i>
+        <button class="nav-btn" data-tab="paps">
+          <i data-lucide="clipboard-list" class="lucide"></i>
           <span>Strategic Initiatives</span>
         </button>
-        <button class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 text-left" data-tab="team">
-          <i data-lucide="users" class="lucide w-5 h-5"></i>
+        <button class="nav-btn" data-tab="team">
+          <i data-lucide="users" class="lucide"></i>
           <span>Team & Governance</span>
         </button>
-        <button class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 text-left" data-tab="profile">
-          <i data-lucide="settings" class="lucide w-5 h-5"></i>
+        <button class="nav-btn" data-tab="profile">
+          <i data-lucide="settings" class="lucide"></i>
           <span>Organization Profile</span>
         </button>
-        <button class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 text-left" data-tab="report">
-          <i data-lucide="file-text" class="lucide w-5 h-5"></i>
+        <button class="nav-btn" data-tab="report">
+          <i data-lucide="file-text" class="lucide"></i>
           <span>Strategic Plan View</span>
         </button>
       </nav>
@@ -66,19 +288,206 @@
     <main class="flex-1 overflow-auto">
       <header class="md:hidden bg-white p-4 shadow-sm flex items-center justify-between sticky top-0 z-20">
         <h2 class="font-semibold text-sm" id="mobile-org-name">Your Organization</h2>
-        <button id="open-sidebar" aria-label="Open menu">
-          <i data-lucide="menu" class="lucide w-5 h-5"></i>
+        <button id="open-sidebar" aria-label="Open navigation menu">
+          <i data-lucide="menu" class="lucide"></i>
         </button>
       </header>
 
       <div class="p-6 md:p-10 max-w-7xl mx-auto pb-20">
         <div id="view-container" class="space-y-6">
-          <!-- Views will be injected here -->
+          <!-- Content loaded here -->
         </div>
       </div>
     </main>
   </div>
 
-  <script src="app.js"></script>
+  <script>
+    // Currency mapping
+    const getCurrencyCode = (country) => {
+      const map = {
+        'Philippines': 'PHP', 'Indonesia': 'IDR', 'Thailand': 'THB', 'Vietnam': 'VND',
+        'India': 'INR', 'Malaysia': 'MYR', 'Singapore': 'SGD', 'Japan': 'JPY',
+        'South Korea': 'KRW', 'Sri Lanka': 'LKR', 'Nepal': 'NPR', 'Bangladesh': 'BDT',
+        'Myanmar': 'MMK', 'Cambodia': 'KHR', 'Laos': 'LAK', 'Brunei': 'BND',
+        'Mongolia': 'MNT', 'China': 'CNY', 'Pakistan': 'PKR', 'default': 'USD'
+      };
+      return map[country] || map.default;
+    };
+
+    // DataService using localStorage
+    const DataService = {
+      get(key) {
+        try {
+          return JSON.parse(localStorage.getItem(key)) || [];
+        } catch (e) {
+          return [];
+        }
+      },
+      set(key, data) {
+        try {
+          localStorage.setItem(key, JSON.stringify(data));
+        } catch (e) {}
+      },
+      add(collection, item) {
+        const current = this.get(collection);
+        const newItem = { ...item, id: Date.now().toString(), createdAt: new Date().toISOString() };
+        const updated = [newItem, ...current];
+        this.set(collection, updated);
+        return updated;
+      },
+      update(collection, id, updates) {
+        const current = this.get(collection);
+        const updated = current.map(item => item.id === id ? { ...item, ...updates } : item);
+        this.set(collection, updated);
+        return updated;
+      },
+      delete(collection, id) {
+        const current = this.get(collection);
+        const updated = current.filter(item => item.id !== id);
+        this.set(collection, updated);
+        return updated;
+      }
+    };
+
+    // Main App State
+    let activeTab = 'dashboard';
+    let orgProfile = { name: 'Your Organization', country: 'Philippines' };
+    let paps = [];
+    let team = [];
+    let swot = [];
+    let bsc = [];
+
+    // DOM Elements
+    const loadingEl = document.getElementById('loading');
+    const appEl = document.getElementById('app');
+    const sidebar = document.getElementById('sidebar');
+    const openSidebarBtn = document.getElementById('open-sidebar');
+    const closeSidebarBtn = document.getElementById('close-sidebar');
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const viewContainer = document.getElementById('view-container');
+    const mobileOrgName = document.getElementById('mobile-org-name');
+
+    // Initialize
+    function initApp() {
+      // Load data
+      paps = DataService.get('strat_paps');
+      team = DataService.get('strat_team');
+      swot = DataService.get('strat_swot');
+      bsc = DataService.get('strat_bsc');
+      const savedProfile = DataService.get('strat_org_profile')[0];
+      if (savedProfile) orgProfile = savedProfile;
+
+      mobileOrgName.textContent = orgProfile.name;
+
+      // Setup event listeners
+      openSidebarBtn?.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+      closeSidebarBtn?.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+
+      navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          navButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeTab = btn.dataset.tab;
+          renderView();
+          if (window.innerWidth < 768) sidebar.classList.add('-translate-x-full');
+        });
+      });
+
+      // Show app
+      loadingEl.classList.add('hidden');
+      appEl.classList.remove('hidden');
+      renderView();
+      lucide.createIcons();
+    }
+
+    // Render current view
+    function renderView() {
+      const stats = {
+        totalBudget: paps.reduce((acc, curr) => acc + (parseFloat(curr.budget) || 0), 0),
+        totalProjects: paps.length,
+        teamSize: team.length,
+        swotCount: swot.length,
+        bscCount: bsc.length
+      };
+
+      let content = '';
+      const currency = getCurrencyCode(orgProfile.country);
+      const formattedBudget = new Intl.NumberFormat('en', { style: 'currency', currency }).format(stats.totalBudget);
+
+      switch (activeTab) {
+        case 'dashboard':
+          content = `
+            <h2 class="text-2xl font-bold text-slate-800 mb-6">Dashboard Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div class="stat-card">
+                <div>
+                  <p class="stat-title">Budget Requirement</p>
+                  <h3 class="stat-value">${formattedBudget}</h3>
+                </div>
+                <div class="stat-icon bg-slate-50 text-emerald-500">
+                  <i data-lucide="dollar-sign" class="lucide"></i>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div>
+                  <p class="stat-title">Strategic Initiatives</p>
+                  <h3 class="stat-value">${stats.totalProjects}</h3>
+                </div>
+                <div class="stat-icon bg-slate-50 text-blue-500">
+                  <i data-lucide="clipboard-list" class="lucide"></i>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div>
+                  <p class="stat-title">SWOT Insights</p>
+                  <h3 class="stat-value">${stats.swotCount}</h3>
+                </div>
+                <div class="stat-icon bg-slate-50 text-purple-500">
+                  <i data-lucide="target" class="lucide"></i>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div>
+                  <p class="stat-title">BSC Objectives</p>
+                  <h3 class="stat-value">${stats.bscCount}</h3>
+                </div>
+                <div class="stat-icon bg-slate-50 text-orange-500">
+                  <i data-lucide="pie-chart" class="lucide"></i>
+                </div>
+              </div>
+            </div>
+          `;
+          break;
+        case 'paps':
+          content = '<div class="text-center p-10 text-slate-600">Strategic Initiatives Manager (PAPs)</div>';
+          break;
+        case 'team':
+          content = '<div class="text-center p-10 text-slate-600">Team & Governance Manager</div>';
+          break;
+        case 'swot':
+          content = '<div class="text-center p-10 text-slate-600">SWOT Analysis Tool</div>';
+          break;
+        case 'bsc':
+          content = '<div class="text-center p-10 text-slate-600">Balanced Scorecard Builder</div>';
+          break;
+        case 'profile':
+          content = '<div class="text-center p-10 text-slate-600">Organization Profile Settings</div>';
+          break;
+        case 'report':
+          content = '<div class="text-center p-10 text-slate-600">Strategic Plan Report Preview</div>';
+          break;
+        default:
+          content = '<div class="text-center p-10">Unknown tab</div>';
+      }
+
+      viewContainer.innerHTML = content;
+      lucide.createIcons();
+    }
+
+    // Start app after Lucide loads
+    window.addEventListener('load', () => {
+      setTimeout(initApp, 600); // Simulate data load
+    });
+  </script>
 </body>
 </html>
