@@ -3,23 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body {
-                  background-color: white; /* Ensure the iframe has a white background */
-                }
-
-                
-              </style>
-                        </head>
-                        <body>
-                              <script src="https://cdn.tailwindcss.com  "></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js  "></script>
-  
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Strategic Planner</title>
 <link rel="manifest" id="manifest-placeholder">
 <meta name="theme-color" content="#1e293b">
@@ -210,7 +193,7 @@ function App() {
         <div className="p-6 md:p-10 max-w-7xl mx-auto pb-20">
           {activeTab === 'dashboard' && <DashboardView objectives={objectives} swot={swot} bsc={bsc} initiatives={initiatives} team={team} />}
           {activeTab === 'objectives' && <ObjectivesView swot={swot} setSwot={setSwot} apiKey={apiKey} strategies={strategies} setStrategies={setStrategies} />}
-          {activeTab === 'bsc' && <BscView bsc={bsc} setBsc={setBsc} apiKey={apiKey} />}
+          {activeTab === 'bsc' && <BscView bsc={bsc} setBsc={setBsc} swot={swot} apiKey={apiKey} />}
           {activeTab === 'initiatives' && <InitiativesView initiatives={initiatives} setInitiatives={setInitiatives} />}
           {activeTab === 'team' && <TeamView team={team} setTeam={setTeam} />}
           {activeTab === 'report' && <ReportView objectives={objectives} swot={swot} strategies={strategies} bsc={bsc} initiatives={initiatives} team={team} />}
@@ -281,12 +264,28 @@ const ObjectivesView = ({ swot, setSwot, apiKey, strategies, setStrategies }) =>
     if (swot.length < 2) return alert("Add at least 2 SWOT items.");
     setGenerating(true);
     try {
-      const prompt = `Strengths: ${swot.filter(s => s.type === 'Strength').map(s => s.text).join('; ')}
-Weaknesses: ${swot.filter(s => s.type === 'Weakness').map(s => s.text).join('; ')}
-Opportunities: ${swot.filter(s => s.type === 'Opportunity').map(s => s.text).join('; ')}
-Threats: ${swot.filter(s => s.type === 'Threat').map(s => s.text).join('; ')}`;
-      const system = "You are a strategic planning expert. Output JSON with keys: so, st, wo, wt.";
-      const schema = { type: "OBJECT", properties: { so: { type: "STRING" }, st: { type: "STRING" }, wo: { type: "STRING" }, wt: { type: "STRING" } } };
+      const strengths = swot.filter(s => s.type === 'Strength').map(s => s.text).join('; ');
+      const weaknesses = swot.filter(s => s.type === 'Weakness').map(s => s.text).join('; ');
+      const opportunities = swot.filter(s => s.type === 'Opportunity').map(s => s.text).join('; ');
+      const threats = swot.filter(s => s.type === 'Threat').map(s => s.text).join('; ');
+
+      const prompt = `Based on the following SWOT analysis, generate actionable strategic options using industry best practices:
+
+Strengths: ${strengths || 'None'}
+Weaknesses: ${weaknesses || 'None'}
+Opportunities: ${opportunities || 'None'}
+Threats: ${threats || 'None'}`;
+
+      const system = "You are a strategic planning expert. Generate concise, actionable strategies in four categories: SO (maxi-maxi), ST (maxi-mimi), WO (mini-maxi), WT (mini-mimi). Use professional business language.";
+      const schema = { 
+        type: "OBJECT", 
+        properties: { 
+          so: { type: "STRING", description: "Leverage strengths to seize opportunities" }, 
+          st: { type: "STRING", description: "Use strengths to mitigate threats" }, 
+          wo: { type: "STRING", description: "Address weaknesses to seize opportunities" }, 
+          wt: { type: "STRING", description: "Defend against threats by overcoming weaknesses" } 
+        } 
+      };
       const result = await AIService.generate(prompt, system, schema, apiKey);
       setStrategies(result);
     } catch (e) {
@@ -365,13 +364,14 @@ const StrategyCard = ({ label, desc, color }) => (
   </div>
 );
 
-const BscView = ({ bsc, setBsc, apiKey }) => {
+const BscView = ({ bsc, setBsc, swot, apiKey }) => {
   const [form, setForm] = useState({ strategy: '', perspective: 'Stakeholder', kpi: '' });
   const [editingId, setEditingId] = useState(null);
+  const [generatingBsc, setGeneratingBsc] = useState(false);
 
   const suggestKPI = async () => {
     if (!form.strategy || !apiKey) return;
-    const prompt = `Suggest one measurable KPI for: "${form.strategy}" in the ${form.perspective} perspective.`;
+    const prompt = `Suggest one specific, measurable KPI for: "${form.strategy}" in the ${form.perspective} perspective.`;
     try {
       const res = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -410,8 +410,65 @@ const BscView = ({ bsc, setBsc, apiKey }) => {
     setBsc(DataService.get('bsc'));
   };
 
+  const generateBscFromSwot = async () => {
+    if (!apiKey) return alert("Please set your OpenAI API key in AI Settings.");
+    if (swot.length < 2) return alert("Add at least 2 SWOT items.");
+    setGeneratingBsc(true);
+    try {
+      const strengths = swot.filter(s => s.type === 'Strength').map(s => s.text).join('; ');
+      const weaknesses = swot.filter(s => s.type === 'Weakness').map(s => s.text).join('; ');
+      const opportunities = swot.filter(s => s.type === 'Opportunity').map(s => s.text).join('; ');
+      const threats = swot.filter(s => s.type === 'Threat').map(s => s.text).join('; ');
+
+      const prompt = `Based on this SWOT analysis, propose one strategic objective and one measurable KPI for each of the four Balanced Scorecard perspectives, aligned with industry best practices:
+
+Strengths: ${strengths || 'None'}
+Weaknesses: ${weaknesses || 'None'}
+Opportunities: ${opportunities || 'None'}
+Threats: ${threats || 'None'}`;
+
+      const system = "You are a strategic planning expert. Output JSON with keys: stakeholder, internal, learning, financial. Each value is an object with 'objective' and 'kpi'.";
+      const schema = {
+        type: "OBJECT",
+        properties: {
+          stakeholder: { type: "OBJECT", properties: { objective: { type: "STRING" }, kpi: { type: "STRING" } } },
+          internal: { type: "OBJECT", properties: { objective: { type: "STRING" }, kpi: { type: "STRING" } } },
+          learning: { type: "OBJECT", properties: { objective: { type: "STRING" }, kpi: { type: "STRING" } } },
+          financial: { type: "OBJECT", properties: { objective: { type: "STRING" }, kpi: { type: "STRING" } } }
+        }
+      };
+
+      const result = await AIService.generate(prompt, system, schema, apiKey);
+      const newBsc = [
+        { perspective: 'Stakeholder', strategy: result.stakeholder.objective, kpi: result.stakeholder.kpi },
+        { perspective: 'Internal Process', strategy: result.internal.objective, kpi: result.internal.kpi },
+        { perspective: 'Learning & Growth', strategy: result.learning.objective, kpi: result.learning.kpi },
+        { perspective: 'Financial', strategy: result.financial.objective, kpi: result.financial.kpi }
+      ];
+      // Save to storage
+      const updated = [...newBsc, ...DataService.get('bsc')];
+      DataService.set('bsc', updated);
+      setBsc(updated);
+    } catch (e) {
+      alert("AI Error: " + e.message);
+    } finally {
+      setGeneratingBsc(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="font-black">Balanced Scorecard</h3>
+        <button 
+          onClick={generateBscFromSwot} 
+          disabled={generatingBsc} 
+          className="btn-primary flex items-center gap-1 text-xs px-3 py-1.5"
+        >
+          {generatingBsc ? 'Generating...' : <><Icons.Sparkles size={12}/> Generate from SWOT</>}
+        </button>
+      </div>
+
       <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
         <h3 className="font-black mb-4">{editingId ? 'Update Objective' : 'Add BSC Objective'}</h3>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -704,14 +761,3 @@ root.render(<App />);
 </script>
 </body>
 </html>
-
-
-
-              <script>
-                                fetch("https://api.openai.com/v1/chat/completions  ", { ... })
-  
-
-              </script>
-                        </body>
-                        </html>
-                    
