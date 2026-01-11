@@ -1,763 +1,1268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Strategic Planner</title>
-<link rel="manifest" id="manifest-placeholder">
-<meta name="theme-color" content="#1e293b">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<script src="https://cdn.tailwindcss.com"></script>
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<style>
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-@media print {
-body * { visibility: hidden; }
-.printable-content, .printable-content * { visibility: visible; }
-.printable-content { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
-.no-print { display: none !important; }
-}
-.input-field {
-@apply w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm;
-}
-.btn-primary {
-@apply flex items-center justify-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-semibold shadow-sm disabled:opacity-50;
-}
-.ai-badge {
-@apply bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase flex items-center gap-1;
-}
-.shimmer {
-background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-background-size: 200% 100%;
-animation: shimmer 1.5s infinite;
-}
-@keyframes shimmer {
-0% { background-position: 200% 0; }
-100% { background-position: -200% 0; }
-}
-</style>
-</head>
-<body class="bg-slate-100 text-slate-800">
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useMemo, useRef } = React;
-
-// --- ICONS ---
-const Icon = ({ path, size = 20, className = "" }) => (
-<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-{path}
-</svg>
-);
-const Icons = {
-LayoutDashboard: (props) => <Icon {...props} path={<><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></>} />,
-ClipboardList: (props) => <Icon {...props} path={<><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M12 11h4" /><path d="M12 16h4" /><path d="M8 11h.01" /><path d="M8 16h.01" /></>} />,
-Users: (props) => <Icon {...props} path={<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></>} />,
-Target: (props) => <Icon {...props} path={<><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></>} />,
-PieChart: (props) => <Icon {...props} path={<><path d="M21.21 15.89A10 10 0 1 1 8 2.83" /><path d="M22 12A10 10 0 0 0 12 2v10z" /></>} />,
-FileText: (props) => <Icon {...props} path={<><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></>} />,
-Plus: (props) => <Icon {...props} path={<><path d="M5 12h14" /><path d="M12 5v14" /></>} />,
-Trash2: (props) => <Icon {...props} path={<><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></>} />,
-Pencil: (props) => <Icon {...props} path={<><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></>} />,
-Menu: (props) => <Icon {...props} path={<><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></>} />,
-X: (props) => <Icon {...props} path={<><path d="M18 6 6 18" /><path d="m6 6 12 12" /></>} />,
-Sparkles: (props) => <Icon {...props} path={<><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /><path d="M5 3v4" /><path d="M3 5h4" /><path d="M21 17v4" /><path d="M19 19h4" /></>} />,
-Check: (props) => <Icon {...props} path={<><polyline points="20 6 9 17 4 12" /></>} />,
-DollarSign: (props) => <Icon {...props} path={<><line x1="12" x2="12" y1="2" y2="22" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></>} />,
-Settings: (props) => <Icon {...props} path={<><circle cx="12" cy="12" r="3" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="M4.93 4.93l1.41 1.41" /><path d="M17.66 17.66l1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="M6.34 17.66l1.41-1.41" /><path d="M19.07 4.93l1.41-1.41" /></>} />
-};
-
-// --- DATA SERVICE ---
-const DataService = {
-  get: (key) => JSON.parse(localStorage.getItem(key)) || [],
-  set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
-  add: (collection, item) => {
-    const newItem = { ...item, id: Date.now().toString() };
-    const updated = [newItem, ...DataService.get(collection)];
-    DataService.set(collection, updated);
-    return updated;
-  },
-  update: (collection, id, updates) => {
-    const updated = DataService.get(collection).map(item => item.id === id ? { ...item, ...updates } : item);
-    DataService.set(collection, updated);
-    return updated;
-  },
-  delete: (collection, id) => {
-    const updated = DataService.get(collection).filter(item => item.id !== id);
-    DataService.set(collection, updated);
-    return updated;
-  }
-};
-
-// --- AI SERVICE (OpenAI) ---
-const AIService = {
-  async generate(userPrompt, systemPrompt, schema, apiKey) {
-    if (!apiKey) throw new Error("API key required");
-    const maxRetries = 3;
-    for (let retries = 0; retries < maxRetries; retries++) {
-      try {
-        const jsonInstruction = `Respond ONLY with valid JSON matching: ${JSON.stringify(schema)}.`;
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userPrompt + "\n\n" + jsonInstruction }
-            ],
-            temperature: 0.4,
-            response_format: { type: "json_object" }
-          })
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        return JSON.parse(data.choices[0].message.content);
-      } catch (e) {
-        if (retries === maxRetries - 1) throw e;
-        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, retries)));
-      }
-    }
-  }
-};
-
-// --- MAIN APP ---
-function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [apiKey, setApiKey] = useState(localStorage.getItem('openaiApiKey') || '');
-  const [loading, setLoading] = useState(true);
-
-  // Data states
-  const [objectives, setObjectives] = useState([]);
-  const [swot, setSwot] = useState([]);
-  const [strategies, setStrategies] = useState(null);
-  const [bsc, setBsc] = useState([]);
-  const [initiatives, setInitiatives] = useState([]);
-  const [team, setTeam] = useState([]);
-
-  useEffect(() => {
-    setObjectives(DataService.get('objectives'));
-    setSwot(DataService.get('swot'));
-    setBsc(DataService.get('bsc'));
-    setInitiatives(DataService.get('initiatives'));
-    setTeam(DataService.get('team'));
-    setLoading(false);
-  }, []);
-
-  const saveApiKey = (key) => {
-    setApiKey(key);
-    localStorage.setItem('openaiApiKey', key);
-  };
-
-  const handleNav = (tab) => {
-    setActiveTab(tab);
-    setIsSidebarOpen(false);
-    window.scrollTo(0,0);
-  };
-
-  if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
-
-  return (
-    <div className="flex h-screen bg-slate-100 overflow-hidden font-sans">
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0`}>
-        <div className="p-6 border-b border-slate-700 flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold text-blue-400">Strategic Planner</h1>
-            <p className="text-xs text-slate-400">Universal Edition</p>
-          </div>
-          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-slate-400"><Icons.X /></button>
-        </div>
-        <nav className="p-4 space-y-2">
-          <NavButton active={activeTab === 'dashboard'} onClick={() => handleNav('dashboard')} icon={<Icons.LayoutDashboard />}>Dashboard</NavButton>
-          <NavButton active={activeTab === 'objectives'} onClick={() => handleNav('objectives')} icon={<Icons.Target />}>Objectives & SWOT</NavButton>
-          <NavButton active={activeTab === 'bsc'} onClick={() => handleNav('bsc')} icon={<Icons.PieChart />}>Balanced Scorecard</NavButton>
-          <NavButton active={activeTab === 'initiatives'} onClick={() => handleNav('initiatives')} icon={<Icons.ClipboardList />}>Initiatives</NavButton>
-          <NavButton active={activeTab === 'team'} onClick={() => handleNav('team')} icon={<Icons.Users />}>Team</NavButton>
-          <NavButton active={activeTab === 'report'} onClick={() => handleNav('report')} icon={<Icons.FileText />}>Strategic Plan</NavButton>
-          <NavButton active={activeTab === 'settings'} onClick={() => handleNav('settings')} icon={<Icons.Settings />}>AI Settings</NavButton>
-        </nav>
-      </aside>
-
-      <main className="flex-1 overflow-auto">
-        <header className="md:hidden bg-white p-4 shadow-sm flex items-center justify-between sticky top-0 z-20">
-          <h2 className="font-semibold text-sm">Strategic Planner</h2>
-          <button onClick={() => setIsSidebarOpen(true)}><Icons.Menu /></button>
-        </header>
-
-        <div className="p-6 md:p-10 max-w-7xl mx-auto pb-20">
-          {activeTab === 'dashboard' && <DashboardView objectives={objectives} swot={swot} bsc={bsc} initiatives={initiatives} team={team} />}
-          {activeTab === 'objectives' && <ObjectivesView swot={swot} setSwot={setSwot} apiKey={apiKey} strategies={strategies} setStrategies={setStrategies} />}
-          {activeTab === 'bsc' && <BscView bsc={bsc} setBsc={setBsc} swot={swot} apiKey={apiKey} />}
-          {activeTab === 'initiatives' && <InitiativesView initiatives={initiatives} setInitiatives={setInitiatives} />}
-          {activeTab === 'team' && <TeamView team={team} setTeam={setTeam} />}
-          {activeTab === 'report' && <ReportView objectives={objectives} swot={swot} strategies={strategies} bsc={bsc} initiatives={initiatives} team={team} />}
-          {activeTab === 'settings' && <SettingsView apiKey={apiKey} saveApiKey={saveApiKey} />}
-        </div>
-      </main>
-    </div>
-  );
-}
-
-// --- REUSABLE COMPONENTS ---
-const NavButton = ({ active, onClick, icon, children }) => (
-  <button onClick={onClick} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${active ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800'}`}>
-    {icon}<span className="font-medium">{children}</span>
-  </button>
-);
-
-const StatCard = ({ title, value, icon }) => (
-  <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
-    <div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{title}</p><h3 className="text-2xl font-black mt-1">{value}</h3></div>
-    <div className="p-3 bg-slate-50 rounded-xl">{icon}</div>
-  </div>
-);
-
-// --- VIEWS ---
-const DashboardView = ({ objectives, swot, bsc, initiatives, team }) => (
-  <div className="space-y-6">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-      <StatCard title="Strategic Objectives" value={objectives.length} icon={<Icons.Target className="text-purple-500" />} />
-      <StatCard title="SWOT Items" value={swot.length} icon={<Icons.Target className="text-emerald-500" />} />
-      <StatCard title="BSC Objectives" value={bsc.length} icon={<Icons.PieChart className="text-orange-500" />} />
-      <StatCard title="Initiatives" value={initiatives.length} icon={<Icons.ClipboardList className="text-blue-500" />} />
-      <StatCard title="Team Members" value={team.length} icon={<Icons.Users className="text-indigo-500" />} />
-    </div>
-  </div>
-);
-
-const ObjectivesView = ({ swot, setSwot, apiKey, strategies, setStrategies }) => {
-  const [form, setForm] = useState({ type: 'Strength', text: '' });
-  const [editingId, setEditingId] = useState(null);
-  const [generating, setGenerating] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editingId) {
-      DataService.update('swot', editingId, form);
-      setSwot(DataService.get('swot'));
-    } else {
-      DataService.add('swot', form);
-      setSwot(DataService.get('swot'));
-    }
-    setForm({ type: 'Strength', text: '' });
-    setEditingId(null);
-  };
-
-  const editItem = (item) => {
-    setForm(item);
-    setEditingId(item.id);
-  };
-
-  const deleteItem = (id) => {
-    DataService.delete('swot', id);
-    setSwot(DataService.get('swot'));
-  };
-
-  const generateStrategies = async () => {
-    if (!apiKey) return alert("Please set your OpenAI API key in AI Settings.");
-    if (swot.length < 2) return alert("Add at least 2 SWOT items.");
-    setGenerating(true);
-    try {
-      const strengths = swot.filter(s => s.type === 'Strength').map(s => s.text).join('; ');
-      const weaknesses = swot.filter(s => s.type === 'Weakness').map(s => s.text).join('; ');
-      const opportunities = swot.filter(s => s.type === 'Opportunity').map(s => s.text).join('; ');
-      const threats = swot.filter(s => s.type === 'Threat').map(s => s.text).join('; ');
-
-      const prompt = `Based on the following SWOT analysis, generate actionable strategic options using industry best practices:
-
-Strengths: ${strengths || 'None'}
-Weaknesses: ${weaknesses || 'None'}
-Opportunities: ${opportunities || 'None'}
-Threats: ${threats || 'None'}`;
-
-      const system = "You are a strategic planning expert. Generate concise, actionable strategies in four categories: SO (maxi-maxi), ST (maxi-mimi), WO (mini-maxi), WT (mini-mimi). Use professional business language.";
-      const schema = { 
-        type: "OBJECT", 
-        properties: { 
-          so: { type: "STRING", description: "Leverage strengths to seize opportunities" }, 
-          st: { type: "STRING", description: "Use strengths to mitigate threats" }, 
-          wo: { type: "STRING", description: "Address weaknesses to seize opportunities" }, 
-          wt: { type: "STRING", description: "Defend against threats by overcoming weaknesses" } 
-        } 
-      };
-      const result = await AIService.generate(prompt, system, schema, apiKey);
-      setStrategies(result);
-    } catch (e) {
-      alert("AI Error: " + e.message);
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-        <h3 className="font-bold mb-4">{editingId ? 'Edit SWOT Item' : 'Add SWOT Item'}</h3>
-        <form onSubmit={handleSubmit} className="flex gap-4">
-          <select className="input-field w-40" value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
-            {['Strength', 'Weakness', 'Opportunity', 'Threat'].map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <input className="input-field flex-1" placeholder="Enter detail..." value={form.text} onChange={e => setForm({...form, text: e.target.value})} required />
-          <button type="submit" className="btn-primary whitespace-nowrap">{editingId ? 'Update' : 'Add'}</button>
-        </form>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {['Strength', 'Weakness', 'Opportunity', 'Threat'].map(type => (
-          <div key={type} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <h4 className={`p-4 font-black uppercase text-xs border-b tracking-widest ${
-              type === 'Strength' ? 'bg-emerald-50 text-emerald-700' :
-              type === 'Weakness' ? 'bg-orange-50 text-orange-700' :
-              type === 'Opportunity' ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700'
-            }`}>{type === 'Opportunity' ? 'Opportunities' : `${type}s`}</h4>
-            <ul className="p-4 space-y-2 max-h-[300px] overflow-auto">
-              {swot.filter(s => s.type === type).map(s => (
-                <li key={s.id} className="p-3 bg-slate-50 border rounded-lg text-sm flex justify-between group">
-                  <span>{s.text}</span>
-                  <div className="flex space-x-1 opacity-0 group-hover:opacity-100">
-                    <button onClick={() => editItem(s)} className="text-blue-500"><Icons.Pencil size={14}/></button>
-                    <button onClick={() => deleteItem(s.id)} className="text-red-500"><Icons.Trash2 size={14}/></button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div className="pt-6 border-t">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-black flex items-center gap-2">
-            Strategic Options <span className="ai-badge"><Icons.Sparkles size={10}/> AI</span>
-          </h3>
-          <button onClick={generateStrategies} disabled={generating} className="btn-primary flex items-center gap-1">
-            {generating ? 'Generating...' : <><Icons.Sparkles size={14}/> Generate</>}
-          </button>
-        </div>
-        {strategies ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <StrategyCard label="SO Strategy" desc={strategies.so} color="emerald" />
-            <StrategyCard label="ST Strategy" desc={strategies.st} color="red" />
-            <StrategyCard label="WO Strategy" desc={strategies.wo} color="blue" />
-            <StrategyCard label="WT Strategy" desc={strategies.wt} color="slate" />
-          </div>
-        ) : (
-          <div className="p-10 bg-slate-50 border-dashed rounded-xl text-center text-slate-400">
-            Add SWOT items then click "Generate" to create AI-powered strategies.
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const StrategyCard = ({ label, desc, color }) => (
-  <div className={`p-5 rounded-xl border bg-white border-l-4 border-l-${color}-500 shadow-sm`}>
-    <h5 className="font-bold text-xs uppercase text-slate-400 mb-2">{label}</h5>
-    <p className="text-sm italic">"{desc}"</p>
-  </div>
-);
-
-const BscView = ({ bsc, setBsc, swot, apiKey }) => {
-  const [form, setForm] = useState({ strategy: '', perspective: 'Stakeholder', kpi: '' });
-  const [editingId, setEditingId] = useState(null);
-  const [generatingBsc, setGeneratingBsc] = useState(false);
-
-  const suggestKPI = async () => {
-    if (!form.strategy || !apiKey) return;
-    const prompt = `Suggest one specific, measurable KPI for: "${form.strategy}" in the ${form.perspective} perspective.`;
-    try {
-      const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 50
-        })
-      });
-      const data = await res.json();
-      setForm({...form, kpi: data.choices[0].message.content.trim()});
-    } catch (e) { /* ignore */ }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editingId) {
-      DataService.update('bsc', editingId, form);
-      setBsc(DataService.get('bsc'));
-    } else {
-      DataService.add('bsc', form);
-      setBsc(DataService.get('bsc'));
-    }
-    setForm({ strategy: '', perspective: 'Stakeholder', kpi: '' });
-    setEditingId(null);
-  };
-
-  const editItem = (item) => {
-    setForm(item);
-    setEditingId(item.id);
-  };
-
-  const deleteItem = (id) => {
-    DataService.delete('bsc', id);
-    setBsc(DataService.get('bsc'));
-  };
-
-  const generateBscFromSwot = async () => {
-    if (!apiKey) return alert("Please set your OpenAI API key in AI Settings.");
-    if (swot.length < 2) return alert("Add at least 2 SWOT items.");
-    setGeneratingBsc(true);
-    try {
-      const strengths = swot.filter(s => s.type === 'Strength').map(s => s.text).join('; ');
-      const weaknesses = swot.filter(s => s.type === 'Weakness').map(s => s.text).join('; ');
-      const opportunities = swot.filter(s => s.type === 'Opportunity').map(s => s.text).join('; ');
-      const threats = swot.filter(s => s.type === 'Threat').map(s => s.text).join('; ');
-
-      const prompt = `Based on this SWOT analysis, propose one strategic objective and one measurable KPI for each of the four Balanced Scorecard perspectives, aligned with industry best practices:
-
-Strengths: ${strengths || 'None'}
-Weaknesses: ${weaknesses || 'None'}
-Opportunities: ${opportunities || 'None'}
-Threats: ${threats || 'None'}`;
-
-      const system = "You are a strategic planning expert. Output JSON with keys: stakeholder, internal, learning, financial. Each value is an object with 'objective' and 'kpi'.";
-      const schema = {
-        type: "OBJECT",
-        properties: {
-          stakeholder: { type: "OBJECT", properties: { objective: { type: "STRING" }, kpi: { type: "STRING" } } },
-          internal: { type: "OBJECT", properties: { objective: { type: "STRING" }, kpi: { type: "STRING" } } },
-          learning: { type: "OBJECT", properties: { objective: { type: "STRING" }, kpi: { type: "STRING" } } },
-          financial: { type: "OBJECT", properties: { objective: { type: "STRING" }, kpi: { type: "STRING" } } }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Planner Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Updated Lucide script source -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
         }
-      };
 
-      const result = await AIService.generate(prompt, system, schema, apiKey);
-      const newBsc = [
-        { perspective: 'Stakeholder', strategy: result.stakeholder.objective, kpi: result.stakeholder.kpi },
-        { perspective: 'Internal Process', strategy: result.internal.objective, kpi: result.internal.kpi },
-        { perspective: 'Learning & Growth', strategy: result.learning.objective, kpi: result.learning.kpi },
-        { perspective: 'Financial', strategy: result.financial.objective, kpi: result.financial.kpi }
-      ];
-      // Save to storage
-      const updated = [...newBsc, ...DataService.get('bsc')];
-      DataService.set('bsc', updated);
-      setBsc(updated);
-    } catch (e) {
-      alert("AI Error: " + e.message);
-    } finally {
-      setGeneratingBsc(false);
-    }
-  };
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="font-black">Balanced Scorecard</h3>
-        <button 
-          onClick={generateBscFromSwot} 
-          disabled={generatingBsc} 
-          className="btn-primary flex items-center gap-1 text-xs px-3 py-1.5"
-        >
-          {generatingBsc ? 'Generating...' : <><Icons.Sparkles size={12}/> Generate from SWOT</>}
-        </button>
-      </div>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
 
-      <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-        <h3 className="font-black mb-4">{editingId ? 'Update Objective' : 'Add BSC Objective'}</h3>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input className="input-field" placeholder="Strategic Objective" value={form.strategy} onChange={e => setForm({...form, strategy: e.target.value})} onBlur={suggestKPI} required />
-          <select className="input-field" value={form.perspective} onChange={e => setForm({...form, perspective: e.target.value})}>
-            {['Stakeholder', 'Internal Process', 'Learning & Growth', 'Financial'].map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
-          <input className="input-field" placeholder="KPI / Measure" value={form.kpi} onChange={e => setForm({...form, kpi: e.target.value})} required />
-          <div className="md:col-span-3 flex justify-end gap-2">
-            <button type="submit" className="btn-primary">{editingId ? 'Update' : 'Add'}</button>
-          </div>
-        </form>
-      </div>
+        .swot-s { background-color: #dcfce7; border-color: #22c55e; }
+        .swot-w { background-color: #fee2e2; border-color: #ef4444; }
+        .swot-o { background-color: #dbeafe; border-color: #3b82f6; }
+        .swot-t { background-color: #fef3c7; border-color: #f59e0b; }
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {['Stakeholder', 'Internal Process', 'Learning & Growth', 'Financial'].map(p => (
-          <div key={p} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <h4 className="px-4 py-3 bg-slate-50 font-black text-xs text-slate-600 border-b flex justify-between">
-              {p} Perspective
-              <span className="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">{bsc.filter(b => b.perspective === p).length}</span>
-            </h4>
-            <div className="p-4 space-y-3 min-h-[100px]">
-              {bsc.filter(b => b.perspective === p).map(b => (
-                <div key={b.id} className="p-3 bg-white border rounded-lg group relative">
-                  <div className="font-bold text-sm">{b.strategy}</div>
-                  <div className="text-[10px] text-blue-500 font-bold mt-2 border-t pt-2 uppercase">KPI: {b.kpi}</div>
-                  <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100">
-                    <button onClick={() => editItem(b)} className="text-slate-400"><Icons.Pencil size={12}/></button>
-                    <button onClick={() => deleteItem(b.id)} className="text-slate-400"><Icons.Trash2 size={12}/></button>
-                  </div>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border-left-color: #2563eb;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; padding: 0; }
+            .glass-panel { border: none; box-shadow: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div id="app">
+        <!-- Auth Container -->
+        <div id="auth-container" class="hidden min-h-screen flex items-center justify-center p-4">
+            <!-- Login Form -->
+            <div id="login-form" class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-blue-600 mb-2">Strategic Planner</h1>
+                    <p class="text-gray-500">Sign in to manage your organizational strategy</p>
                 </div>
-              ))}
+                <div id="auth-error" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4"></div>
+                <form id="login-form-el" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="login-email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <div class="relative">
+                            <input type="password" id="login-password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <button type="button" class="absolute right-3 top-2.5 text-gray-400 toggle-password">
+                                <i data-lucide="eye" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center text-sm">
+                            <input type="checkbox" id="remember-me" class="mr-2"> Remember me
+                        </label>
+                        <button type="button" onclick="showAuthScreen('reset')" class="text-sm text-blue-600 hover:underline">Forgot password?</button>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Login</button>
+                    <p class="text-center text-sm text-gray-600">
+                        Don't have an account? <button type="button" onclick="showAuthScreen('register')" class="text-blue-600 hover:underline">Register</button>
+                    </p>
+                </form>
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
 
-const InitiativesView = ({ initiatives, setInitiatives }) => {
-  const [form, setForm] = useState({ title: '', unit: '', responsible: '', kpi: '', target: '', timeline: '' });
-  const [editingId, setEditingId] = useState(null);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editingId) {
-      DataService.update('initiatives', editingId, form);
-      setInitiatives(DataService.get('initiatives'));
-    } else {
-      DataService.add('initiatives', form);
-      setInitiatives(DataService.get('initiatives'));
-    }
-    setForm({ title: '', unit: '', responsible: '', kpi: '', target: '', timeline: '' });
-    setEditingId(null);
-  };
-
-  const editItem = (item) => {
-    setForm(item);
-    setEditingId(item.id);
-  };
-
-  const deleteItem = (id) => {
-    DataService.delete('initiatives', id);
-    setInitiatives(DataService.get('initiatives'));
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-        <h3 className="font-bold mb-4">{editingId ? 'Edit Initiative' : 'Add Initiative'}</h3>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input className="input-field" placeholder="Title" value={form.title} onChange={e => setForm({...form, title: e.target.value})} required />
-          <input className="input-field" placeholder="Unit" value={form.unit} onChange={e => setForm({...form, unit: e.target.value})} required />
-          <input className="input-field" placeholder="Responsible Person" value={form.responsible} onChange={e => setForm({...form, responsible: e.target.value})} required />
-          <input className="input-field" placeholder="KPI" value={form.kpi} onChange={e => setForm({...form, kpi: e.target.value})} required />
-          <input className="input-field" placeholder="Target" value={form.target} onChange={e => setForm({...form, target: e.target.value})} required />
-          <input className="input-field" placeholder="Timeline" value={form.timeline} onChange={e => setForm({...form, timeline: e.target.value})} required />
-          <div className="md:col-span-3 flex justify-end gap-2">
-            <button type="submit" className="btn-primary">{editingId ? 'Update' : 'Add'}</button>
-          </div>
-        </form>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b text-slate-500 font-bold">
-            <tr>
-              <th className="p-4">INITIATIVE</th>
-              <th className="p-4">UNIT / PERSON</th>
-              <th className="p-4">KPI / TARGET</th>
-              <th className="p-4">TIMELINE</th>
-              <th className="p-4 text-right">ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {initiatives.map(i => (
-              <tr key={i.id} className="hover:bg-blue-50/30">
-                <td className="p-4">{i.title}</td>
-                <td className="p-4">{i.unit} / {i.responsible}</td>
-                <td className="p-4">{i.kpi}: <span className="font-bold">{i.target}</span></td>
-                <td className="p-4">{i.timeline}</td>
-                <td className="p-4 text-right space-x-3">
-                  <button onClick={() => editItem(i)} className="text-slate-400"><Icons.Pencil size={18}/></button>
-                  <button onClick={() => deleteItem(i.id)} className="text-slate-400"><Icons.Trash2 size={18}/></button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
-
-const TeamView = ({ team, setTeam }) => {
-  const [form, setForm] = useState({ name: '', role: '' });
-  const [editingId, setEditingId] = useState(null);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editingId) {
-      DataService.update('team', editingId, form);
-      setTeam(DataService.get('team'));
-    } else {
-      DataService.add('team', form);
-      setTeam(DataService.get('team'));
-    }
-    setForm({ name: '', role: '' });
-    setEditingId(null);
-  };
-
-  const editItem = (item) => {
-    setForm(item);
-    setEditingId(item.id);
-  };
-
-  const deleteItem = (id) => {
-    DataService.delete('team', id);
-    setTeam(DataService.get('team'));
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-        <h3 className="font-bold mb-4">{editingId ? 'Update Member' : 'Add Team Member'}</h3>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input className="input-field" placeholder="Full Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
-          <input className="input-field" placeholder="Role" value={form.role} onChange={e => setForm({...form, role: e.target.value})} required />
-          <div className="md:col-span-2 flex justify-end gap-2">
-            <button type="submit" className="btn-primary">{editingId ? 'Update' : 'Add'}</button>
-          </div>
-        </form>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {team.map(m => (
-          <div key={m.id} className="bg-white p-5 rounded-xl border shadow-sm group relative">
-            <div className="font-black text-slate-800 text-lg">{m.name}</div>
-            <div className="text-[10px] text-blue-600 font-bold uppercase mt-1">{m.role}</div>
-            <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100">
-              <button onClick={() => editItem(m)} className="text-slate-400"><Icons.Pencil size={16}/></button>
-              <button onClick={() => deleteItem(m.id)} className="text-slate-400"><Icons.Trash2 size={16}/></button>
+            <!-- Registration Form -->
+            <div id="register-form" class="hidden w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl font-bold text-blue-600">Create Account</h1>
+                    <p class="text-gray-500">Begin your strategic journey</p>
+                </div>
+                <form id="reg-form-el" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="reg-name" required minlength="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="reg-email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <div class="relative">
+                            <input type="password" id="reg-password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <button type="button" class="absolute right-3 top-2.5 text-gray-400 toggle-password">
+                                <i data-lucide="eye" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 space-y-1">
+                            <div id="pw-len" class="text-xs text-gray-400 flex items-center"><i data-lucide="circle" class="w-3 h-3 mr-1"></i> 8+ characters</div>
+                            <div id="pw-upper" class="text-xs text-gray-400 flex items-center"><i data-lucide="circle" class="w-3 h-3 mr-1"></i> 1 Uppercase</div>
+                            <div id="pw-num" class="text-xs text-gray-400 flex items-center"><i data-lucide="circle" class="w-3 h-3 mr-1"></i> 1 Number</div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <input type="password" id="reg-confirm" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <div id="pw-match" class="text-xs text-red-500 mt-1 hidden">Passwords do not match</div>
+                    </div>
+                    <button type="submit" id="reg-submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Register</button>
+                    <button type="button" onclick="showAuthScreen('login')" class="w-full text-center text-sm text-gray-600 hover:underline">Back to Login</button>
+                </form>
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
 
-const ReportView = ({ swot, strategies, bsc, initiatives, team }) => (
-  <div className="bg-white p-10 shadow-2xl printable-content mx-auto max-w-5xl border rounded-xl">
-    <div className="flex justify-between items-start border-b-2 pb-8 mb-8">
-      <div>
-        <h1 className="text-3xl font-black uppercase">Strategic Plan</h1>
-        <p className="text-blue-600 font-bold tracking-[0.2em] mt-1 uppercase">Operational Roadmap</p>
-      </div>
-      <div className="text-right">
-        <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-black uppercase">Official Draft</span>
-      </div>
-    </div>
-
-    <section className="mb-12">
-      <h2 className="text-xl font-black flex items-center gap-2 mb-4"><Icons.Target size={18} /> SWOT Analysis</h2>
-      <div className="grid grid-cols-2 gap-4">
-        {['Strength', 'Weakness', 'Opportunity', 'Threat'].map(t => (
-          <div key={t} className="p-4 border bg-white rounded-lg">
-            <h3 className="font-black text-xs mb-2 border-b pb-1 inline-block">{t === 'Opportunity' ? 'Opportunities' : `${t}s`}</h3>
-            {swot.filter(s => s.type === t).map(s => <div key={s.id} className="text-[11px] mb-1">• {s.text}</div>)}
-          </div>
-        ))}
-      </div>
-    </section>
-
-    {strategies && (
-      <section className="mb-12">
-        <h2 className="text-xl font-black flex items-center gap-2 mb-4"><Icons.Sparkles size={18} /> Strategic Recommendations</h2>
-        {Object.entries(strategies).map(([key, desc]) => (
-          <div key={key} className="p-3 bg-slate-50 rounded mb-2 text-sm italic">• {desc}</div>
-        ))}
-      </section>
-    )}
-
-    <section className="mb-12">
-      <h2 className="text-xl font-black flex items-center gap-2 mb-4"><Icons.PieChart size={18} /> Balanced Scorecard</h2>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {['Stakeholder', 'Internal Process', 'Learning & Growth', 'Financial'].map(p => (
-          <div key={p} className="p-4 bg-slate-50 border rounded">
-            <h3 className="font-black text-[10px] mb-2">{p}</h3>
-            {bsc.filter(b => b.perspective === p).map(b => <div key={b.id} className="text-[10px] mb-1">• {b.strategy}</div>)}
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <section className="mb-12">
-      <h2 className="text-xl font-black flex items-center gap-2 mb-4"><Icons.ClipboardList size={18} /> Strategic Initiatives</h2>
-      <div className="overflow-hidden border rounded">
-        <table className="w-full text-[10px]">
-          <thead>
-            <tr className="bg-slate-900 text-white font-bold">
-              <th className="p-2">Initiative</th>
-              <th className="p-2">Unit / Person</th>
-              <th className="p-2">KPI / Target / Timeline</th>
-            </tr>
-          </thead>
-          <tbody>
-            {initiatives.map(i => (
-              <tr key={i.id} className="hover:bg-slate-50">
-                <td className="p-2 font-bold">{i.title}</td>
-                <td className="p-2">{i.unit} / {i.responsible}</td>
-                <td className="p-2">
-                  {i.kpi}: <span className="font-black">{i.target}</span><br/>
-                  <span className="text-blue-600 font-bold">Timeline: {i.timeline}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section>
-      <h2 className="text-xl font-black flex items-center gap-2 mb-4"><Icons.Users size={18} /> Team</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-        {team.map(t => <div key={t.id} className="p-2 border rounded text-[10px]">{t.name} — {t.role}</div>)}
-      </div>
-    </section>
-
-    <div className="mt-16 pt-8 border-t text-center no-print">
-      <button onClick={() => window.print()} className="btn-primary py-3 px-10 text-xs shadow-xl">Download Official PDF</button>
-    </div>
-  </div>
-);
-
-const SettingsView = ({ apiKey, saveApiKey }) => {
-  const [tempKey, setTempKey] = useState(apiKey);
-  return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-        <h2 className="text-xl font-bold mb-4">OpenAI API Settings</h2>
-        <div className="space-y-4">
-          <input
-            type="password"
-            value={tempKey}
-            onChange={e => setTempKey(e.target.value)}
-            className="input-field"
-            placeholder="Enter your OpenAI API key"
-          />
-          <button
-            onClick={() => saveApiKey(tempKey)}
-            className="btn-primary w-full"
-            disabled={!tempKey.trim()}
-          >
-            Save API Key
-          </button>
+            <!-- Reset Password -->
+            <div id="reset-form" class="hidden w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl font-bold text-blue-600">Reset Password</h1>
+                    <p class="text-gray-500">Enter your email to receive a link</p>
+                </div>
+                <div id="reset-success" class="hidden bg-green-50 text-green-600 p-4 rounded-lg text-sm mb-4">
+                    If an account exists for this email, you will receive reset instructions shortly.
+                </div>
+                <form id="reset-form-el" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="reset-email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Send Reset Link</button>
+                    <button type="button" onclick="showAuthScreen('login')" class="w-full text-center text-sm text-gray-600 hover:underline">Back to Login</button>
+                </form>
+            </div>
         </div>
-        <div className="mt-4 text-slate-500 text-sm p-3 bg-slate-50 rounded">
-          Get your key from <a href="https://platform.openai.com/api-keys" target="_blank" className="text-blue-600">OpenAI Platform</a>
-        </div>
-      </div>
-    </div>
-  );
-};
 
-// Render
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
-</script>
+        <!-- Main Dashboard Layout -->
+        <div id="dashboard-container" class="hidden flex min-h-screen">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-slate-900 text-slate-300 flex-shrink-0 no-print">
+                <div class="p-6">
+                    <h2 class="text-xl font-bold text-white mb-8 flex items-center">
+                        <i data-lucide="target" class="mr-2 text-blue-500"></i> StratPlan
+                    </h2>
+                    <nav class="space-y-1">
+                        <button onclick="navigate('dashboard')" class="nav-btn w-full flex items-center p-3 rounded-lg hover:bg-slate-800 transition active-nav">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i> Dashboard
+                        </button>
+                        <button onclick="navigate('swot')" class="nav-btn w-full flex items-center p-3 rounded-lg hover:bg-slate-800 transition">
+                            <i data-lucide="activity" class="w-5 h-5 mr-3"></i> SWOT Analysis
+                        </button>
+                        <button onclick="navigate('bsc')" class="nav-btn w-full flex items-center p-3 rounded-lg hover:bg-slate-800 transition">
+                            <i data-lucide="layers" class="w-5 h-5 mr-3"></i> Balanced Scorecard
+                        </button>
+                        <button onclick="navigate('initiatives')" class="nav-btn w-full flex items-center p-3 rounded-lg hover:bg-slate-800 transition">
+                            <i data-lucide="briefcase" class="w-5 h-5 mr-3"></i> Initiatives
+                        </button>
+                        <button onclick="navigate('collaboration')" class="nav-btn w-full flex items-center p-3 rounded-lg hover:bg-slate-800 transition">
+                            <i data-lucide="users" class="w-5 h-5 mr-3"></i> Team Hub
+                        </button>
+                        <button onclick="navigate('plan')" class="nav-btn w-full flex items-center p-3 rounded-lg hover:bg-slate-800 transition">
+                            <i data-lucide="file-text" class="w-5 h-5 mr-3"></i> Plan Generator
+                        </button>
+                    </nav>
+                </div>
+                <div class="mt-auto p-6 border-t border-slate-800">
+                    <div class="flex items-center mb-4">
+                        <div id="user-avatar" class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs mr-3">JD</div>
+                        <div class="overflow-hidden">
+                            <p id="user-display-name" class="text-sm font-medium text-white truncate">John Doe</p>
+                            <p class="text-xs text-slate-500">Administrator</p>
+                        </div>
+                    </div>
+                    <button onclick="handleLogout()" class="w-full flex items-center p-2 rounded-lg text-red-400 hover:bg-red-900/20 transition">
+                        <i data-lucide="log-out" class="w-4 h-4 mr-3"></i> Logout
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="flex-grow overflow-y-auto custom-scrollbar p-8">
+                <!-- Dashboard Page -->
+                <div id="page-dashboard" class="page">
+                    <header class="mb-8 flex justify-between items-end">
+                        <div>
+                            <h1 class="text-3xl font-bold text-slate-900">Analytics Dashboard</h1>
+                            <p class="text-slate-500">Strategic overview for <span id="org-name-display" class="font-medium text-slate-700 font-bold">Global Tech Corp</span></p>
+                        </div>
+                        <div class="text-right text-xs text-slate-400">
+                            Last Updated: <span id="last-updated">Today, 10:45 AM</span>
+                        </div>
+                    </header>
+
+                    <!-- Org Mandate Card -->
+                    <div class="glass-panel p-6 rounded-2xl mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-slate-800 flex items-center">
+                                <i data-lucide="info" class="w-4 h-4 mr-2 text-blue-600"></i> Organizational Mandate
+                            </h3>
+                            <button onclick="editMandate()" class="text-blue-600 hover:underline text-sm">Edit</button>
+                        </div>
+                        <div id="mandate-content" class="text-slate-600 leading-relaxed italic">
+                            "To empower every person and every organization on the planet to achieve more through innovative strategic planning and technological excellence."
+                        </div>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="glass-panel p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2 text-blue-600">
+                                <i data-lucide="dollar-sign" class="w-6 h-6"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">Financial</span>
+                            </div>
+                            <h4 id="financial-count" class="text-2xl font-bold text-slate-900">0</h4>
+                            <p class="text-sm text-slate-500">Active Strategies</p>
+                            <div class="mt-4 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                <div id="financial-progress" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2 text-green-600">
+                                <i data-lucide="users" class="w-6 h-6"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">Customer</span>
+                            </div>
+                            <h4 id="customer-count" class="text-2xl font-bold text-slate-900">0</h4>
+                            <p class="text-sm text-slate-500">Active Strategies</p>
+                            <div class="mt-4 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                <div id="customer-progress" class="bg-green-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2 text-orange-600">
+                                <i data-lucide="settings" class="w-6 h-6"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">Processes</span>
+                            </div>
+                            <h4 id="process-count" class="text-2xl font-bold text-slate-900">0</h4>
+                            <p class="text-sm text-slate-500">Active Strategies</p>
+                            <div class="mt-4 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                <div id="process-progress" class="bg-orange-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2 text-purple-600">
+                                <i data-lucide="trending-up" class="w-6 h-6"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">L&G</span>
+                            </div>
+                            <h4 id="lg-count" class="text-2xl font-bold text-slate-900">0</h4>
+                            <p class="text-sm text-slate-500">Active Strategies</p>
+                            <div class="mt-4 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                <div id="lg-progress" class="bg-purple-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Table Preview -->
+                    <div class="glass-panel rounded-2xl overflow-hidden">
+                        <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                            <h3 class="font-bold text-slate-800">Top Priority KPIs</h3>
+                            <button onclick="navigate('bsc')" class="text-xs text-blue-600 font-semibold uppercase tracking-wider">View All</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-bold">
+                                    <tr>
+                                        <th class="px-6 py-4">Strategy</th>
+                                        <th class="px-6 py-4">KPI Metric</th>
+                                        <th class="px-6 py-4">Current / Target</th>
+                                        <th class="px-6 py-4">Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-kpi-rows" class="divide-y divide-slate-100">
+                                    <!-- Rows added dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SWOT Page -->
+                <div id="page-swot" class="hidden page">
+                    <header class="mb-8 flex justify-between items-start">
+                        <div>
+                            <h1 class="text-3xl font-bold text-slate-900">SWOT Analysis</h1>
+                            <p class="text-slate-500">Map internal capabilities and external environment</p>
+                        </div>
+                        <button id="ai-gen-btn" onclick="generateAIStrategies()" class="flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:opacity-90 transition">
+                            <i data-lucide="sparkles" class="w-5 h-5 mr-2"></i> Generate AI Strategies
+                        </button>
+                    </header>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Strengths -->
+                        <div class="swot-s border-2 rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between mb-4 text-green-700">
+                                <h3 class="font-bold text-xl">Strengths</h3>
+                                <i data-lucide="plus-circle" class="w-6 h-6 cursor-pointer" onclick="addSwotItem('S')"></i>
+                            </div>
+                            <div id="swot-S-list" class="space-y-3"></div>
+                        </div>
+                        <!-- Weaknesses -->
+                        <div class="swot-w border-2 rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between mb-4 text-red-700">
+                                <h3 class="font-bold text-xl">Weaknesses</h3>
+                                <i data-lucide="plus-circle" class="w-6 h-6 cursor-pointer" onclick="addSwotItem('W')"></i>
+                            </div>
+                            <div id="swot-W-list" class="space-y-3"></div>
+                        </div>
+                        <!-- Opportunities -->
+                        <div class="swot-o border-2 rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between mb-4 text-blue-700">
+                                <h3 class="font-bold text-xl">Opportunities</h3>
+                                <i data-lucide="plus-circle" class="w-6 h-6 cursor-pointer" onclick="addSwotItem('O')"></i>
+                            </div>
+                            <div id="swot-O-list" class="space-y-3"></div>
+                        </div>
+                        <!-- Threats -->
+                        <div class="swot-t border-2 rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between mb-4 text-amber-700">
+                                <h3 class="font-bold text-xl">Threats</h3>
+                                <i data-lucide="plus-circle" class="w-6 h-6 cursor-pointer" onclick="addSwotItem('T')"></i>
+                            </div>
+                            <div id="swot-T-list" class="space-y-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BSC Page -->
+                <div id="page-bsc" class="hidden page">
+                    <header class="mb-8 flex justify-between items-start">
+                        <div>
+                            <h1 class="text-3xl font-bold text-slate-900">Balanced Scorecard</h1>
+                            <p class="text-slate-500">Define strategies and track performance across 4 perspectives</p>
+                        </div>
+                        <button onclick="openStrategyModal()" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center">
+                            <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Add Strategy
+                        </button>
+                    </header>
+
+                    <div class="space-y-8">
+                        <!-- Financial Perspective -->
+                        <section>
+                            <div class="bg-blue-600 text-white px-6 py-3 rounded-t-xl font-bold flex items-center">
+                                <i data-lucide="bar-chart-3" class="w-5 h-5 mr-3"></i> Financial Perspective
+                            </div>
+                            <div class="glass-panel rounded-b-xl overflow-hidden">
+                                <div id="bsc-financial-list" class="divide-y divide-slate-100">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Customer Perspective -->
+                        <section>
+                            <div class="bg-green-600 text-white px-6 py-3 rounded-t-xl font-bold flex items-center">
+                                <i data-lucide="smile" class="w-5 h-5 mr-3"></i> Customer Perspective
+                            </div>
+                            <div class="glass-panel rounded-b-xl overflow-hidden">
+                                <div id="bsc-customer-list" class="divide-y divide-slate-100">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Internal Processes -->
+                        <section>
+                            <div class="bg-orange-600 text-white px-6 py-3 rounded-t-xl font-bold flex items-center">
+                                <i data-lucide="cpu" class="w-5 h-5 mr-3"></i> Internal Processes
+                            </div>
+                            <div class="glass-panel rounded-b-xl overflow-hidden">
+                                <div id="bsc-process-list" class="divide-y divide-slate-100">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- L&G -->
+                        <section>
+                            <div class="bg-purple-600 text-white px-6 py-3 rounded-t-xl font-bold flex items-center">
+                                <i data-lucide="book-open" class="w-5 h-5 mr-3"></i> Learning & Growth
+                            </div>
+                            <div class="glass-panel rounded-b-xl overflow-hidden">
+                                <div id="bsc-lg-list" class="divide-y divide-slate-100">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Initiatives Page -->
+                <div id="page-initiatives" class="hidden page">
+                    <header class="mb-8 flex justify-between items-start">
+                        <div>
+                            <h1 class="text-3xl font-bold text-slate-900">Initiatives & Projects</h1>
+                            <p class="text-slate-500">Track implementation of your strategic goals</p>
+                        </div>
+                        <button onclick="openInitiativeModal()" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
+                            Add Initiative
+                        </button>
+                    </header>
+                    <div class="grid grid-cols-1 gap-4" id="initiatives-container">
+                        <!-- Dynamic initiatives -->
+                    </div>
+                </div>
+
+                <!-- Collaboration Page -->
+                <div id="page-collaboration" class="hidden page">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-160px)]">
+                        <!-- Team Column -->
+                        <div class="glass-panel rounded-2xl flex flex-col overflow-hidden">
+                            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                <h3 class="font-bold text-slate-800">Team Members</h3>
+                                <button onclick="addTeamMember()" class="p-1 bg-white border rounded text-blue-600 hover:bg-blue-50">
+                                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div id="team-list" class="flex-grow overflow-y-auto custom-scrollbar p-4 space-y-4">
+                                <!-- Members -->
+                            </div>
+                        </div>
+
+                        <!-- Chat Column -->
+                        <div class="lg:col-span-2 glass-panel rounded-2xl flex flex-col overflow-hidden">
+                            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
+                                    <h3 class="font-bold text-slate-800">Strategy War Room</h3>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="p-2 text-slate-400 hover:text-blue-600 transition"><i data-lucide="paperclip" class="w-4 h-4"></i></button>
+                                    <button class="p-2 text-slate-400 hover:text-blue-600 transition"><i data-lucide="more-vertical" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                            <div id="chat-box" class="flex-grow overflow-y-auto custom-scrollbar p-6 space-y-4">
+                                <!-- Messages -->
+                            </div>
+                            <div class="p-4 bg-slate-50 border-t border-slate-100">
+                                <form id="chat-form" class="flex gap-4">
+                                    <input type="text" id="chat-input" placeholder="Type a message..." class="flex-grow px-4 py-2 bg-white border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <button type="submit" class="bg-blue-600 text-white p-2 rounded-xl hover:bg-blue-700 transition">
+                                        <i data-lucide="send" class="w-5 h-5"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan Generator Page -->
+                <div id="page-plan" class="hidden page">
+                    <header class="mb-8 flex justify-between items-center no-print">
+                        <div>
+                            <h1 class="text-3xl font-bold text-slate-900">Strategic Plan Document</h1>
+                            <p class="text-slate-500">Full executive report for the current cycle</p>
+                        </div>
+                        <button onclick="window.print()" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:bg-slate-800 transition flex items-center">
+                            <i data-lucide="printer" class="w-4 h-4 mr-2"></i> Print to PDF
+                        </button>
+                    </header>
+
+                    <div id="printable-plan" class="bg-white rounded-2xl border shadow-sm p-12 max-w-5xl mx-auto text-slate-800">
+                        <!-- Document Metadata -->
+                        <div class="flex justify-between items-start border-b-2 border-slate-900 pb-8 mb-12">
+                            <div>
+                                <div class="bg-slate-900 text-white px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest mb-4 inline-block">Official Strategic Plan</div>
+                                <h1 id="plan-org-name" class="text-4xl font-black text-slate-900 mb-2">GLOBAL TECH CORP</h1>
+                                <p class="text-slate-500">2024 - 2026 Strategy Cycle</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-slate-400 font-bold uppercase mb-1">Generated On</p>
+                                <p id="plan-date" class="font-medium">October 24, 2023</p>
+                                <p class="text-xs text-slate-400 font-bold uppercase mt-4 mb-1">Version</p>
+                                <p class="font-medium">1.0.0-PRO</p>
+                            </div>
+                        </div>
+
+                        <!-- 1. Executive Summary -->
+                        <section class="mb-12">
+                            <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center">
+                                <span class="bg-slate-900 text-white w-7 h-7 flex items-center justify-center rounded-full text-xs mr-3">01</span>
+                                Executive Summary
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-slate-50 p-6 rounded-xl border">
+                                <div>
+                                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Vision & Mission</h4>
+                                    <p id="plan-mandate" class="italic text-slate-600 leading-relaxed"></p>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Strategic Intent</h4>
+                                    <p class="text-slate-600 leading-relaxed">The organization is committed to digital transformation and sustainable growth by leveraging core internal strengths to capture emerging market opportunities while mitigating environmental threats.</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 2. Situational Analysis -->
+                        <section class="mb-12">
+                            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
+                                <span class="bg-slate-900 text-white w-7 h-7 flex items-center justify-center rounded-full text-xs mr-3">02</span>
+                                Situational Analysis (SWOT)
+                            </h2>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-green-50 p-5 rounded-lg border-l-4 border-green-600">
+                                    <h4 class="font-bold text-green-800 text-sm uppercase mb-3">Strengths</h4>
+                                    <ul id="plan-swot-s" class="text-sm space-y-2 text-green-900"></ul>
+                                </div>
+                                <div class="bg-red-50 p-5 rounded-lg border-l-4 border-red-600">
+                                    <h4 class="font-bold text-red-800 text-sm uppercase mb-3">Weaknesses</h4>
+                                    <ul id="plan-swot-w" class="text-sm space-y-2 text-red-900"></ul>
+                                </div>
+                                <div class="bg-blue-50 p-5 rounded-lg border-l-4 border-blue-600">
+                                    <h4 class="font-bold text-blue-800 text-sm uppercase mb-3">Opportunities</h4>
+                                    <ul id="plan-swot-o" class="text-sm space-y-2 text-blue-900"></ul>
+                                </div>
+                                <div class="bg-amber-50 p-5 rounded-lg border-l-4 border-amber-600">
+                                    <h4 class="font-bold text-amber-800 text-sm uppercase mb-3">Threats</h4>
+                                    <ul id="plan-swot-t" class="text-sm space-y-2 text-amber-900"></ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 3. Balanced Scorecard -->
+                        <section class="mb-12">
+                            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
+                                <span class="bg-slate-900 text-white w-7 h-7 flex items-center justify-center rounded-full text-xs mr-3">03</span>
+                                Balanced Scorecard Framework
+                            </h2>
+                            <div class="overflow-hidden border-2 border-slate-100 rounded-xl">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-slate-900 text-white">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left">Perspective</th>
+                                            <th class="px-4 py-3 text-left">Strategic Objective</th>
+                                            <th class="px-4 py-3 text-left">KPI & Target</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="plan-bsc-body" class="divide-y divide-slate-200">
+                                        <!-- Table generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <!-- 4. Strategic Initiatives -->
+                        <section class="mb-12 page-break">
+                            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
+                                <span class="bg-slate-900 text-white w-7 h-7 flex items-center justify-center rounded-full text-xs mr-3">04</span>
+                                Implementation Roadmap
+                            </h2>
+                            <div id="plan-initiatives-list" class="space-y-4">
+                                <!-- Cards -->
+                            </div>
+                        </section>
+
+                        <!-- 5. M&E Framework -->
+                        <section>
+                            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
+                                <span class="bg-slate-900 text-white w-7 h-7 flex items-center justify-center rounded-full text-xs mr-3">05</span>
+                                Monitoring & Evaluation
+                            </h2>
+                            <div class="bg-slate-50 p-6 rounded-xl border text-sm leading-relaxed text-slate-600">
+                                <p class="mb-4">This strategic plan will be reviewed quarterly by the executive steering committee. Progress will be measured against established baseline data with a tolerance threshold of ±5% for performance variance.</p>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div class="p-3 bg-white rounded border text-center">
+                                        <div class="font-bold text-slate-900">Monthly</div>
+                                        <div class="text-[10px] uppercase text-slate-400">Tactical Review</div>
+                                    </div>
+                                    <div class="p-3 bg-white rounded border text-center">
+                                        <div class="font-bold text-slate-900">Quarterly</div>
+                                        <div class="text-[10px] uppercase text-slate-400">Strategic Audit</div>
+                                    </div>
+                                    <div class="p-3 bg-white rounded border text-center">
+                                        <div class="font-bold text-slate-900">Annual</div>
+                                        <div class="text-[10px] uppercase text-slate-400">Impact Assessment</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <!-- Generic Form Modal -->
+        <div id="modal-content" class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <!-- Content Injected -->
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STATE ---
+        let currentUser = null;
+        let appState = {
+            mandate: "To empower every person and every organization on the planet through strategic innovation.",
+            orgName: "Global Tech Corp",
+            swot: { S: [], W: [], O: [], T: [] },
+            bsc: [],
+            initiatives: [],
+            team: [
+                { id: 1, name: "John Doe", role: "Administrator", email: "admin@example.com", status: "online" },
+                { id: 2, name: "Sarah Smith", role: "Strategy Lead", email: "sarah@example.com", status: "away" }
+            ],
+            messages: [
+                { id: 1, sender: "Sarah Smith", text: "I've updated the Q3 targets for the Financial perspective.", time: "10:30 AM" },
+                { id: 2, sender: "John Doe", text: "Great. I'll review them for the board meeting.", time: "10:45 AM" }
+            ]
+        };
+
+        // Helper to safely call Lucide icon rendering
+        function updateIcons() {
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+        }
+
+        // --- AUTH LOGIC ---
+        function showAuthScreen(screen) {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('reset-form').classList.add('hidden');
+            
+            if (screen === 'login') document.getElementById('login-form').classList.remove('hidden');
+            if (screen === 'register') document.getElementById('register-form').classList.remove('hidden');
+            if (screen === 'reset') document.getElementById('reset-form').classList.remove('hidden');
+            updateIcons();
+        }
+
+        function handleLogin(e) {
+            if(e) e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            
+            const users = JSON.parse(localStorage.getItem('sp_users') || '[]');
+            const user = users.find(u => u.email === email && u.password === pass);
+            
+            if (user || (email === "demo@strat.com" && pass === "Password123")) {
+                const userData = user || { name: "Demo User", email: "demo@strat.com" };
+                const token = {
+                    user: userData,
+                    expiry: Date.now() + (24 * 60 * 60 * 1000)
+                };
+                localStorage.setItem('sp_session', JSON.stringify(token));
+                initApp(userData);
+            } else {
+                const err = document.getElementById('auth-error');
+                err.innerText = "Invalid credentials. Please try again.";
+                err.classList.remove('hidden');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm').value;
+
+            if (password !== confirm) return;
+
+            const users = JSON.parse(localStorage.getItem('sp_users') || '[]');
+            users.push({ name, email, password });
+            localStorage.setItem('sp_users', JSON.stringify(users));
+            
+            showAuthScreen('login');
+            const err = document.getElementById('auth-error');
+            err.innerText = "Registration successful! Please login.";
+            err.classList.remove('hidden');
+            err.className = "bg-green-50 text-green-600 p-3 rounded-lg text-sm mb-4";
+        }
+
+        function checkSession() {
+            const sessionRaw = localStorage.getItem('sp_session');
+            if (sessionRaw) {
+                try {
+                    const session = JSON.parse(sessionRaw);
+                    if (Date.now() < session.expiry) {
+                        initApp(session.user);
+                        return;
+                    }
+                } catch(e) {
+                    console.error("Session error", e);
+                }
+            }
+            document.getElementById('auth-container').classList.remove('hidden');
+            showAuthScreen('login');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('sp_session');
+            location.reload();
+        }
+
+        // --- NAVIGATION & UI ---
+        function navigate(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            const targetPage = document.getElementById(`page-${page}`);
+            if (targetPage) targetPage.classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-800', 'text-white'));
+            const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.innerText.toLowerCase().includes(page === 'collaboration' ? 'team' : page));
+            if (activeBtn) activeBtn.classList.add('bg-slate-800', 'text-white');
+            
+            if (page === 'plan') renderPlan();
+            if (page === 'dashboard') renderDashboard();
+            if (page === 'swot') renderSwot();
+            if (page === 'bsc') renderBsc();
+            if (page === 'initiatives') renderInitiatives();
+            if (page === 'collaboration') {
+                renderTeam();
+                renderChat();
+            }
+            updateIcons();
+        }
+
+        function initApp(user) {
+            currentUser = user;
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('dashboard-container').classList.remove('hidden');
+            document.getElementById('user-display-name').innerText = user.name;
+            document.getElementById('user-avatar').innerText = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            // Load app data
+            const savedData = localStorage.getItem(`sp_data_${user.email}`);
+            if (savedData) appState = JSON.parse(savedData);
+            
+            navigate('dashboard');
+        }
+
+        function saveData() {
+            if (currentUser) {
+                localStorage.setItem(`sp_data_${currentUser.email}`, JSON.stringify(appState));
+            }
+        }
+
+        // --- SWOT LOGIC ---
+        function addSwotItem(type) {
+            const val = prompt(`Add a new ${type === 'S' ? 'Strength' : type === 'W' ? 'Weakness' : type === 'O' ? 'Opportunity' : 'Threat'}:`);
+            if (val) {
+                appState.swot[type].push(val);
+                saveData();
+                renderSwot();
+            }
+        }
+
+        function removeSwotItem(type, index) {
+            appState.swot[type].splice(index, 1);
+            saveData();
+            renderSwot();
+        }
+
+        function renderSwot() {
+            ['S', 'W', 'O', 'T'].forEach(type => {
+                const container = document.getElementById(`swot-${type}-list`);
+                if (!container) return;
+                container.innerHTML = appState.swot[type].map((item, i) => `
+                    <div class="flex items-start justify-between bg-white/50 p-3 rounded-lg border border-white/20">
+                        <span class="text-sm font-medium text-slate-800">${item}</span>
+                        <button onclick="removeSwotItem('${type}', ${i})" class="text-slate-400 hover:text-red-500 ml-2">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `).join('');
+            });
+            updateIcons();
+        }
+
+        async function generateAIStrategies() {
+            const btn = document.getElementById('ai-gen-btn');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<div class="spinner mr-2"></div> Analysing Data...`;
+            btn.disabled = true;
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            const recommendations = [
+                { objective: "Develop Cloud Infrastructure", perspective: "Internal Processes", kpi: "Server Uptime", target: "99.99%", current: "98.5%" },
+                { objective: "Improve Customer NPS", perspective: "Customer", kpi: "NPS Score", target: "75", current: "62" },
+                { objective: "Upskill Engineering Team", perspective: "Learning & Growth", kpi: "Certification Count", target: "50", current: "12" }
+            ];
+
+            appState.bsc.push(...recommendations);
+            saveData();
+            
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+            
+            const notify = document.createElement('div');
+            notify.className = "fixed top-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-2xl z-[100] animate-bounce";
+            notify.innerHTML = "AI Analysis Complete! 3 New strategies added to BSC.";
+            document.body.appendChild(notify);
+            setTimeout(() => notify.remove(), 4000);
+            
+            navigate('bsc');
+        }
+
+        // --- BSC LOGIC ---
+        function renderBsc() {
+            const groups = {
+                "Financial": document.getElementById('bsc-financial-list'),
+                "Customer": document.getElementById('bsc-customer-list'),
+                "Internal Processes": document.getElementById('bsc-process-list'),
+                "Learning & Growth": document.getElementById('bsc-lg-list')
+            };
+
+            Object.values(groups).forEach(g => { if(g) g.innerHTML = ''; });
+
+            appState.bsc.forEach((item, index) => {
+                const container = groups[item.perspective];
+                if (!container) return;
+                
+                const progress = (parseFloat(item.current) / parseFloat(item.target)) * 100 || 0;
+                
+                container.innerHTML += `
+                    <div class="p-6 hover:bg-slate-50 transition">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex-grow">
+                                <h4 class="font-bold text-slate-900">${item.objective}</h4>
+                                <div class="flex items-center gap-4 mt-1 text-sm text-slate-500">
+                                    <span class="flex items-center"><i data-lucide="activity" class="w-3 h-3 mr-1"></i> ${item.kpi}</span>
+                                    <span class="flex items-center"><i data-lucide="target" class="w-3 h-3 mr-1"></i> Target: ${item.target}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="text-right">
+                                    <div class="text-xs font-bold text-slate-400 uppercase">Current</div>
+                                    <div class="text-lg font-bold text-slate-800">${item.current}</div>
+                                </div>
+                                <div class="w-16 h-16 relative">
+                                    <svg class="w-full h-full" viewBox="0 0 36 36">
+                                        <path class="text-slate-100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                        <path class="${progress >= 100 ? 'text-green-500' : 'text-blue-600'}" stroke-width="3" stroke-dasharray="${progress}, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold">${Math.round(progress)}%</div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="editStrategy(${index})" class="p-2 text-slate-400 hover:text-blue-600"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteStrategy(${index})" class="p-2 text-slate-400 hover:text-red-600"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            updateIcons();
+        }
+
+        function openStrategyModal(index = -1) {
+            const item = index > -1 ? appState.bsc[index] : { objective: '', perspective: 'Financial', kpi: '', target: '', current: '' };
+            const modal = document.getElementById('modal-content');
+            modal.innerHTML = `
+                <div class="p-6 border-b flex justify-between items-center">
+                    <h3 class="text-xl font-bold">${index > -1 ? 'Edit' : 'Add'} Strategic Objective</h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x"></i></button>
+                </div>
+                <form id="strategy-form" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Perspective</label>
+                        <select id="s-perspective" class="w-full border rounded-lg px-3 py-2 outline-none">
+                            <option ${item.perspective === 'Financial' ? 'selected' : ''}>Financial</option>
+                            <option ${item.perspective === 'Customer' ? 'selected' : ''}>Customer</option>
+                            <option ${item.perspective === 'Internal Processes' ? 'selected' : ''}>Internal Processes</option>
+                            <option ${item.perspective === 'Learning & Growth' ? 'selected' : ''}>Learning & Growth</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Strategic Objective</label>
+                        <input type="text" id="s-obj" value="${item.objective}" required class="w-full border rounded-lg px-3 py-2 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">KPI Metric</label>
+                        <input type="text" id="s-kpi" value="${item.kpi}" required class="w-full border rounded-lg px-3 py-2 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Target Value</label>
+                            <input type="text" id="s-target" value="${item.target}" required class="w-full border rounded-lg px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Current Value</label>
+                            <input type="text" id="s-current" value="${item.current}" required class="w-full border rounded-lg px-3 py-2 outline-none">
+                        </div>
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-bold">${index > -1 ? 'Update' : 'Save'} Strategy</button>
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('strategy-form').onsubmit = (e) => {
+                e.preventDefault();
+                const updated = {
+                    objective: document.getElementById('s-obj').value,
+                    perspective: document.getElementById('s-perspective').value,
+                    kpi: document.getElementById('s-kpi').value,
+                    target: document.getElementById('s-target').value,
+                    current: document.getElementById('s-current').value
+                };
+                if (index > -1) appState.bsc[index] = updated;
+                else appState.bsc.push(updated);
+                saveData();
+                closeModal();
+                renderBsc();
+            };
+            
+            document.getElementById('modal-overlay').classList.remove('hidden');
+            updateIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.add('hidden');
+        }
+
+        function deleteStrategy(i) {
+            if(confirm('Are you sure you want to delete this strategy?')) {
+                appState.bsc.splice(i, 1);
+                saveData();
+                renderBsc();
+            }
+        }
+
+        function editStrategy(i) {
+            openStrategyModal(i);
+        }
+
+        // --- DASHBOARD LOGIC ---
+        function renderDashboard() {
+            const counts = {
+                'Financial': 0,
+                'Customer': 0,
+                'Internal Processes': 0,
+                'Learning & Growth': 0
+            };
+            
+            appState.bsc.forEach(s => counts[s.perspective]++);
+            
+            const finCount = document.getElementById('financial-count');
+            if(finCount) finCount.innerText = counts['Financial'];
+            const custCount = document.getElementById('customer-count');
+            if(custCount) custCount.innerText = counts['Customer'];
+            const procCount = document.getElementById('process-count');
+            if(procCount) procCount.innerText = counts['Internal Processes'];
+            const lgCountEl = document.getElementById('lg-count');
+            if(lgCountEl) lgCountEl.innerText = counts['Learning & Growth'];
+            
+            const finProg = document.getElementById('financial-progress');
+            if(finProg) finProg.style.width = Math.min((counts['Financial']/5)*100, 100) + '%';
+            const custProg = document.getElementById('customer-progress');
+            if(custProg) custProg.style.width = Math.min((counts['Customer']/5)*100, 100) + '%';
+            const procProg = document.getElementById('process-progress');
+            if(procProg) procProg.style.width = Math.min((counts['Internal Processes']/5)*100, 100) + '%';
+            const lgProg = document.getElementById('lg-progress');
+            if(lgProg) lgProg.style.width = Math.min((counts['Learning & Growth']/5)*100, 100) + '%';
+            
+            const tbody = document.getElementById('dashboard-kpi-rows');
+            if(tbody) {
+                tbody.innerHTML = appState.bsc.slice(0, 5).map(item => {
+                    const prog = (parseFloat(item.current) / parseFloat(item.target)) * 100 || 0;
+                    return `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 font-medium text-slate-800">${item.objective}</td>
+                            <td class="px-6 py-4 text-slate-600">${item.kpi}</td>
+                            <td class="px-6 py-4 font-bold text-slate-900">${item.current} / ${item.target}</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                        <div class="h-full ${prog >= 100 ? 'bg-green-500' : 'bg-blue-600'}" style="width: ${Math.min(prog, 100)}%"></div>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-500">${Math.round(prog)}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            const orgNameEl = document.getElementById('org-name-display');
+            if(orgNameEl) orgNameEl.innerText = appState.orgName;
+            const mandateEl = document.getElementById('mandate-content');
+            if(mandateEl) mandateEl.innerText = `"${appState.mandate}"`;
+        }
+
+        function editMandate() {
+            const n = prompt("Enter Organizational Name:", appState.orgName);
+            const m = prompt("Enter Organizational Mandate / Vision:", appState.mandate);
+            if(n) appState.orgName = n;
+            if(m) appState.mandate = m;
+            saveData();
+            renderDashboard();
+        }
+
+        // --- INITIATIVES ---
+        function renderInitiatives() {
+            const container = document.getElementById('initiatives-container');
+            if(!container) return;
+            if(appState.initiatives.length === 0) {
+                container.innerHTML = `<div class="p-12 text-center text-slate-400 italic">No initiatives recorded yet. Add one to get started.</div>`;
+                return;
+            }
+            container.innerHTML = appState.initiatives.map((item, i) => `
+                <div class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${item.status === 'Completed' ? 'bg-green-100 text-green-700' : item.status === 'In Progress' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'}">${item.status}</span>
+                            <h3 class="font-bold text-slate-900 text-lg">${item.title}</h3>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-slate-500">
+                            <div><span class="block font-bold text-slate-400 uppercase">Lead</span> ${item.owner}</div>
+                            <div><span class="block font-bold text-slate-400 uppercase">Due Date</span> ${item.due}</div>
+                            <div><span class="block font-bold text-slate-400 uppercase">Resources</span> ${item.resources}</div>
+                            <div><span class="block font-bold text-slate-400 uppercase">Output</span> ${item.output}</div>
+                        </div>
+                    </div>
+                    <button onclick="deleteInitiative(${i})" class="mt-4 md:mt-0 text-red-500 hover:bg-red-50 p-2 rounded"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                </div>
+            `).join('');
+            updateIcons();
+        }
+
+        function openInitiativeModal() {
+            const modal = document.getElementById('modal-content');
+            modal.innerHTML = `
+                <div class="p-6 border-b flex justify-between items-center">
+                    <h3 class="text-xl font-bold">New Initiative</h3>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x"></i></button>
+                </div>
+                <form id="init-form" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Project/Activity Title</label>
+                        <input type="text" id="i-title" required class="w-full border rounded-lg px-3 py-2 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Status</label>
+                            <select id="i-status" class="w-full border rounded-lg px-3 py-2 outline-none">
+                                <option>Planning</option>
+                                <option>In Progress</option>
+                                <option>Completed</option>
+                                <option>On Hold</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Responsible Person</label>
+                            <input type="text" id="i-owner" required class="w-full border rounded-lg px-3 py-2 outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Due Date</label>
+                            <input type="date" id="i-due" required class="w-full border rounded-lg px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Expected Output</label>
+                            <input type="text" id="i-output" required class="w-full border rounded-lg px-3 py-2 outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Resources Needed</label>
+                        <input type="text" id="i-resources" placeholder="e.g. $5k Budget, 2 Engineers" class="w-full border rounded-lg px-3 py-2 outline-none">
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-bold">Add Initiative</button>
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('init-form').onsubmit = (e) => {
+                e.preventDefault();
+                appState.initiatives.push({
+                    title: document.getElementById('i-title').value,
+                    status: document.getElementById('i-status').value,
+                    owner: document.getElementById('i-owner').value,
+                    due: document.getElementById('i-due').value,
+                    output: document.getElementById('i-output').value,
+                    resources: document.getElementById('i-resources').value
+                });
+                saveData();
+                closeModal();
+                renderInitiatives();
+            };
+            
+            document.getElementById('modal-overlay').classList.remove('hidden');
+            updateIcons();
+        }
+
+        function deleteInitiative(i) {
+            appState.initiatives.splice(i, 1);
+            saveData();
+            renderInitiatives();
+        }
+
+        // --- COLLABORATION ---
+        function renderTeam() {
+            const list = document.getElementById('team-list');
+            if(!list) return;
+            list.innerHTML = appState.team.map(m => `
+                <div class="flex items-center p-2 rounded-lg hover:bg-slate-50 transition border border-transparent hover:border-slate-100">
+                    <div class="relative">
+                        <div class="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600">${m.name[0]}</div>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full ${m.status === 'online' ? 'bg-green-500' : 'bg-slate-300'}"></div>
+                    </div>
+                    <div class="ml-3 overflow-hidden">
+                        <p class="text-sm font-bold text-slate-800 truncate">${m.name}</p>
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">${m.role}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderChat() {
+            const box = document.getElementById('chat-box');
+            if(!box) return;
+            box.innerHTML = appState.messages.map(m => `
+                <div class="flex flex-col ${m.sender === currentUser.name ? 'items-end' : 'items-start'}">
+                    <div class="max-w-[80%] ${m.sender === currentUser.name ? 'bg-blue-600 text-white rounded-l-xl rounded-tr-xl' : 'bg-slate-100 text-slate-800 rounded-r-xl rounded-tl-xl'} p-3 shadow-sm">
+                        <p class="text-xs font-bold opacity-70 mb-1">${m.sender}</p>
+                        <p class="text-sm">${m.text}</p>
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-1">${m.time}</span>
+                </div>
+            `).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        const chatForm = document.getElementById('chat-form');
+        if(chatForm) {
+            chatForm.onsubmit = (e) => {
+                e.preventDefault();
+                const input = document.getElementById('chat-input');
+                if(!input.value.trim()) return;
+                
+                appState.messages.push({
+                    id: Date.now(),
+                    sender: currentUser.name,
+                    text: input.value,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+                input.value = '';
+                renderChat();
+                saveData();
+            };
+        }
+
+        function addTeamMember() {
+            const n = prompt("Member Name:");
+            const r = prompt("Role:");
+            if(n && r) {
+                appState.team.push({ id: Date.now(), name: n, role: r, status: 'away', email: '' });
+                saveData();
+                renderTeam();
+            }
+        }
+
+        // --- PLAN GENERATOR ---
+        function renderPlan() {
+            const orgNameEl = document.getElementById('plan-org-name');
+            if(orgNameEl) orgNameEl.innerText = appState.orgName.toUpperCase();
+            const mandateEl = document.getElementById('plan-mandate');
+            if(mandateEl) mandateEl.innerText = `"${appState.mandate}"`;
+            const dateEl = document.getElementById('plan-date');
+            if(dateEl) dateEl.innerText = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            
+            ['s', 'w', 'o', 't'].forEach(t => {
+                const upper = t.toUpperCase();
+                const listEl = document.getElementById(`plan-swot-${t}`);
+                if(listEl) {
+                    listEl.innerHTML = appState.swot[upper].length ? 
+                        appState.swot[upper].map(i => `<li>• ${i}</li>`).join('') : `<li class="italic opacity-50">None defined</li>`;
+                }
+            });
+
+            const tbody = document.getElementById('plan-bsc-body');
+            if(tbody) {
+                tbody.innerHTML = appState.bsc.length ? appState.bsc.map(item => `
+                    <tr>
+                        <td class="px-4 py-3 font-bold text-slate-400 text-xs uppercase">${item.perspective}</td>
+                        <td class="px-4 py-3 font-medium text-slate-800">${item.objective}</td>
+                        <td class="px-4 py-3">
+                            <div class="font-bold">${item.kpi}</div>
+                            <div class="text-xs text-slate-500">Target: ${item.target} (Current: ${item.current})</div>
+                        </td>
+                    </tr>
+                `).join('') : `<tr><td colspan="3" class="p-8 text-center text-slate-400">No BSC data available.</td></tr>`;
+            }
+
+            const roadmap = document.getElementById('plan-initiatives-list');
+            if(roadmap) {
+                roadmap.innerHTML = appState.initiatives.length ? appState.initiatives.map(item => `
+                    <div class="bg-slate-50 p-4 rounded border flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-slate-900">${item.title}</h4>
+                            <p class="text-xs text-slate-500">Lead: ${item.owner} | Output: ${item.output}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[10px] font-bold uppercase ${item.status === 'Completed' ? 'text-green-600' : 'text-blue-600'}">${item.status}</div>
+                            <div class="text-xs font-medium">Due: ${item.due}</div>
+                        </div>
+                    </div>
+                `).join('') : `<div class="p-8 text-center text-slate-400 bg-slate-50 rounded">No initiatives defined.</div>`;
+            }
+        }
+
+        // --- FORM HELPERS & INIT ---
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = btn.previousElementSibling;
+                input.type = input.type === 'password' ? 'text' : 'password';
+            });
+        });
+
+        const pwInput = document.getElementById('reg-password');
+        if(pwInput) {
+            pwInput.addEventListener('input', (e) => {
+                const v = e.target.value;
+                const len = document.getElementById('pw-len');
+                if(len) len.className = v.length >= 8 ? 'text-xs text-green-500 flex items-center' : 'text-xs text-gray-400 flex items-center';
+                const upper = document.getElementById('pw-upper');
+                if(upper) upper.className = /[A-Z]/.test(v) ? 'text-xs text-green-500 flex items-center' : 'text-xs text-gray-400 flex items-center';
+                const num = document.getElementById('pw-num');
+                if(num) num.className = /[0-9]/.test(v) ? 'text-xs text-green-500 flex items-center' : 'text-xs text-gray-400 flex items-center';
+            });
+        }
+
+        const loginEl = document.getElementById('login-form-el');
+        if(loginEl) loginEl.onsubmit = handleLogin;
+        const regEl = document.getElementById('reg-form-el');
+        if(regEl) regEl.onsubmit = handleRegister;
+        const resetEl = document.getElementById('reset-form-el');
+        if(resetEl) {
+            resetEl.onsubmit = (e) => {
+                e.preventDefault();
+                document.getElementById('reset-success').classList.remove('hidden');
+                document.getElementById('reset-email').value = '';
+            };
+        }
+
+        window.onload = () => {
+            // Initial render attempts check session after a small delay to ensure Lucide is loaded
+            setTimeout(() => {
+                checkSession();
+                updateIcons();
+            }, 100);
+        };
+    </script>
 </body>
 </html>
