@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WSP Secretariat Organizational Chart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .org-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .org-card:hover {
+      transform: translateY(-4px);
+    }
+    .connector-line {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawLine 1.5s ease forwards;
+    }
+    @keyframes drawLine {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-card {
+      animation: fadeSlideUp 0.6s ease forwards;
+    }
+    .delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .delay-2 { animation-delay: 0.2s; opacity: 0; }
+    .delay-3 { animation-delay: 0.3s; opacity: 0; }
+    .delay-4 { animation-delay: 0.4s; opacity: 0; }
+    .delay-5 { animation-delay: 0.5s; opacity: 0; }
+    .delay-6 { animation-delay: 0.6s; opacity: 0; }
+    .delay-7 { animation-delay: 0.7s; opacity: 0; }
+    .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.2s ease;
+    }
+    .tooltip-trigger:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+    .plantilla-badge {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+    .non-plantilla-badge {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    }
+    .legend-item {
+      transition: transform 0.2s ease;
+    }
+    .legend-item:hover {
+      transform: scale(1.05);
+    }
+    .risk-indicator {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .overlap-zone {
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(251, 191, 36, 0.1) 10px,
+        rgba(251, 191, 36, 0.1) 20px
+      );
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app-wrapper" class="w-full h-full overflow-auto" style="background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);"><!-- Header -->
+   <header class="text-center py-8 px-4 animate-card">
+    <h1 id="chart-title" class="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">WSP Secretariat Organizational Chart</h1>
+    <p id="subtitle-text" class="text-slate-400 text-lg">Technical Education and Skills Development Authority</p>
+    <div class="flex justify-center gap-4 mt-4 flex-wrap"><span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">TESDO Cluster</span> <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30">WorldSkills Philippines</span>
+    </div>
+   </header><!-- Legend -->
+   <div class="flex justify-center gap-6 mb-8 px-4 flex-wrap animate-card delay-1">
+    <div class="legend-item flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-700"><span class="w-3 h-3 rounded-full plantilla-badge"></span> <span class="text-slate-300 text-sm font-medium">Plantilla Position*</span>
+    </div>
+    <div class="legend-item flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-700"><span class="w-3 h-3 rounded-full non-plantilla-badge"></span> <span class="text-slate-300 text-sm font-medium">Non-Permanent</span>
+    </div>
+    <div class="legend-item flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-700">
+     <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+     </svg><span class="text-slate-300 text-sm font-medium">Overlap Zone</span>
+    </div>
+   </div><!-- Main Org Chart Container -->
+   <div class="max-w-7xl mx-auto px-4 pb-12"><!-- Oversight Level -->
+    <div class="flex justify-center gap-8 mb-6 flex-wrap"><!-- DDG Operations -->
+     <div class="org-card animate-card delay-2 tooltip-trigger relative">
+      <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-5 shadow-xl shadow-indigo-500/20 border border-indigo-500/30 text-center min-w-[200px]">
+       <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-indigo-400/20 flex items-center justify-center">
+        <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+       </div>
+       <p class="text-indigo-200 text-xs font-medium uppercase tracking-wider mb-1">Reports To</p>
+       <h3 class="text-white font-bold text-sm">DDG for Operations</h3>
+       <p class="text-indigo-300 text-xs mt-1">Strategic Oversight</p>
+      </div>
+      <div class="tooltip absolute -bottom-16 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs p-3 rounded-lg shadow-xl z-20 w-48 border border-slate-700">
+       Strategic direction and policy alignment for WorldSkills initiatives
+      </div>
+     </div><!-- ROMO/ED -->
+     <div class="org-card animate-card delay-2 tooltip-trigger relative">
+      <div class="bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl p-5 shadow-xl shadow-violet-500/20 border border-violet-500/30 text-center min-w-[200px]">
+       <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-violet-400/20 flex items-center justify-center">
+        <svg class="w-6 h-6 text-violet-200" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+       </div>
+       <p class="text-violet-200 text-xs font-medium uppercase tracking-wider mb-1">Functional Mgmt</p>
+       <h3 class="text-white font-bold text-sm">ROMO / Executive Director</h3>
+       <p class="text-violet-300 text-xs mt-1">Regional Coordination</p>
+      </div>
+      <div class="tooltip absolute -bottom-16 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs p-3 rounded-lg shadow-xl z-20 w-48 border border-slate-700">
+       Synchronizes WorldSkills with regional training centers and field operations
+      </div>
+     </div>
+    </div><!-- Connector SVG -->
+    <svg class="mx-auto mb-4" width="400" height="40" viewbox="0 0 400 40"><path class="connector-line" d="M100 0 L100 20 L200 20 L200 40" stroke="#6366f1" stroke-width="2" fill="none" /> <path class="connector-line" d="M300 0 L300 20 L200 20" stroke="#8b5cf6" stroke-width="2" fill="none" />
+    </svg><!-- WS Unit Head -->
+    <div class="flex justify-center mb-8">
+     <div class="org-card animate-card delay-3 tooltip-trigger relative">
+      <div class="bg-gradient-to-br from-cyan-500 to-cyan-700 rounded-2xl p-6 shadow-xl shadow-cyan-500/20 border border-cyan-400/30 text-center min-w-[240px]">
+       <div class="absolute -top-2 -right-2"><span class="plantilla-badge text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">★ Plantilla</span>
+       </div>
+       <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-400/30 flex items-center justify-center">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+       </div>
+       <h3 class="text-white font-extrabold text-lg">WS Unit Head*</h3>
+       <p class="text-cyan-200 text-sm mt-1">Secretariat Leadership</p>
+       <div class="mt-3 pt-3 border-t border-cyan-400/30">
+        <p class="text-cyan-100 text-xs">Oversees Administrative &amp; Technical Wings</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Connector to Wings -->
+    <svg class="mx-auto mb-4" width="800" height="50" viewbox="0 0 800 50"><path class="connector-line" d="M400 0 L400 25 L200 25 L200 50" stroke="#06b6d4" stroke-width="2" fill="none" /> <path class="connector-line" d="M400 25 L600 25 L600 50" stroke="#06b6d4" stroke-width="2" fill="none" />
+    </svg><!-- Two Wings -->
+    <div class="grid md:grid-cols-2 gap-8 mb-8"><!-- Administrative Wing -->
+     <div class="animate-card delay-4">
+      <div class="bg-slate-800/60 rounded-3xl p-6 border border-slate-700/50 backdrop-blur">
+       <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+         <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+         </svg>
+        </div>
+        <h2 class="text-xl font-bold text-white">Administrative Wing</h2>
+       </div>
+       <div class="space-y-4"><!-- Admin Support -->
+        <div class="org-card tooltip-trigger relative bg-gradient-to-r from-emerald-600/20 to-emerald-600/5 rounded-xl p-4 border border-emerald-500/30">
+         <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+           <div class="w-10 h-10 rounded-lg bg-emerald-500/30 flex items-center justify-center"><span class="text-lg">📋</span>
+           </div>
+           <div>
+            <h4 class="text-white font-semibold text-sm">Admin Support*</h4>
+            <p class="text-emerald-300 text-xs">Operations &amp; Logistics</p>
+           </div>
+          </div><span class="plantilla-badge text-white text-xs font-bold px-2 py-1 rounded-full">★</span>
+         </div>
+        </div><!-- Writer/Researcher -->
+        <div class="org-card tooltip-trigger relative bg-gradient-to-r from-emerald-600/20 to-emerald-600/5 rounded-xl p-4 border border-emerald-500/30">
+         <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+           <div class="w-10 h-10 rounded-lg bg-emerald-500/30 flex items-center justify-center"><span class="text-lg">✍️</span>
+           </div>
+           <div>
+            <h4 class="text-white font-semibold text-sm">Writer/Researcher*</h4>
+            <p class="text-emerald-300 text-xs">Documentation &amp; Research</p>
+           </div>
+          </div><span class="plantilla-badge text-white text-xs font-bold px-2 py-1 rounded-full">★</span>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Technical Wing -->
+     <div class="animate-card delay-5">
+      <div class="bg-slate-800/60 rounded-3xl p-6 border border-slate-700/50 backdrop-blur">
+       <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+         <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+         </svg>
+        </div>
+        <h2 class="text-xl font-bold text-white">Technical / All-around Wing</h2>
+       </div>
+       <div class="space-y-4"><!-- Senior All-around -->
+        <div class="org-card tooltip-trigger relative bg-gradient-to-r from-blue-600/20 to-blue-600/5 rounded-xl p-4 border border-blue-500/30">
+         <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+           <div class="w-10 h-10 rounded-lg bg-blue-500/30 flex items-center justify-center"><span class="text-lg">⭐</span>
+           </div>
+           <div>
+            <h4 class="text-white font-semibold text-sm">Senior All-around*</h4>
+            <p class="text-blue-300 text-xs">Cross-functional Lead</p>
+           </div>
+          </div><span class="plantilla-badge text-white text-xs font-bold px-2 py-1 rounded-full">★</span>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Overlap Zone - Technical Support Ecosystem -->
+    <div class="animate-card delay-6">
+     <div class="relative overflow-hidden bg-slate-800/40 rounded-3xl p-6 border-2 border-dashed border-amber-500/40 overlap-zone"><!-- Risk Warning Banner -->
+      <div class="absolute top-0 right-0 bg-amber-500/20 px-4 py-2 rounded-bl-xl border-l border-b border-amber-500/40">
+       <div class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-amber-400 risk-indicator" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg><span class="text-amber-400 text-xs font-bold uppercase tracking-wider">High Risk Zone</span>
+       </div>
+      </div>
+      <div class="flex items-center gap-3 mb-4 mt-4">
+       <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+        </svg>
+       </div>
+       <div>
+        <h2 class="text-xl font-bold text-white">Technical Support Ecosystem</h2>
+        <p class="text-amber-400/80 text-xs font-medium">⚠️ Non-Plantilla Positions • Institutional Memory Risk</p>
+       </div>
+      </div>
+      <p class="text-slate-400 text-sm mb-6 max-w-2xl">Cross-functional zone where roles frequently overlap. Personnel operate in an <span class="text-amber-400 font-semibold">Agile Team Culture</span> but face <span class="text-red-400 font-semibold">Structural Ambiguity</span> with non-rigid boundaries.</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"><!-- Data Analytics -->
+       <div class="org-card bg-gradient-to-br from-red-900/30 to-red-900/10 rounded-xl p-4 border border-red-500/30">
+        <div class="flex items-center gap-2 mb-2"><span class="text-2xl">📊</span> <span class="non-plantilla-badge text-white text-xs px-2 py-0.5 rounded-full">Non-Perm</span>
+        </div>
+        <h4 class="text-white font-semibold text-sm">Data Analytics</h4>
+        <p class="text-slate-400 text-xs mt-1">Performance metrics &amp; insights</p>
+       </div><!-- IT Programming -->
+       <div class="org-card bg-gradient-to-br from-red-900/30 to-red-900/10 rounded-xl p-4 border border-red-500/30">
+        <div class="flex items-center gap-2 mb-2"><span class="text-2xl">💻</span> <span class="non-plantilla-badge text-white text-xs px-2 py-0.5 rounded-full">Non-Perm</span>
+        </div>
+        <h4 class="text-white font-semibold text-sm">IT Programming</h4>
+        <p class="text-slate-400 text-xs mt-1">Systems &amp; digital solutions</p>
+       </div><!-- Partnership Focal -->
+       <div class="org-card bg-gradient-to-br from-red-900/30 to-red-900/10 rounded-xl p-4 border border-red-500/30">
+        <div class="flex items-center gap-2 mb-2"><span class="text-2xl">🤝</span> <span class="non-plantilla-badge text-white text-xs px-2 py-0.5 rounded-full">Non-Perm</span>
+        </div>
+        <h4 class="text-white font-semibold text-sm">Partnership Focal</h4>
+        <p class="text-slate-400 text-xs mt-1">Stakeholder relations</p>
+       </div><!-- Project Coordination -->
+       <div class="org-card bg-gradient-to-br from-red-900/30 to-red-900/10 rounded-xl p-4 border border-red-500/30">
+        <div class="flex items-center gap-2 mb-2"><span class="text-2xl">📁</span> <span class="non-plantilla-badge text-white text-xs px-2 py-0.5 rounded-full">Non-Perm</span>
+        </div>
+        <h4 class="text-white font-semibold text-sm">Project Coordination</h4>
+        <p class="text-slate-400 text-xs mt-1">Event &amp; program management</p>
+       </div><!-- Graphics-Tech Support -->
+       <div class="org-card bg-gradient-to-br from-amber-900/30 to-amber-900/10 rounded-xl p-4 border border-amber-500/30">
+        <div class="flex items-center gap-2 mb-2"><span class="text-2xl">🎨</span> <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/40">Hybrid</span>
+        </div>
+        <h4 class="text-white font-semibold text-sm">Graphics-Tech Support</h4>
+        <p class="text-slate-400 text-xs mt-1">Visual design &amp; tech assistance</p>
+        <p class="text-amber-400/70 text-xs mt-2 italic">Cross-pollination role</p>
+       </div>
+      </div>
+     </div>
+    </div><!-- Stats Summary -->
+    <div class="mt-8 animate-card delay-7">
+     <div class="grid sm:grid-cols-3 gap-4">
+      <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50 text-center">
+       <div class="text-3xl font-extrabold text-emerald-400">
+        4
+       </div>
+       <p class="text-slate-400 text-sm mt-1">Plantilla Positions</p>
+       <p class="text-emerald-400/60 text-xs mt-1">Established &amp; Permanent</p>
+      </div>
+      <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50 text-center">
+       <div class="text-3xl font-extrabold text-red-400">
+        5+
+       </div>
+       <p class="text-slate-400 text-sm mt-1">Non-Permanent Staff</p>
+       <p class="text-red-400/60 text-xs mt-1">High Turnover Risk</p>
+      </div>
+      <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50 text-center">
+       <div class="text-3xl font-extrabold text-amber-400">
+        ⚠️
+       </div>
+       <p class="text-slate-400 text-sm mt-1">Institutional Memory</p>
+       <p class="text-amber-400/60 text-xs mt-1">Critical Vulnerability</p>
+      </div>
+     </div>
+    </div><!-- Footer Note -->
+    <div class="mt-8 text-center animate-card delay-7">
+     <p class="text-slate-500 text-xs">* Denotes established plantilla positions</p>
+     <p class="text-slate-600 text-xs mt-1">Interactive Organizational Chart • WSP Secretariat under TESDO</p>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      chart_title: 'WSP Secretariat Organizational Chart',
+      subtitle_text: 'Technical Education and Skills Development Authority',
+      background_color: '#0f172a',
+      surface_color: '#1e293b',
+      text_color: '#f8fafc',
+      primary_color: '#06b6d4',
+      accent_color: '#f59e0b',
+      font_family: 'Plus Jakarta Sans',
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      const title = document.getElementById('chart-title');
+      const subtitle = document.getElementById('subtitle-text');
+      
+      if (title) {
+        title.textContent = config.chart_title || defaultConfig.chart_title;
+        title.style.fontFamily = `${config.font_family || defaultConfig.font_family}, sans-serif`;
+        title.style.fontSize = `${(config.font_size || defaultConfig.font_size) * 2}px`;
+        title.style.color = config.text_color || defaultConfig.text_color;
+      }
+      
+      if (subtitle) {
+        subtitle.textContent = config.subtitle_text || defaultConfig.subtitle_text;
+        subtitle.style.fontFamily = `${config.font_family || defaultConfig.font_family}, sans-serif`;
+        subtitle.style.fontSize = `${(config.font_size || defaultConfig.font_size) * 1.125}px`;
+      }
+
+      const wrapper = document.getElementById('app-wrapper');
+      if (wrapper) {
+        const bg = config.background_color || defaultConfig.background_color;
+        const surface = config.surface_color || defaultConfig.surface_color;
+        wrapper.style.background = `linear-gradient(180deg, ${bg} 0%, ${surface} 50%, ${bg} 100%)`;
+      }
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => { config.background_color = value; window.elementSdk.setConfig({ background_color: value }); }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => { config.surface_color = value; window.elementSdk.setConfig({ surface_color: value }); }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => { config.text_color = value; window.elementSdk.setConfig({ text_color: value }); }
+          },
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => { config.primary_color = value; window.elementSdk.setConfig({ primary_color: value }); }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (value) => { config.accent_color = value; window.elementSdk.setConfig({ accent_color: value }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => { config.font_family = value; window.elementSdk.setConfig({ font_family: value }); }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => { config.font_size = value; window.elementSdk.setConfig({ font_size: value }); }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['chart_title', config.chart_title || defaultConfig.chart_title],
+        ['subtitle_text', config.subtitle_text || defaultConfig.subtitle_text]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9befef06b0438d05',t:'MTc2ODU5MDg0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
