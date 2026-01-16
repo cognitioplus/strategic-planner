@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WSP Secretariat Structure</title>
+    <title>WSP Secretariat Structure - Portrait View</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f5f5f5;
+            padding: 20px;
         }
         .chart-container {
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
             background-color: white;
             padding: 20px;
@@ -50,14 +51,22 @@
         h1 {
             color: #333;
             text-align: center;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            text-align: center;
+            margin-top: 5px;
             margin-bottom: 20px;
+            font-size: 16px;
         }
         .legend {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 15px;
             flex-wrap: wrap;
+            font-size: 11px;
         }
         .legend-item {
             display: flex;
@@ -65,76 +74,130 @@
             gap: 5px;
         }
         .legend-color {
-            width: 15px;
-            height: 15px;
+            width: 12px;
+            height: 12px;
             border: 1px solid #333;
         }
         .highlighted {
             fill: #ffeb3b !important;
             stroke: #ff9800 !important;
         }
+        .plantilla-marker {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        .analysis-section {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border-left: 4px solid #2196f3;
+        }
+        .analysis-title {
+            color: #2196f3;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .risk-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .high-risk {
+            background-color: #d32f2f;
+        }
+        .medium-risk {
+            background-color: #ffa000;
+        }
+        .low-risk {
+            background-color: #388e3c;
+        }
     </style>
 </head>
 <body>
     <div class="chart-container">
-        <h1>WSP Secretariat Structure</h1>
+        <h1>WorldSkills Philippines (WSP) Secretariat Structure</h1>
+        <h2>Portrait View - Organizational Hierarchy & Operational Dynamics</h2>
         <div id="chart"></div>
         <div class="legend">
             <div class="legend-item"><div class="legend-color" style="background-color: #e6f7ff;"></div> Leadership</div>
-            <div class="legend-item"><div class="legend-color" style="background-color: #fff2cc;"></div> Admin</div>
+            <div class="legend-item"><div class="legend-color" style="background-color: #fff2cc;"></div> Administrative</div>
             <div class="legend-item"><div class="legend-color" style="background-color: #d5e8d4;"></div> Technical</div>
-            <div class="legend-item"><div class="legend-color" style="background-color: #f8cecc;"></div> All-around</div>
+            <div class="legend-item"><div class="legend-color" style="background-color: #f8cecc;"></div> All-around/Support</div>
+            <div class="legend-item"><span class="plantilla-marker">* </span> Plantilla Position</div>
+        </div>
+
+        <div class="analysis-section">
+            <div class="analysis-title">Structural Dynamics Analysis</div>
+            <p><span class="risk-indicator high-risk"></span> <strong>High Risk:</strong> Heavy reliance on non-permanent staff. Only 4 positions are plantilla (marked with *).</p>
+            <p><span class="risk-indicator medium-risk"></span> <strong>Medium Risk:</strong> Functional overlaps between Admin, Technical, and Support roles create structural ambiguity.</p>
+            <p><span class="risk-indicator low-risk"></span> <strong>Low Risk:</strong> Direct leadership support provides operational mandate but creates "Additional Workload" paradox.</p>
         </div>
     </div>
 
     <script>
-        // Data structure based on the whiteboard image
+        // Data structure based on the provided information
         const data = {
-            name: "TESDO (DDG Vidal)",
+            name: "David B. Bungallon\nExecutive Director, ROMO",
             children: [
                 {
-                    name: "ROMO (to Dave)",
+                    name: "Dexter C. Hulleza\nChief TESD Specialist/Head, WorldSkills",
                     children: [
                         {
-                            name: "WS (Dexter)",
-                            children: [
-                                {
-                                    name: "Admin",
-                                    children: [
-                                        { name: "Alex (HR & Fin)" },
-                                        { name: "Dolf* (Admin Support)" },
-                                        { name: "Bianca (Supply Officer)" }
-                                    ]
-                                },
-                                {
-                                    name: "Technical",
-                                    children: [
-                                        { name: "Niezza (Senior)*" },
-                                        { name: "Tet (TESD II) Project Coordinator" },
-                                        { name: "Aira* (Writer / Researcher) - Tech-Sup" },
-                                        { name: "Mara (Proj. Coordinator)" },
-                                        { name: "Ron (IT Programmer) Tech Support" },
-                                        { name: "Charles (Tech Support)" },
-                                        { name: "Ave (Graphics - Tech Support)" },
-                                        { name: "Abi (Partnership focal)" },
-                                        { name: "Hans (Data Analyst)" }
-                                    ]
-                                },
-                                {
-                                    name: "All-around",
-                                    children: []
-                                }
-                            ]
+                            name: "Niezza G. Soriano*\nTESD Specialist I, WorldSkills",
+                            type: "Technical"
+                        },
+                        {
+                            name: "Aira Mae Dela Vega*\nTESD Specialist I, WorldSkills",
+                            type: "Technical"
+                        },
+                        {
+                            name: "Rodolfo G. Villena\nAdministrative Assistant III, ODDG-TESDO",
+                            type: "Administrative"
+                        },
+                        {
+                            name: "Maria Theresa K. Marin\nProject Coordinator, WorldSkills",
+                            type: "Technical"
+                        },
+                        {
+                            name: "Maradika Ysiaba M. Ramos\nProject Coordinator, WorldSkills",
+                            type: "Technical"
+                        },
+                        {
+                            name: "Abigail B. Pascual*\nAdministrative Support Staff, WorldSkills",
+                            type: "Administrative"
+                        },
+                        {
+                            name: "Kristine Danielle P. Vega*\nAdministrative Support Staff, WorldSkills",
+                            type: "Administrative"
+                        },
+                        {
+                            name: "Charles Dave A. Obejero\nTechnical Support Staff, WorldSkills",
+                            type: "All-around/Support"
+                        },
+                        {
+                            name: "Ron Inigo Barcayan\nTechnical Support Staff, WorldSkills",
+                            type: "All-around/Support"
+                        },
+                        {
+                            name: "Ave Aster Menciano\nTechnical Support Staff, WorldSkills",
+                            type: "All-around/Support"
+                        },
+                        {
+                            name: "Hans Orozco\nAdministrative Support Staff, ROMO",
+                            type: "Administrative"
                         }
                     ]
                 }
             ]
         };
 
-        // Set up dimensions and margins
-        const margin = {top: 20, right: 90, bottom: 30, left: 90};
-        const width = 960 - margin.left - margin.right;
-        const height = 800 - margin.top - margin.bottom;
+        // Set up dimensions for portrait view
+        const margin = {top: 20, right: 30, bottom: 30, left: 30};
+        const width = 700 - margin.left - margin.right;
+        const height = 1000 - margin.top - margin.bottom;
 
         // Create SVG element
         const svg = d3.select("#chart")
@@ -149,7 +212,7 @@
             .attr("class", "tooltip")
             .style("opacity", 0);
 
-        // Create tree layout
+        // Create tree layout (portrait orientation)
         const tree = d3.tree()
             .size([height, width]);
 
@@ -159,7 +222,7 @@
 
         // Define color scale for different departments
         const colorScale = d3.scaleOrdinal()
-            .domain(["Leadership", "Admin", "Technical", "All-around"])
+            .domain(["Leadership", "Administrative", "Technical", "All-around/Support"])
             .range(["#e6f7ff", "#fff2cc", "#d5e8d4", "#f8cecc"]);
 
         // Add links between nodes
@@ -198,19 +261,16 @@
             .attr("r", 12)
             .attr("fill", d => {
                 if (d.depth === 0) return colorScale("Leadership");
-                if (d.data.name === "Admin") return colorScale("Admin");
-                if (d.data.name === "Technical") return colorScale("Technical");
-                if (d.data.name === "All-around") return colorScale("All-around");
-                if (d.parent && d.parent.data.name === "Admin") return colorScale("Admin");
-                if (d.parent && d.parent.data.name === "Technical") return colorScale("Technical");
-                if (d.parent && d.parent.data.name === "All-around") return colorScale("All-around");
+                if (d.data.type === "Administrative") return colorScale("Administrative");
+                if (d.data.type === "Technical") return colorScale("Technical");
+                if (d.data.type === "All-around/Support") return colorScale("All-around/Support");
                 return "#ffffff";
             })
             .attr("stroke", d => {
                 if (d.depth === 0) return "#0056b3";
-                if (d.data.name === "Admin") return "#8a6d3b";
-                if (d.data.name === "Technical") return "#3c763d";
-                if (d.data.name === "All-around") return "#a94442";
+                if (d.data.type === "Administrative") return "#8a6d3b";
+                if (d.data.type === "Technical") return "#3c763d";
+                if (d.data.type === "All-around/Support") return "#a94442";
                 return "#333";
             });
 
@@ -219,13 +279,40 @@
             .attr("dy", "0.35em")
             .attr("x", d => d.children ? -13 : 13)
             .style("text-anchor", d => d.children ? "end" : "start")
-            .text(d => d.data.name)
+            .text(d => {
+                const nameParts = d.data.name.split('\n');
+                return nameParts[0];
+            })
             .style("font-weight", d => d.depth === 0 ? "bold" : "normal")
             .style("font-size", d => {
                 if (d.depth === 0) return "14px";
-                if (d.data.name === "Admin" || d.data.name === "Technical" || d.data.name === "All-around") return "13px";
                 return "12px";
             });
+
+        // Add position text below the name
+        node.append("text")
+            .attr("dy", "1.5em")
+            .attr("x", d => d.children ? -13 : 13)
+            .style("text-anchor", d => d.children ? "end" : "start")
+            .text(d => {
+                const nameParts = d.data.name.split('\n');
+                if (nameParts.length > 1) {
+                    return nameParts[1];
+                }
+                return "";
+            })
+            .style("font-size", "10px")
+            .style("fill", "#555");
+
+        // Add plantilla marker for positions marked with *
+        node.append("text")
+            .attr("dy", "-0.5em")
+            .attr("x", d => d.children ? -13 : 13)
+            .style("text-anchor", d => d.children ? "end" : "start")
+            .text(d => d.data.name.includes("*") ? "*" : "")
+            .style("font-weight", "bold")
+            .style("font-size", "14px")
+            .style("fill", "#d32f2f");
 
         // Add click functionality to expand/collapse nodes
         node.on("click", function(event, d) {
@@ -281,34 +368,58 @@
                 .attr("r", 12)
                 .attr("fill", d => {
                     if (d.depth === 0) return colorScale("Leadership");
-                    if (d.data.name === "Admin") return colorScale("Admin");
-                    if (d.data.name === "Technical") return colorScale("Technical");
-                    if (d.data.name === "All-around") return colorScale("All-around");
-                    if (d.parent && d.parent.data.name === "Admin") return colorScale("Admin");
-                    if (d.parent && d.parent.data.name === "Technical") return colorScale("Technical");
-                    if (d.parent && d.parent.data.name === "All-around") return colorScale("All-around");
+                    if (d.data.type === "Administrative") return colorScale("Administrative");
+                    if (d.data.type === "Technical") return colorScale("Technical");
+                    if (d.data.type === "All-around/Support") return colorScale("All-around/Support");
                     return "#ffffff";
                 })
                 .attr("stroke", d => {
                     if (d.depth === 0) return "#0056b3";
-                    if (d.data.name === "Admin") return "#8a6d3b";
-                    if (d.data.name === "Technical") return "#3c763d";
-                    if (d.data.name === "All-around") return "#a94442";
+                    if (d.data.type === "Administrative") return "#8a6d3b";
+                    if (d.data.type === "Technical") return "#3c763d";
+                    if (d.data.type === "All-around/Support") return "#a94442";
                     return "#333";
                 });
 
-            // Add text to new nodes
+            // Add name text to new nodes
             nodeEnter.append("text")
                 .attr("dy", "0.35em")
                 .attr("x", d => d.children ? -13 : 13)
                 .style("text-anchor", d => d.children ? "end" : "start")
-                .text(d => d.data.name)
+                .text(d => {
+                    const nameParts = d.data.name.split('\n');
+                    return nameParts[0];
+                })
                 .style("font-weight", d => d.depth === 0 ? "bold" : "normal")
                 .style("font-size", d => {
                     if (d.depth === 0) return "14px";
-                    if (d.data.name === "Admin" || d.data.name === "Technical" || d.data.name === "All-around") return "13px";
                     return "12px";
                 });
+
+            // Add position text to new nodes
+            nodeEnter.append("text")
+                .attr("dy", "1.5em")
+                .attr("x", d => d.children ? -13 : 13)
+                .style("text-anchor", d => d.children ? "end" : "start")
+                .text(d => {
+                    const nameParts = d.data.name.split('\n');
+                    if (nameParts.length > 1) {
+                        return nameParts[1];
+                    }
+                    return "";
+                })
+                .style("font-size", "10px")
+                .style("fill", "#555");
+
+            // Add plantilla marker to new nodes
+            nodeEnter.append("text")
+                .attr("dy", "-0.5em")
+                .attr("x", d => d.children ? -13 : 13)
+                .style("text-anchor", d => d.children ? "end" : "start")
+                .text(d => d.data.name.includes("*") ? "*" : "")
+                .style("font-weight", "bold")
+                .style("font-size", "14px")
+                .style("fill", "#d32f2f");
 
             // Update existing nodes
             nodeUpdate.attr("transform", d => `translate(${d.y},${d.x})`);
@@ -340,4 +451,3 @@
     </script>
 </body>
 </html>
-
