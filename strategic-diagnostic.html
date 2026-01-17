@@ -355,6 +355,48 @@
       'growth-underinvestment': { name: 'Growth & Underinvestment', icon: '💰', description: 'Growth approaches a limit that can be pushed out if capacity investments are made. But investments take time and organization invests too little or too slowly.', elements: [{ id: 'demand', label: 'Growing Demand', desc: 'Increasing need or demand' }, { id: 'capacity', label: 'Current Capacity', desc: 'Ability to meet demand' }, { id: 'performance', label: 'Performance', desc: 'Quality of delivery' }, { id: 'investment', label: 'Investment', desc: 'Capacity expansion efforts' }], leveragePoints: ['Build capacity ahead of demonstrated need','Use leading indicators for investment triggers','Avoid using declining performance to justify not investing','Create long-term investment commitment'], narrative: 'Organizations often wait too long to invest in capacity, then use declining performance as reason not to invest. Proactive capacity building is essential for sustained growth.', canonicalCld: archetypeSVGs['growth-underinvestment'], botPattern: botData['growth-underinvestment'] }
     };
 
+    // === SIMULATED WSP DATA ===
+    const wspSimulatedSWOT = [
+      // STRENGTHS
+      { type: 'swot', category: 'strength', content: 'Institutional & Policy Alignment: Strong legal anchoring via Section 30 of RA 7796.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'strength', content: 'Direct Leadership Support: Consistent financial and administrative backing from TESDA leadership during major events.', archetype: 'shifting-burden', element_role: 'fundamental-solution', leverage_point: 'Formalize leadership support into permanent policy mandates' },
+      { type: 'swot', category: 'strength', content: 'WS standards naturally complement existing CBT/Outcomes-based frameworks.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'strength', content: 'Proven world-class logistics (hosting largest WorldSkills ASEAN to date).', archetype: 'limits-growth', element_role: 'growing-action', leverage_point: 'Document and scale logistics playbook nationally' },
+      { type: 'swot', category: 'strength', content: 'Expertise in Diplomatic Protocols and AI integration.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'strength', content: 'Access to established Regional Training Centers and highly skilled regional experts.', archetype: 'success-successful', element_role: 'activity-a', leverage_point: 'Balance elite RTC focus with national diffusion' },
+      { type: 'swot', category: 'strength', content: 'Robust local/global industry partnerships.', archetype: 'tragedy-commons', element_role: 'individual-activity', leverage_point: 'Strengthen partnership governance to prevent erosion' },
+      { type: 'swot', category: 'strength', content: 'Rapid Mobilization: High-speed deployment of Job Order (JO) personnel for event-specific projects.', archetype: 'fixes-fail', element_role: 'fix', leverage_point: 'Convert rapid mobilization into institutionalized response units' },
+
+      // WEAKNESSES
+      { type: 'swot', category: 'weakness', content: 'Structural Ambiguity: Reliance on ad-hoc/shifting task forces; lack of permanent national-regional roles.', archetype: 'fixes-fail', element_role: 'unintended', leverage_point: 'Create legally defined WSP functional roles' },
+      { type: 'swot', category: 'weakness', content: 'Conflict of Priority: WS roles perceived as "additional workload" by organic TESDA personnel.', archetype: 'shifting-burden', element_role: 'problem-symptom', leverage_point: 'Integrate WSP duties into core KPIs of TESDA units' },
+      { type: 'swot', category: 'weakness', content: 'Talent Attrition: High turnover of expert trainers to industry or overseas.', archetype: 'shifting-burden', element_role: 'side-effect', leverage_point: 'Develop retention incentives and career ladders' },
+      { type: 'swot', category: 'weakness', content: 'Skill Gaps: Heavy dependence on untrained JO personnel for critical mobilization tasks.', archetype: 'limits-growth', element_role: 'limiting-condition', leverage_point: 'Certify a core WSP Volunteer Corps' },
+      { type: 'swot', category: 'weakness', content: 'Competitors lack financial stability for intensive, unpaid training periods.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'weakness', content: 'No clear mandate for local integration of international benchmarks.', archetype: 'eroding-goals', element_role: 'pressure', leverage_point: 'Issue WSP Circular mandating benchmark adoption' },
+      { type: 'swot', category: 'weakness', content: 'Lack of established guidelines for RSC/PSC; slow MOA processing.', archetype: 'tragedy-commons', element_role: 'resource-limit', leverage_point: 'Delegate MOA signing authority to WSP Secretariat' },
+      { type: 'swot', category: 'weakness', content: 'Absence of established incentives for private sector participants.', archetype: '', element_role: '', leverage_point: '' },
+
+      // OPPORTUNITIES
+      { type: 'swot', category: 'opportunity', content: 'Positioning the PH as a SE Asian hub for technical excellence and protocol.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'opportunity', content: 'Leveraging "Gold Medal" visibility to expand international competition hosting.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'opportunity', content: 'Using the success of 2025 to rebrand TVET and attract Gen Z talent.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'opportunity', content: 'Expansion into Industry 4.0 sectors (IoT, Cyber Security, Robotics, Green Tech).', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'opportunity', content: 'Companies are open to co-developing standards, assessments, and work-based learning.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'opportunity', content: 'Joint training/short courses for JO personnel provided by international partners.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'opportunity', content: 'Strengthening linkages with other government agencies and academic institutions.', archetype: '', element_role: '', leverage_point: '' },
+
+      // THREATS
+      { type: 'swot', category: 'threat', content: 'Sustainability Risk: Changes in organizational hierarchy may disrupt future plans/budget allocations.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'threat', content: 'Risk of WS integration being reduced to "pilot-only" initiatives without long-term policy commitment.', archetype: 'success-successful', element_role: 'resources-b', leverage_point: 'Secure multi-year budget and legislative backing' },
+      { type: 'swot', category: 'threat', content: 'Institutional Memory Loss: Changes in hierarchy or personnel rotations disrupting long-term plans.', archetype: 'fixes-fail', element_role: 'problem', leverage_point: 'Build digital knowledge repository and succession protocols' },
+      { type: 'swot', category: 'threat', content: 'Technological Lag: Rapid Industry 4.0 evolution outstripping slow government curriculum (TR) updates.', archetype: 'eroding-goals', element_role: 'gap', leverage_point: 'Adopt agile, modular TR update cycles' },
+      { type: 'swot', category: 'threat', content: 'Resistance from trainers/institutions to adopt more rigorous, high-performance benchmarks.', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'threat', content: 'Difficulty securing medals at the global level (e.g., WorldSkills Lyon).', archetype: '', element_role: '', leverage_point: '' },
+      { type: 'swot', category: 'threat', content: 'Delays in formalization leading to lost partnerships and reduced industry confidence.', archetype: 'tragedy-commons', element_role: 'total-activity', leverage_point: 'Publish partnership SLA dashboard and timelines' },
+      { type: 'swot', category: 'threat', content: 'Untrained staff potentially compromising credibility with professional global partners.', archetype: 'limits-growth', element_role: 'slowing-action', leverage_point: 'Mandate pre-event certification for all mobilized staff' }
+    ];
+
     // === DATA HANDLER ===
     const dataHandler = {
       onDataChanged(data) {
@@ -366,8 +408,8 @@
       }
     };
 
-    // === INIT ===
-    async function initApp() {
+    // === INIT WITH SAMPLE DATA ===
+    async function initAppWithWSPData() {
       if (window.elementSdk) {
         window.elementSdk.init({
           defaultConfig,
@@ -397,6 +439,35 @@
 
       applyConfig(window.elementSdk?.config || defaultConfig);
       renderArchetypeButtons();
+
+      // Load sample data only if empty
+      if (allItems.length === 0) {
+        const promises = wspSimulatedSWOT.map(item =>
+          window.dataSdk.create({
+            ...item,
+            created_at: new Date().toISOString()
+          })
+        );
+        await Promise.all(promises);
+        allItems = await window.dataSdk.read();
+        renderSwotLists();
+        updateCounts();
+        renderLeveragePoints();
+      }
+
+      // Handle external navigation
+      setTimeout(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const hash = window.location.hash.replace('#', '');
+        const target = urlParams.get('archetype') || hash;
+        if (target && archetypes[target]) {
+          switchTab('archetypes');
+          setTimeout(() => {
+            selectArchetype(target);
+            document.getElementById('archetype-detail')?.scrollIntoView({ behavior: 'smooth' });
+          }, 300);
+        }
+      }, 1000);
     }
 
     function applyConfig(config) {
@@ -432,7 +503,7 @@
       document.getElementById('ai-section').classList.toggle('hidden', !useAI);
     }
 
-    // === STRATEGIC OPTIONS (ENHANCED) ===
+    // === STRATEGIC OPTIONS ===
     async function generateStrategicOptions() {
       const list = document.getElementById('strategic-options-list');
       const narrativeEl = document.getElementById('strategic-narrative');
@@ -535,7 +606,7 @@
       `).join('');
     }
 
-    // === ARCHETYPE RENDERING (WITH CLD + BOT) ===
+    // === ARCHETYPE RENDERING ===
     function selectArchetype(archetypeId) {
       selectedArchetype = archetypeId;
       const arch = archetypes[archetypeId];
@@ -624,11 +695,11 @@
         const ctx = document.getElementById(`bot-chart-${archetypeId}`).getContext('2d');
         new Chart(ctx, {
           type: 'line',
-          data: {
+           {
             labels: arch.botPattern.x,
             datasets: [{
               label: 'System Behavior',
-              data: arch.botPattern.y,
+               arch.botPattern.y,
               borderColor: '#6366f1',
               backgroundColor: 'rgba(99, 102, 241, 0.1)',
               tension: 0.3,
@@ -773,7 +844,7 @@
       }
     }
 
-    // === OTHER CORE FUNCTIONS (SWOT, Mapping, etc.) ===
+    // === CORE FUNCTIONS ===
     async function addSwotItem() {
       const category = document.getElementById('new-category').value;
       const content = document.getElementById('new-content').value.trim();
@@ -948,7 +1019,7 @@
       `).join('');
     }
 
-    // Utility functions
+    // Utilities
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text || '';
@@ -967,8 +1038,8 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
-    // Initialize
-    initApp();
+    // Start the app
+    initAppWithWSPData();
   </script>
 </body>
 </html>
