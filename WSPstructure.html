@@ -6,159 +6,166 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/feather-icons"></script>
 
 <style>
-  body {
-    margin: 0;
-    background: #f8fafc;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
+body {
+  margin: 0;
+  background: #f8fafc;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
 
-  .container {
-    max-width: 1100px;
-    margin: auto;
-    padding: 40px 16px 80px;
-    position: relative;
-  }
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px 16px 80px;
+  position: relative;
+}
 
-  /* ---------- BASE CHART (UNCHANGED) ---------- */
-  .leader {
-    background: #1e1bb8;
-    color: white;
-    border-radius: 16px;
-    padding: 18px 22px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    max-width: 720px;
-    margin: 0 auto 26px;
-    position: relative;
-  }
+/* ===== BASE CHART (UNCHANGED STRUCTURE) ===== */
+.leader {
+  background: #1e1bb8;
+  color: white;
+  border-radius: 16px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 720px;
+  margin: 0 auto 26px;
+  position: relative;
+}
 
-  .photo {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 4px solid #facc15;
-    background: white;
-  }
+.photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 4px solid #facc15;
+  background: white;
+}
 
-  .connector {
-    width: 2px;
-    height: 30px;
-    background: #0f172a;
-    margin: 0 auto;
-  }
+.connector {
+  width: 2px;
+  height: 30px;
+  background: #0f172a;
+  margin: 0 auto;
+}
 
-  .groups {
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap: 40px;
-    margin-top: 40px;
-  }
+.groups {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 40px;
+  margin-top: 40px;
+}
 
-  @media(max-width:768px){
-    .groups { grid-template-columns: 1fr; }
-  }
+@media(max-width:768px){
+  .groups { grid-template-columns: 1fr; }
+}
 
-  .group {
-    border-radius: 18px;
-    padding: 18px;
-    text-align: center;
-    font-weight: 800;
-    position: relative;
-  }
+.group {
+  border-radius: 18px;
+  padding: 18px;
+  text-align: center;
+  font-weight: 800;
+  position: relative;
+}
 
-  .admin { background: #e5c84c; }
-  .tech { background: #fff7b2; }
+.admin { background: #e5c84c; }
+.tech { background: #fff7b2; }
 
-  .sub {
-    margin-top: 16px;
-    padding: 14px;
-    border-radius: 14px;
-    background: #fde047;
-    font-weight: 700;
-  }
+.sub {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #fde047;
+  font-weight: 700;
+  position: relative;
+}
 
-  .sub-light {
-    background: #f1f5f9;
-    font-weight: 600;
-    font-size: .9rem;
-  }
+.sub-light {
+  background: #f1f5f9;
+  font-weight: 600;
+  font-size: .9rem;
+}
 
-  /* ---------- SWT OVERLAYS ---------- */
-  .swt-badge {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: .8rem;
-    color: white;
-    cursor: pointer;
-  }
+/* ===== SWT BADGES ===== */
+.swt-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: .8rem;
+  color: white;
+  cursor: pointer;
+  transition: opacity .25s ease;
+}
 
-  .strength { background: #16a34a; }
-  .weakness { background: #f59e0b; }
-  .threat { background: #dc2626; }
+.strength { background: #16a34a; }
+.weakness { background: #f59e0b; }
+.threat   { background: #dc2626; }
 
-  .tooltip {
-    position: absolute;
-    top: 40px;
-    right: 0;
-    background: #0f172a;
-    color: white;
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-size: .75rem;
-    width: 260px;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(6px);
-    transition: all .25s ease;
-    z-index: 50;
-  }
+.tooltip {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  background: #0f172a;
+  color: white;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: .75rem;
+  width: 260px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: all .25s ease;
+  z-index: 20;
+}
 
-  .swt-badge:hover .tooltip {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
+.swt-badge:hover .tooltip,
+.swt-badge:focus .tooltip {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
 
-  /* ---------- SWT CONTROL PANEL ---------- */
-  .panel {
-    position: fixed;
-    bottom: 16px;
-    right: 16px;
-    background: white;
-    border-radius: 16px;
-    padding: 14px;
-    box-shadow: 0 12px 30px rgba(0,0,0,.15);
-    z-index: 100;
-  }
+/* ===== CONTROL PANEL ===== */
+.panel {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  background: white;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.15);
+  z-index: 100;
+}
 
-  .panel button {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 6px;
-    width: 100%;
-    border: none;
-    padding: 8px;
-    border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
-  }
+.panel button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  width: 100%;
+  border: none;
+  padding: 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-  .btn-s { background: #dcfce7; }
-  .btn-w { background: #fef3c7; }
-  .btn-t { background: #fee2e2; }
+.btn-s { background: #dcfce7; }
+.btn-w { background: #fef3c7; }
+.btn-t { background: #fee2e2; }
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 </style>
 </head>
 
@@ -171,12 +178,12 @@
     <div class="photo"></div>
     Reporting to the Office of the Deputy Director General for Operations
 
-    <div class="swt-badge strength">
+    <div class="swt-badge strength" tabindex="0">
       S
       <div class="tooltip">
         <strong>Direct Leadership Support</strong><br/>
-        Consistent financial and administrative backing from TESDA leadership and
-        external TESDA sub-organizations during major WorldSkills events.
+        Consistent financial and administrative backing from TESDA leadership
+        and external TESDA sub-organizations during major WorldSkills events.
       </div>
     </div>
   </div>
@@ -188,11 +195,12 @@
     <div class="photo"></div>
     Under the ROMO Executive Director’s Office
 
-    <div class="swt-badge strength">
+    <div class="swt-badge strength" tabindex="0">
       S
       <div class="tooltip">
-        Functional agility enabled through ROMO coordination,
-        accelerating approvals and cross-unit mobilization.
+        <strong>Operational Agility</strong><br/>
+        Direct executive coordination enables rapid approvals,
+        cross-unit mobilization, and event readiness.
       </div>
     </div>
   </div>
@@ -204,12 +212,12 @@
     <div class="photo"></div>
     WorldSkills Philippines, Head Chief, TESDO
 
-    <div class="swt-badge weakness">
+    <div class="swt-badge weakness" tabindex="0">
       W
       <div class="tooltip">
         <strong>Structural Ambiguity</strong><br/>
-        Reliance on ad-hoc and shifting task forces,
-        with no permanent national-regional role anchoring.
+        Reliance on ad-hoc task forces with no permanent
+        national–regional plantilla roles.
       </div>
     </div>
   </div>
@@ -221,12 +229,12 @@
     <div class="group admin">
       ADMIN GROUP
 
-      <div class="swt-badge weakness">
+      <div class="swt-badge weakness" tabindex="0">
         W
         <div class="tooltip">
           <strong>Conflict of Priority</strong><br/>
-          WSP tasks are often treated as additional workload by
-          organic personnel balancing home-unit KPIs.
+          WSP duties are perceived as secondary workload by
+          organic personnel balancing primary mandates.
         </div>
       </div>
 
@@ -238,12 +246,13 @@
     <div class="group tech">
       TECHNICAL GROUP
 
-      <div class="swt-badge threat">
+      <div class="swt-badge threat" tabindex="0">
         T
         <div class="tooltip">
-          <strong>Institutional Memory Loss</strong><br/>
-          Personnel rotation and hierarchy changes disrupt
-          long-term technical continuity and planning.
+          <strong>Policy & Sustainability Risks</strong><br/>
+          Changes in hierarchy may disrupt budgets,
+          reduce WS integration to pilot-only initiatives,
+          and erode institutional memory.
         </div>
       </div>
 
@@ -254,12 +263,12 @@
         (Data Analytics, IT Programming,<br/>
         Partnership Focal, Project Coordination)
 
-        <div class="swt-badge weakness" style="top:auto; bottom:-10px;">
+        <div class="swt-badge weakness" style="top:auto; bottom:-10px;" tabindex="0">
           W
           <div class="tooltip">
             <strong>Skill Gaps</strong><br/>
             Heavy dependence on untrained JO personnel
-            for critical mobilization and systems tasks.
+            for critical mobilization and systems delivery.
           </div>
         </div>
       </div>
@@ -277,13 +286,11 @@
 </div>
 
 <script>
-  feather.replace();
-
-  function toggle(type){
-    document.querySelectorAll('.' + type).forEach(el=>{
-      el.style.display = el.style.display === 'none' ? 'flex' : 'none';
-    });
-  }
+function toggle(type) {
+  document.querySelectorAll('.' + type).forEach(el => {
+    el.classList.toggle('hidden');
+  });
+}
 </script>
 
 </body>
