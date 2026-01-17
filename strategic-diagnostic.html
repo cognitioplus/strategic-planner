@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Systems SWOT Strategist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #6366f1;
+      --secondary: #a855f7;
+    }
+    body {
+      box-sizing: border-box;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .swot-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .swot-card:hover { transform: translateY(-2px); }
+    .archetype-node {
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .archetype-node:hover {
+      filter: brightness(1.1);
+      transform: scale(1.02);
+    }
+    .fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pulse-glow {
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
+    }
+    .tab-active {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: white;
+    }
+    .connection-line {
+      stroke-dasharray: 5;
+      animation: dash 1s linear infinite;
+    }
+    @keyframes dash {
+      to { stroke-dashoffset: -10; }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1e1b4b; }
+    ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 3px; }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+</head>
+<body class="h-full bg-slate-950 text-slate-100 overflow-auto">
+  <div id="app" class="h-full w-full flex flex-col">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-950 via-purple-950 to-slate-950 border-b border-indigo-800/50 px-6 py-4 flex-shrink-0">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 id="main-title" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">Systems SWOT Strategist</h1>
+          <p id="org-name" class="text-slate-400 text-sm mt-1">Strategic Analysis Tool</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="mono text-xs text-indigo-400 bg-indigo-900/50 px-3 py-1 rounded-full border border-indigo-800/50">
+            <span id="item-count">0</span> Items
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-slate-900/80 border-b border-slate-800 px-6 py-3 flex-shrink-0">
+      <div class="flex gap-2">
+        <button onclick="switchTab('swot')" id="tab-swot" class="tab-active px-5 py-2 rounded-lg text-sm font-medium transition-all">📊 SWOT Matrix</button>
+        <button onclick="switchTab('archetypes')" id="tab-archetypes" class="px-5 py-2 rounded-lg text-sm font-medium bg-slate-800 hover:bg-slate-700 transition-all">🔄 Systems Archetypes</button>
+        <button onclick="switchTab('strategy')" id="tab-strategy" class="px-5 py-2 rounded-lg text-sm font-medium bg-slate-800 hover:bg-slate-700 transition-all">🎯 Strategic Options</button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto p-6">
+      <!-- SWOT Tab -->
+      <div id="swot-tab" class="fade-in">
+        <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-5 mb-6">
+          <h3 class="text-lg font-semibold text-indigo-300 mb-4">Add SWOT Item</h3>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-2">Category</label>
+              <select id="new-category" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                <option value="strength">💪 Strength</option>
+                <option value="weakness">⚠️ Weakness</option>
+                <option value="opportunity">🌟 Opportunity</option>
+                <option value="threat">🔥 Threat</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs text-slate-400 mb-2">Description</label>
+              <input type="text" id="new-content" placeholder="Describe the SWOT item..." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div class="flex items-end">
+              <button onclick="addSwotItem()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium py-2.5 px-5 rounded-lg transition-all">+ Add Item</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SWOT Matrix -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Strengths -->
+          <div class="bg-gradient-to-br from-emerald-950/40 to-slate-900/60 border border-emerald-800/40 rounded-xl p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-2xl">💪</span>
+              <h3 class="text-lg font-semibold text-emerald-400">Strengths</h3>
+              <span class="mono text-xs bg-emerald-900/50 px-2 py-0.5 rounded text-emerald-300" id="strength-count">0</span>
+            </div>
+            <div id="strength-list" class="space-y-2 min-h-[100px]">
+              <p class="text-slate-500 text-sm italic">No strengths added yet</p>
+            </div>
+          </div>
+          <!-- Weaknesses -->
+          <div class="bg-gradient-to-br from-amber-950/40 to-slate-900/60 border border-amber-800/40 rounded-xl p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-2xl">⚠️</span>
+              <h3 class="text-lg font-semibold text-amber-400">Weaknesses</h3>
+              <span class="mono text-xs bg-amber-900/50 px-2 py-0.5 rounded text-amber-300" id="weakness-count">0</span>
+            </div>
+            <div id="weakness-list" class="space-y-2 min-h-[100px]">
+              <p class="text-slate-500 text-sm italic">No weaknesses added yet</p>
+            </div>
+          </div>
+          <!-- Opportunities -->
+          <div class="bg-gradient-to-br from-sky-950/40 to-slate-900/60 border border-sky-800/40 rounded-xl p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-2xl">🌟</span>
+              <h3 class="text-lg font-semibold text-sky-400">Opportunities</h3>
+              <span class="mono text-xs bg-sky-900/50 px-2 py-0.5 rounded text-sky-300" id="opportunity-count">0</span>
+            </div>
+            <div id="opportunity-list" class="space-y-2 min-h-[100px]">
+              <p class="text-slate-500 text-sm italic">No opportunities added yet</p>
+            </div>
+          </div>
+          <!-- Threats -->
+          <div class="bg-gradient-to-br from-rose-950/40 to-slate-900/60 border border-rose-800/40 rounded-xl p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-2xl">🔥</span>
+              <h3 class="text-lg font-semibold text-rose-400">Threats</h3>
+              <span class="mono text-xs bg-rose-900/50 px-2 py-0.5 rounded text-rose-300" id="threat-count">0</span>
+            </div>
+            <div id="threat-list" class="space-y-2 min-h-[100px]">
+              <p class="text-slate-500 text-sm italic">No threats added yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Archetypes Tab -->
+      <div id="archetypes-tab" class="hidden fade-in">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Archetype Selector -->
+          <div class="lg:col-span-1">
+            <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
+              <h3 class="text-lg font-semibold text-indigo-300 mb-4">Systems Archetypes</h3>
+              <p class="text-xs text-slate-400 mb-4">Select an archetype to map your SWOT items and identify leverage points.</p>
+              <div class="space-y-2" id="archetype-buttons">
+                <!-- Buttons dynamically rendered -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Archetype Detail -->
+          <div class="lg:col-span-2">
+            <div id="archetype-detail" class="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+              <div class="text-center py-12">
+                <span class="text-6xl mb-4 block">🔄</span>
+                <h3 class="text-xl font-semibold text-slate-400 mb-2">Select an Archetype</h3>
+                <p class="text-sm text-slate-500">Choose a systems archetype from the left to visualize dynamics and map your SWOT items.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strategy Tab -->
+      <div id="strategy-tab" class="hidden fade-in">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Leverage Points Summary -->
+          <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
+            <h3 class="text-lg font-semibold text-indigo-300 mb-4">🎯 Identified Leverage Points</h3>
+            <div id="leverage-points-list" class="space-y-3">
+              <p class="text-slate-500 text-sm italic">Map SWOT items to archetypes to identify leverage points.</p>
+            </div>
+          </div>
+
+          <!-- Strategic Options Generator -->
+          <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
+            <h3 class="text-lg font-semibold text-purple-300 mb-4">⚡ Strategic Options</h3>
+            <div class="flex gap-2 mb-4">
+              <button onclick="generateStrategicOptions()" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-medium py-3 px-5 rounded-lg transition-all pulse-glow">Generate Options</button>
+              <button onclick="exportAnalysis()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 px-5 rounded-lg transition-all">📥 Export</button>
+            </div>
+            <div id="strategic-options-list" class="space-y-3">
+              <p class="text-slate-500 text-sm italic">Click above to generate strategic options based on your analysis.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Strategic Narrative -->
+        <div class="mt-6 bg-gradient-to-br from-indigo-950/40 to-purple-950/40 border border-indigo-800/40 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-indigo-300 mb-4">📖 Strategic Narrative</h3>
+          <div id="strategic-narrative" class="prose prose-invert max-w-none">
+            <p class="text-slate-400 text-sm italic">Complete your SWOT analysis and archetype mapping to generate a comprehensive strategic narrative.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Mapping Modal -->
+  <div id="mapping-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 fade-in">
+      <h3 class="text-xl font-semibold text-indigo-300 mb-4">Map to Archetype Element</h3>
+      <p id="modal-item-content" class="text-slate-300 mb-4 p-3 bg-slate-800 rounded-lg"></p>
+      <div class="mb-4">
+        <label class="block text-xs text-slate-400 mb-2">Select Archetype</label>
+        <select id="modal-archetype" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+          <option value="">-- Choose Archetype --</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block text-xs text-slate-400 mb-2">Element Role</label>
+        <select id="modal-element-role" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+          <option value="">-- Select Role After Choosing Archetype --</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block text-xs text-slate-400 mb-2">Leverage Point Insight</label>
+        <textarea id="modal-leverage-point" rows="3" placeholder="Describe how this creates a leverage point..." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="closeMappingModal()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2.5 px-5 rounded-lg transition-all">Cancel</button>
+        <button onclick="saveMappingAndClose()" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-2.5 px-5 rounded-lg transition-all">Save Mapping</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Default configuration
+    const defaultConfig = {
+      analysis_title: 'Systems SWOT Strategist',
+      organization_name: 'Strategic Analysis Tool',
+      background_color: '#020617',
+      surface_color: '#0f172a',
+      text_color: '#e2e8f0',
+      primary_action: '#6366f1',
+      secondary_action: '#a855f7',
+      font_family: 'Space Grotesk',
+      font_size: 16
+    };
+
+    // App state
+    let allItems = [];
+    let currentTab = 'swot';
+    let selectedArchetype = null;
+    let mappingItemId = null;
+
+    // Archetype definitions with elements and leverage points
+    const archetypes = {
+      'limits-growth': {
+        name: 'Limits to Growth',
+        icon: '📈',
+        description: 'A reinforcing process is set in motion to produce a desired result. It creates a spiral of success but also creates inadvertent secondary effects (limiting process) which eventually slow down the success.',
+        elements: [
+          { id: 'growing-action', label: 'Growing Action', desc: 'The effort or action driving growth' },
+          { id: 'condition', label: 'Growing Condition', desc: 'The improving situation or metric' },
+          { id: 'limiting-condition', label: 'Limiting Condition', desc: 'The constraint that emerges' },
+          { id: 'slowing-action', label: 'Slowing Action', desc: 'The effect that reduces growth' }
+        ],
+        leveragePoints: [
+          'Identify the limiting factor early before growth slows',
+          'Plan capacity expansion ahead of demand',
+          'Remove or weaken constraints proactively',
+          'Find alternative growth paths that bypass limits'
+        ],
+        narrative: 'In this archetype, initial success creates momentum, but hidden constraints emerge as growth continues. The key is to anticipate these limits and address them before they halt progress.'
+      },
+      'shifting-burden': {
+        name: 'Shifting the Burden',
+        icon: '🔄',
+        description: 'An underlying problem generates symptoms that demand attention. But the underlying problem is difficult to address. People "shift the burden" to other solutions that seem easier but only address the symptoms.',
+        elements: [
+          { id: 'problem-symptom', label: 'Problem Symptom', desc: 'The visible issue being addressed' },
+          { id: 'symptomatic-solution', label: 'Symptomatic Solution', desc: 'Quick fix that treats symptoms' },
+          { id: 'fundamental-solution', label: 'Fundamental Solution', desc: 'Root cause intervention' },
+          { id: 'side-effect', label: 'Side Effect', desc: 'Unintended consequence of quick fix' }
+        ],
+        leveragePoints: [
+          'Focus attention on the fundamental solution',
+          'Reduce dependency on symptomatic solutions',
+          'Build awareness of side effects',
+          'Invest in long-term capability building'
+        ],
+        narrative: 'This pattern shows how organizations become addicted to quick fixes while the underlying problem worsens. Breaking free requires investing in fundamental solutions despite short-term pressures.'
+      },
+      'eroding-goals': {
+        name: 'Eroding Goals',
+        icon: '📉',
+        description: 'A balancing process adjusts conditions to a goal. But when there is a gap between goal and condition, there is pressure to lower the goal.',
+        elements: [
+          { id: 'goal', label: 'Goal/Standard', desc: 'The target or standard' },
+          { id: 'gap', label: 'Gap', desc: 'Difference between goal and reality' },
+          { id: 'pressure', label: 'Pressure to Lower', desc: 'Forces pushing to reduce standards' },
+          { id: 'condition', label: 'Current Condition', desc: 'Actual performance or state' }
+        ],
+        leveragePoints: [
+          'Anchor goals to external benchmarks',
+          'Make goal erosion visible and costly',
+          'Build commitment to absolute standards',
+          'Address root causes of performance gaps'
+        ],
+        narrative: 'When reality falls short of goals, organizations often lower their standards rather than improve performance. Maintaining standards requires conscious effort and accountability.'
+      },
+      'escalation': {
+        name: 'Escalation',
+        icon: '⚔️',
+        description: 'Two parties compete for advantage. Each sees their own aggressive actions as defensive and the other\'s as threatening.',
+        elements: [
+          { id: 'party-a-action', label: 'Party A\'s Action', desc: 'One party\'s competitive move' },
+          { id: 'party-a-results', label: 'Party A\'s Results', desc: 'Outcome for party A' },
+          { id: 'party-b-action', label: 'Party B\'s Action', desc: 'Other party\'s response' },
+          { id: 'party-b-results', label: 'Party B\'s Results', desc: 'Outcome for party B' }
+        ],
+        leveragePoints: [
+          'Find ways to "win" without defeating the other',
+          'Establish communication channels',
+          'Create mutual benefit scenarios',
+          'Introduce third-party mediation'
+        ],
+        narrative: 'Competitive dynamics can spiral into destructive arms races. Breaking free requires either cooperation or finding ways to compete on different dimensions.'
+      },
+      'success-successful': {
+        name: 'Success to Successful',
+        icon: '🏆',
+        description: 'Two activities compete for support or resources. The more successful one becomes, the more support it gains, starving the other.',
+        elements: [
+          { id: 'activity-a', label: 'Activity A', desc: 'One competing activity' },
+          { id: 'resources-a', label: 'Resources to A', desc: 'Support flowing to A' },
+          { id: 'activity-b', label: 'Activity B', desc: 'Other competing activity' },
+          { id: 'resources-b', label: 'Resources to B', desc: 'Support flowing to B' }
+        ],
+        leveragePoints: [
+          'Decouple activities from zero-sum competition',
+          'Create balanced resource allocation',
+          'Protect promising activities from premature failure',
+          'Establish minimum resource guarantees'
+        ],
+        narrative: 'Winner-take-all dynamics can starve valuable alternatives. Maintaining portfolio balance requires intentional protection of less successful but important activities.'
+      },
+      'tragedy-commons': {
+        name: 'Tragedy of the Commons',
+        icon: '🌍',
+        description: 'Individuals use a commonly available but limited resource solely on their own need. At first they are rewarded, but eventually it depletes the resource.',
+        elements: [
+          { id: 'individual-activity', label: 'Individual Activity', desc: 'Each actor\'s use of resource' },
+          { id: 'individual-gain', label: 'Individual Gain', desc: 'Benefit to each actor' },
+          { id: 'total-activity', label: 'Total Activity', desc: 'Combined use by all actors' },
+          { id: 'resource-limit', label: 'Resource Limit', desc: 'The commons capacity' }
+        ],
+        leveragePoints: [
+          'Make the connection between individual actions and commons visible',
+          'Establish governance or regulation',
+          'Create incentives for sustainable use',
+          'Develop monitoring and feedback systems'
+        ],
+        narrative: 'Shared resources face degradation when individual incentives conflict with collective welfare. Solutions require either regulation, privatization, or changed incentives.'
+      },
+      'fixes-fail': {
+        name: 'Fixes that Fail',
+        icon: '🔧',
+        description: 'A fix, effective in the short term, creates unintended consequences that require more of the same fix.',
+        elements: [
+          { id: 'problem', label: 'Problem', desc: 'The issue being addressed' },
+          { id: 'fix', label: 'Fix', desc: 'The applied solution' },
+          { id: 'improvement', label: 'Short-term Improvement', desc: 'Initial positive result' },
+          { id: 'unintended', label: 'Unintended Consequence', desc: 'Delayed negative effect' }
+        ],
+        leveragePoints: [
+          'Map out potential unintended consequences before acting',
+          'Implement monitoring for delayed effects',
+          'Consider multiple intervention points',
+          'Build in reversibility to solutions'
+        ],
+        narrative: 'Well-intentioned solutions can create new problems that demand more of the same intervention. Breaking this cycle requires anticipating second and third-order effects.'
+      },
+      'growth-underinvestment': {
+        name: 'Growth & Underinvestment',
+        icon: '💰',
+        description: 'Growth approaches a limit that can be pushed out if capacity investments are made. But investments take time and organization invests too little or too slowly.',
+        elements: [
+          { id: 'demand', label: 'Growing Demand', desc: 'Increasing need or demand' },
+          { id: 'capacity', label: 'Current Capacity', desc: 'Ability to meet demand' },
+          { id: 'performance', label: 'Performance', desc: 'Quality of delivery' },
+          { id: 'investment', label: 'Investment', desc: 'Capacity expansion efforts' }
+        ],
+        leveragePoints: [
+          'Build capacity ahead of demonstrated need',
+          'Use leading indicators for investment triggers',
+          'Avoid using declining performance to justify not investing',
+          'Create long-term investment commitment'
+        ],
+        narrative: 'Organizations often wait too long to invest in capacity, then use declining performance as reason not to invest. Proactive capacity building is essential for sustained growth.'
+      }
+    };
+
+    // Data handler for SDK
+    const dataHandler = {
+      onDataChanged(data) {
+        allItems = data;
+        renderSwotLists();
+        updateCounts();
+        renderLeveragePoints();
+        renderArchetypeButtons();
+      }
+    };
+
+    // Initialize SDKs
+    async function initApp() {
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => applyConfig(config),
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+              { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+              { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+              { get: () => config.primary_action || defaultConfig.primary_action, set: (v) => { config.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); } },
+              { get: () => config.secondary_action || defaultConfig.secondary_action, set: (v) => { config.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); } }
+            ],
+            fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+            fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['analysis_title', config.analysis_title || defaultConfig.analysis_title],
+            ['organization_name', config.organization_name || defaultConfig.organization_name]
+          ])
+        });
+      }
+
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) console.error('Failed to initialize Data SDK');
+      }
+
+      applyConfig(window.elementSdk?.config || defaultConfig);
+      renderArchetypeButtons();
+    }
+
+    function applyConfig(config) {
+      const cfg = { ...defaultConfig, ...config };
+      document.getElementById('main-title').textContent = cfg.analysis_title;
+      document.getElementById('org-name').textContent = cfg.organization_name;
+      document.body.style.backgroundColor = cfg.background_color;
+      document.body.style.color = cfg.text_color;
+      document.body.style.fontFamily = `${cfg.font_family}, Space Grotesk, sans-serif`;
+      document.body.style.fontSize = `${cfg.font_size}px`;
+      document.documentElement.style.setProperty('--primary', cfg.primary_action);
+      document.documentElement.style.setProperty('--secondary', cfg.secondary_action);
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      ['swot', 'archetypes', 'strategy'].forEach(t => {
+        const el = document.getElementById(`${t}-tab`);
+        if (el) el.classList.toggle('hidden', t !== tab);
+      });
+      document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('tab-active', 'bg-slate-800'));
+      document.getElementById(`tab-${tab}`).classList.add('tab-active');
+    }
+
+    async function addSwotItem() {
+      const category = document.getElementById('new-category').value;
+      const content = document.getElementById('new-content').value.trim();
+      if (!content) return;
+      if (allItems.length >= 999) return showToast('Maximum limit of 999 items reached', 'error');
+
+      const btn = document.querySelector('button[onclick="addSwotItem()"]');
+      btn.disabled = true;
+      btn.textContent = 'Adding...';
+
+      const result = await window.dataSdk.create({
+        type: 'swot',
+        category,
+        content,
+        archetype: '',
+        element_role: '',
+        leverage_point: '',
+        created_at: new Date().toISOString()
+      });
+
+      btn.disabled = false;
+      btn.textContent = '+ Add Item';
+
+      if (result.isOk) {
+        document.getElementById('new-content').value = '';
+        showToast('Item added successfully', 'success');
+      } else {
+        showToast('Failed to add item', 'error');
+      }
+    }
+
+    async function deleteItem(id) {
+      const item = allItems.find(i => i.__backendId === id);
+      if (!item) return;
+      const result = await window.dataSdk.delete(item);
+      if (result.isOk) showToast('Item deleted', 'success');
+      else showToast('Failed to delete item', 'error');
+    }
+
+    function renderSwotLists() {
+      const categories = ['strength', 'weakness', 'opportunity', 'threat'];
+      categories.forEach(cat => {
+        const list = document.getElementById(`${cat}-list`);
+        const items = allItems.filter(i => i.category === cat);
+        if (items.length === 0) {
+          list.innerHTML = `<p class="text-slate-500 text-sm italic">No ${cat}s added yet</p>`;
+        } else {
+          list.innerHTML = items.map(item => `
+            <div class="swot-card bg-slate-800/60 border border-slate-700 rounded-lg p-3 group" data-id="${item.__backendId}">
+              <div class="flex justify-between items-start gap-2">
+                <p class="text-sm flex-1">${escapeHtml(item.content)}</p>
+                <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onclick="openMappingModal('${item.__backendId}')" class="text-indigo-400 hover:text-indigo-300 p-1" title="Map to archetype">🔗</button>
+                  <button onclick="deleteItem('${item.__backendId}')" class="text-rose-400 hover:text-rose-300 p-1" title="Delete">✕</button>
+                </div>
+              </div>
+              ${item.archetype ? `<span class="inline-block mt-2 text-xs bg-indigo-900/50 text-indigo-300 px-2 py-0.5 rounded">${archetypes[item.archetype]?.icon || '🔄'} ${archetypes[item.archetype]?.name || item.archetype} → ${item.element_role || 'Mapped'}</span>` : ''}
+            </div>
+          `).join('');
+        }
+      });
+    }
+
+    function updateCounts() {
+      const counts = { strength: 0, weakness: 0, opportunity: 0, threat: 0 };
+      allItems.forEach(item => {
+        if (counts.hasOwnProperty(item.category)) counts[item.category]++;
+      });
+      Object.entries(counts).forEach(([cat, count]) => {
+        const el = document.getElementById(`${cat}-count`);
+        if (el) el.textContent = count;
+      });
+      document.getElementById('item-count').textContent = allItems.length;
+    }
+
+    function renderArchetypeButtons() {
+      const container = document.getElementById('archetype-buttons');
+      container.innerHTML = Object.entries(archetypes).map(([id, arch]) => `
+        <button onclick="selectArchetype('${id}')" class="archetype-node w-full text-left p-3 rounded-lg bg-slate-800/60 border border-slate-700 hover:border-indigo-500">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">${arch.icon}</span>
+            <div>
+              <p class="font-medium text-sm">${arch.name}</p>
+              <p class="text-xs text-slate-400">${arch.description.substring(0, 40)}...</p>
+            </div>
+          </div>
+        </button>
+      `).join('');
+    }
+
+    function selectArchetype(archetypeId) {
+      selectedArchetype = archetypeId;
+      document.querySelectorAll('#archetype-buttons button').forEach(btn => {
+        btn.classList.remove('border-indigo-500', 'bg-indigo-950/30');
+        btn.classList.add('border-slate-700');
+      });
+      event.currentTarget.classList.add('border-indigo-500', 'bg-indigo-950/30');
+      event.currentTarget.classList.remove('border-slate-700');
+
+      const arch = archetypes[archetypeId];
+      const mappedItems = allItems.filter(i => i.archetype === archetypeId);
+
+      document.getElementById('archetype-detail').innerHTML = `
+        <div class="fade-in">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-3xl">${arch.icon}</span>
+            <h3 class="text-xl font-semibold text-indigo-300">${arch.name}</h3>
+          </div>
+          <p class="text-slate-300 text-sm mb-6">${arch.description}</p>
+
+          <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-4 mb-6">
+            <h4 class="text-sm font-medium text-slate-400 mb-3">System Structure</h4>
+            <div class="grid grid-cols-2 gap-3">
+              ${arch.elements.map(el => {
+                const mapped = mappedItems.find(i => i.element_role === el.id);
+                return `
+                  <div class="bg-slate-900/60 border ${mapped ? 'border-indigo-500' : 'border-slate-600'} rounded-lg p-3">
+                    <p class="text-xs text-indigo-400 font-medium mb-1">${el.label}</p>
+                    <p class="text-xs text-slate-500">${el.desc}</p>
+                    ${mapped ? `<p class="text-xs text-emerald-400 mt-1">${escapeHtml(mapped.content)}</p>` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <div class="bg-gradient-to-br from-purple-950/30 to-slate-900/60 border border-purple-800/40 rounded-xl p-4 mb-6">
+            <h4 class="text-sm font-medium text-purple-300 mb-3">🎯 Leverage Points</h4>
+            <ul class="space-y-2">
+              ${arch.leveragePoints.map(lp => `<li class="flex items-start gap-2 text-sm text-slate-300"><span class="text-purple-400 mt-0.5">→</span> ${lp}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-4">
+            <h4 class="text-sm font-medium text-slate-400 mb-2">📖 Pattern Narrative</h4>
+            <p class="text-sm text-slate-300 italic">${arch.narrative}</p>
+          </div>
+
+          <div class="mt-6">
+            <h4 class="text-sm font-medium text-slate-400 mb-3">Mapped SWOT Items (${mappedItems.length})</h4>
+            ${mappedItems.length > 0 ? `
+              <div class="space-y-2">
+                ${mappedItems.map(item => `
+                  <div class="bg-slate-800/60 border border-slate-700 rounded-lg p-3 text-sm">
+                    <span class="text-xs text-slate-400 uppercase">${item.category}</span>
+                    <p class="text-slate-200">${escapeHtml(item.content)}</p>
+                    <p class="text-xs text-purple-300 mt-1">Role: ${arch.elements.find(e => e.id === item.element_role)?.label || '—'}</p>
+                    ${item.leverage_point ? `<p class="text-xs text-emerald-400 mt-1">Leverage: ${escapeHtml(item.leverage_point)}</p>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            ` : `<p class="text-slate-500 text-sm italic">No items mapped to this archetype yet.</p>`}
+          </div>
+        </div>
+      `;
+    }
+
+    function openMappingModal(itemId) {
+      mappingItemId = itemId;
+      const item = allItems.find(i => i.__backendId === itemId);
+      if (!item) return;
+
+      document.getElementById('modal-item-content').textContent = item.content;
+      const archetypeSelect = document.getElementById('modal-archetype');
+      const roleSelect = document.getElementById('modal-element-role');
+
+      archetypeSelect.innerHTML = '<option value="">-- Choose Archetype --</option>' +
+        Object.entries(archetypes).map(([id, arch]) => `<option value="${id}">${arch.icon} ${arch.name}</option>`).join('');
+
+      archetypeSelect.value = item.archetype || '';
+      populateRoleSelect(archetypeSelect.value, item.element_role);
+      document.getElementById('modal-leverage-point').value = item.leverage_point || '';
+
+      document.getElementById('mapping-modal').classList.remove('hidden');
+    }
+
+    function populateRoleSelect(archetypeId, selectedRole = '') {
+      const roleSelect = document.getElementById('modal-element-role');
+      if (!archetypeId) {
+        roleSelect.innerHTML = '<option value="">-- Select Archetype First --</option>';
+        return;
+      }
+      const arch = archetypes[archetypeId];
+      roleSelect.innerHTML = arch.elements.map(el => 
+        `<option value="${el.id}" ${el.id === selectedRole ? 'selected' : ''}>${el.label}</option>`
+      ).join('');
+    }
+
+    document.getElementById('modal-archetype').addEventListener('change', function() {
+      populateRoleSelect(this.value);
+    });
+
+    function closeMappingModal() {
+      mappingItemId = null;
+      document.getElementById('mapping-modal').classList.add('hidden');
+    }
+
+    async function saveMappingAndClose() {
+      if (!mappingItemId) return;
+      const item = allItems.find(i => i.__backendId === mappingItemId);
+      if (!item) return;
+
+      const archetype = document.getElementById('modal-archetype').value;
+      const elementRole = document.getElementById('modal-element-role').value;
+      const leveragePoint = document.getElementById('modal-leverage-point').value.trim();
+
+      const updatedItem = {
+        ...item,
+        archetype,
+        element_role: elementRole,
+        leverage_point: leveragePoint
+      };
+
+      const result = await window.dataSdk.update(updatedItem);
+      if (result.isOk) {
+        showToast('Mapping saved', 'success');
+        closeMappingModal();
+      } else {
+        showToast('Failed to save mapping', 'error');
+      }
+    }
+
+    function renderLeveragePoints() {
+      const list = document.getElementById('leverage-points-list');
+      const mappedItems = allItems.filter(i => i.archetype && i.leverage_point);
+      if (mappedItems.length === 0) {
+        list.innerHTML = '<p class="text-slate-500 text-sm italic">Map SWOT items to archetypes to identify leverage points.</p>';
+        return;
+      }
+      list.innerHTML = mappedItems.map(item => `
+        <div class="bg-slate-800/60 border border-slate-700 rounded-lg p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <span>${archetypes[item.archetype]?.icon || '🔄'}</span>
+            <span class="text-xs text-indigo-400">${archetypes[item.archetype]?.name || item.archetype} → ${archetypes[item.archetype]?.elements.find(e => e.id === item.element_role)?.label || '—'}</span>
+          </div>
+          <p class="text-sm text-slate-300">${escapeHtml(item.content)}</p>
+          <p class="text-xs text-purple-300 mt-2">→ ${escapeHtml(item.leverage_point)}</p>
+        </div>
+      `).join('');
+    }
+
+    async function generateStrategicOptions() {
+      const list = document.getElementById('strategic-options-list');
+      const narrative = document.getElementById('strategic-narrative');
+      list.innerHTML = '<p class="text-slate-400 text-sm">Generating strategic options...</p>';
+
+      const strengths = allItems.filter(i => i.category === 'strength');
+      const weaknesses = allItems.filter(i => i.category === 'weakness');
+      const opportunities = allItems.filter(i => i.category === 'opportunity');
+      const threats = allItems.filter(i => i.category === 'threat');
+      const mappedItems = allItems.filter(i => i.archetype && i.leverage_point);
+
+      await new Promise(r => setTimeout(r, 500));
+
+      const strategies = [];
+
+      // SO Strategies
+      if (strengths.length && opportunities.length) {
+        strategies.push({
+          type: 'SO Strategy',
+          label: 'Growth/Offensive',
+          color: 'emerald',
+          description: `Leverage key strengths (${strengths.map(s => s.content).join(', ')}) to capitalize on emerging opportunities (${opportunities.map(o => o.content).join(', ')}).`
+        });
+      }
+      // WO Strategies
+      if (weaknesses.length && opportunities.length) {
+        strategies.push({
+          type: 'WO Strategy',
+          label: 'Development',
+          color: 'amber',
+          description: `Address weaknesses (${weaknesses.map(w => w.content).join(', ')}) by pursuing opportunities (${opportunities.map(o => o.content).join(', ')}) to overcome limitations.`
+        });
+      }
+      // ST Strategies
+      if (strengths.length && threats.length) {
+        strategies.push({
+          type: 'ST Strategy',
+          label: 'Defensive',
+          color: 'sky',
+          description: `Use strengths (${strengths.map(s => s.content).join(', ')}) to mitigate or counter external threats (${threats.map(t => t.content).join(', ')}).`
+        });
+      }
+      // WT Strategies
+      if (weaknesses.length && threats.length) {
+        strategies.push({
+          type: 'WT Strategy',
+          label: 'Survival/Exit',
+          color: 'rose',
+          description: `Minimize weaknesses (${weaknesses.map(w => w.content).join(', ')}) while avoiding threats (${threats.map(t => t.content).join(', ')}) through strategic repositioning.`
+        });
+      }
+
+      // Archetype-based interventions
+      mappedItems.forEach(item => {
+        strategies.push({
+          type: 'Systems Intervention',
+          label: archetypes[item.archetype].name,
+          color: 'purple',
+          description: `Apply leverage point: "${item.leverage_point}" linked to "${item.content}".`
+        });
+      });
+
+      if (strategies.length === 0) {
+        list.innerHTML = '<p class="text-slate-500 text-sm italic">Add more SWOT items and map them to archetypes to generate strategic options.</p>';
+        return;
+      }
+
+      list.innerHTML = strategies.map(s => `
+        <div class="bg-${s.color}-950/30 border border-${s.color}-800/40 rounded-lg p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-medium text-${s.color}-400 bg-${s.color}-900/50 px-2 py-0.5 rounded">${s.type}</span>
+            <span class="text-xs text-slate-400">${s.label}</span>
+          </div>
+          <p class="text-sm text-slate-300">${s.description}</p>
+        </div>
+      `).join('');
+
+      // Generate narrative
+      const usedArchetypes = [...new Set(mappedItems.map(i => i.archetype))];
+      narrative.innerHTML = `
+        <div class="space-y-4 text-sm text-slate-300">
+          <p><strong class="text-indigo-300">Current Position:</strong> Your analysis identified ${strengths.length} strengths, ${weaknesses.length} weaknesses, ${opportunities.length} opportunities, and ${threats.length} threats.</p>
+          ${usedArchetypes.length > 0 ? `
+            <p><strong class="text-purple-300">Systems Dynamics:</strong> The analysis reveals ${usedArchetypes.length} system archetype(s) at play: ${usedArchetypes.map(a => `<span class="text-indigo-400">${archetypes[a]?.name || a}</span>`).join(', ')}.</p>
+            <p><strong class="text-purple-300">Key Leverage Points:</strong></p>
+            <ul class="list-disc list-inside space-y-1 text-slate-400">
+              ${mappedItems.map(i => `<li>${escapeHtml(i.leverage_point)} (<em>${i.content}</em>)</li>`).join('')}
+            </ul>
+          ` : ''}
+          <p><strong class="text-emerald-300">Strategic Direction:</strong> Based on the analysis, ${strategies.length} strategic options have been identified.</p>
+          <p><strong class="text-amber-300">Recommended Actions:</strong></p>
+          <ol class="list-decimal list-inside space-y-1 text-slate-400">
+            ${strategies.slice(0, 3).map(s => `<li>${s.description}</li>`).join('')}
+          </ol>
+        </div>
+      `;
+    }
+
+    function exportAnalysis() {
+      const exportData = {
+        metadata: {
+          title: document.getElementById('main-title').textContent,
+          org: document.getElementById('org-name').textContent,
+          exportedAt: new Date().toISOString()
+        },
+        swot: allItems,
+        narrative: document.getElementById('strategic-narrative').innerText
+      };
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `systems-swot-analysis-${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Analysis exported!', 'success');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    }
+
+    function showToast(message, type) {
+      const existing = document.querySelector('.toast-message');
+      if (existing) existing.remove();
+      const toast = document.createElement('div');
+      toast.className = `toast-message fixed bottom-4 right-4 px-4 py-2 rounded-lg text-sm font-medium z-50 fade-in ${
+        type === 'success' ? 'bg-emerald-600' : 'bg-rose-600'
+      }`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
