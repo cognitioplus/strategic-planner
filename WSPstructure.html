@@ -1,266 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>WSP Secretariat Organizational Chart</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<title>WSP Organizational Chart – SWT Overlay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/feather-icons"></script>
 
-  <!-- Icons -->
-  <script src="https://unpkg.com/feather-icons"></script>
+<style>
+  body {
+    margin: 0;
+    background: #f8fafc;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
 
-  <style>
-    body {
-      margin: 0;
-      background: #f8fafc;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      color: #0f172a;
-    }
+  .container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 40px 16px 80px;
+    position: relative;
+  }
 
-    .wsp-container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 40px 16px 80px;
-    }
+  /* ---------- BASE CHART (UNCHANGED) ---------- */
+  .leader {
+    background: #1e1bb8;
+    color: white;
+    border-radius: 16px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 720px;
+    margin: 0 auto 26px;
+    position: relative;
+  }
 
-    /* ---------- HEADER ---------- */
-    .wsp-title {
-      text-align: center;
-      font-weight: 800;
-      font-size: clamp(1.3rem, 3vw, 2rem);
-      margin-bottom: 30px;
-    }
+  .photo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 4px solid #facc15;
+    background: white;
+  }
 
-    /* ---------- COMMON ---------- */
-    .card {
-      border-radius: 16px;
-      padding: 18px 20px;
-      position: relative;
-      transition: transform .3s ease, box-shadow .3s ease;
-    }
+  .connector {
+    width: 2px;
+    height: 30px;
+    background: #0f172a;
+    margin: 0 auto;
+  }
 
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 18px 40px rgba(0,0,0,.12);
-    }
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 40px;
+    margin-top: 40px;
+  }
 
-    .leader-card {
-      background: #1e1bb8;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      max-width: 720px;
-      margin: 0 auto 26px;
-    }
+  @media(max-width:768px){
+    .groups { grid-template-columns: 1fr; }
+  }
 
-    .leader-photo {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      border: 4px solid #facc15;
-      background: #fff;
-      flex-shrink: 0;
-    }
+  .group {
+    border-radius: 18px;
+    padding: 18px;
+    text-align: center;
+    font-weight: 800;
+    position: relative;
+  }
 
-    .leader-text {
-      font-weight: 700;
-      line-height: 1.3;
-    }
+  .admin { background: #e5c84c; }
+  .tech { background: #fff7b2; }
 
-    .leader-subtext {
-      font-size: 0.85rem;
-      opacity: 0.9;
-      margin-top: 4px;
-    }
+  .sub {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 14px;
+    background: #fde047;
+    font-weight: 700;
+  }
 
-    .star-flag {
-      position: absolute;
-      right: -10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: #fff;
-      border-radius: 8px;
-      padding: 6px;
-      border: 2px solid #0f172a;
-    }
+  .sub-light {
+    background: #f1f5f9;
+    font-weight: 600;
+    font-size: .9rem;
+  }
 
-    /* ---------- CONNECTORS ---------- */
-    .connector {
-      width: 2px;
-      height: 32px;
-      background: #0f172a;
-      margin: 0 auto;
-    }
+  /* ---------- SWT OVERLAYS ---------- */
+  .swt-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: .8rem;
+    color: white;
+    cursor: pointer;
+  }
 
-    .branch {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 40px;
-      margin-top: 40px;
-    }
+  .strength { background: #16a34a; }
+  .weakness { background: #f59e0b; }
+  .threat { background: #dc2626; }
 
-    @media (max-width: 768px) {
-      .branch {
-        grid-template-columns: 1fr;
-      }
-    }
+  .tooltip {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: #0f172a;
+    color: white;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: .75rem;
+    width: 260px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: all .25s ease;
+    z-index: 50;
+  }
 
-    /* ---------- GROUPS ---------- */
-    .group-box {
-      border-radius: 18px;
-      padding: 20px;
-      text-align: center;
-      font-weight: 800;
-      font-size: 1rem;
-    }
+  .swt-badge:hover .tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
 
-    .admin-group {
-      background: #e5c84c;
-    }
+  /* ---------- SWT CONTROL PANEL ---------- */
+  .panel {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: white;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.15);
+    z-index: 100;
+  }
 
-    .tech-group {
-      background: #fff7b2;
-      position: relative;
-    }
+  .panel button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    width: 100%;
+    border: none;
+    padding: 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+  }
 
-    .warning {
-      position: absolute;
-      right: -10px;
-      top: -10px;
-      background: #fff;
-      border-radius: 10px;
-      padding: 6px;
-      border: 2px solid #dc2626;
-      color: #dc2626;
-    }
-
-    /* ---------- SUB ROLES ---------- */
-    .sub-box {
-      margin-top: 18px;
-      border-radius: 14px;
-      padding: 14px;
-      font-weight: 700;
-    }
-
-    .yellow {
-      background: #fde047;
-    }
-
-    .light {
-      background: #f1f5f9;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    /* ---------- FOOT ---------- */
-    .note {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 0.75rem;
-      color: #475569;
-    }
-  </style>
+  .btn-s { background: #dcfce7; }
+  .btn-w { background: #fef3c7; }
+  .btn-t { background: #fee2e2; }
+</style>
 </head>
 
 <body>
 
-<div class="wsp-container">
-
-  <div class="wsp-title">
-    WSP Secretariat Strategically Nested<br/>
-    Within TESDA Operations Cluster
-  </div>
+<div class="container">
 
   <!-- DDG -->
-  <div class="card leader-card" id="ddg-operations">
-    <img class="leader-photo" alt="DDG"/>
-    <div>
-      <div class="leader-text">
-        Reporting to the Office of the Deputy Director General for Operations
+  <div class="leader">
+    <div class="photo"></div>
+    Reporting to the Office of the Deputy Director General for Operations
+
+    <div class="swt-badge strength">
+      S
+      <div class="tooltip">
+        <strong>Direct Leadership Support</strong><br/>
+        Consistent financial and administrative backing from TESDA leadership and
+        external TESDA sub-organizations during major WorldSkills events.
       </div>
     </div>
-    <div class="star-flag"><i data-feather="star"></i></div>
   </div>
 
   <div class="connector"></div>
 
   <!-- ROMO -->
-  <div class="card leader-card" id="romo-office">
-    <img class="leader-photo" alt="ROMO"/>
-    <div>
-      <div class="leader-text">
-        Under the ROMO Executive Director’s Office
-      </div>
-      <div class="leader-subtext">
-        Functional Management is facilitated through the Regional Operations Management Officer
+  <div class="leader">
+    <div class="photo"></div>
+    Under the ROMO Executive Director’s Office
+
+    <div class="swt-badge strength">
+      S
+      <div class="tooltip">
+        Functional agility enabled through ROMO coordination,
+        accelerating approvals and cross-unit mobilization.
       </div>
     </div>
-    <div class="star-flag"><i data-feather="star"></i></div>
   </div>
 
   <div class="connector"></div>
 
-  <!-- WSP Head -->
-  <div class="card leader-card" id="wsp-head">
-    <img class="leader-photo" alt="WSP Head"/>
-    <div>
-      <div class="leader-text">
-        WorldSkills Philippines, Head Chief, TESDO
-      </div>
-      <div class="leader-subtext">
-        Headed by Chief Specialist from TESDO
+  <!-- WSP HEAD -->
+  <div class="leader">
+    <div class="photo"></div>
+    WorldSkills Philippines, Head Chief, TESDO
+
+    <div class="swt-badge weakness">
+      W
+      <div class="tooltip">
+        <strong>Structural Ambiguity</strong><br/>
+        Reliance on ad-hoc and shifting task forces,
+        with no permanent national-regional role anchoring.
       </div>
     </div>
-    <div class="star-flag"><i data-feather="star"></i></div>
   </div>
 
   <!-- GROUPS -->
-  <div class="branch">
+  <div class="groups">
 
     <!-- ADMIN -->
-    <div>
-      <div class="group-box admin-group">
-        ADMIN GROUP
+    <div class="group admin">
+      ADMIN GROUP
+
+      <div class="swt-badge weakness">
+        W
+        <div class="tooltip">
+          <strong>Conflict of Priority</strong><br/>
+          WSP tasks are often treated as additional workload by
+          organic personnel balancing home-unit KPIs.
+        </div>
       </div>
-      <div class="sub-box yellow">
-        Admin Support Staff
-      </div>
-      <div class="sub-box light">
-        Writers / Researchers
-      </div>
+
+      <div class="sub">Admin Support Staff</div>
+      <div class="sub sub-light">Writers / Researchers</div>
     </div>
 
     <!-- TECH -->
-    <div>
-      <div class="group-box tech-group">
-        TECHNICAL GROUP
-        <div class="warning">
-          <i data-feather="alert-triangle"></i>
+    <div class="group tech">
+      TECHNICAL GROUP
+
+      <div class="swt-badge threat">
+        T
+        <div class="tooltip">
+          <strong>Institutional Memory Loss</strong><br/>
+          Personnel rotation and hierarchy changes disrupt
+          long-term technical continuity and planning.
         </div>
       </div>
-      <div class="sub-box yellow">
-        Senior Technical Specialists
-      </div>
-      <div class="sub-box light">
+
+      <div class="sub">Senior Technical Specialists</div>
+
+      <div class="sub sub-light">
         Technical Support<br/>
-        [Data Analytics, IT Programming,<br/>
-        Partnership Focal, and Project Coordination]
+        (Data Analytics, IT Programming,<br/>
+        Partnership Focal, Project Coordination)
+
+        <div class="swt-badge weakness" style="top:auto; bottom:-10px;">
+          W
+          <div class="tooltip">
+            <strong>Skill Gaps</strong><br/>
+            Heavy dependence on untrained JO personnel
+            for critical mobilization and systems tasks.
+          </div>
+        </div>
       </div>
     </div>
 
-  </div>
-
-  <div class="note">
-    Organizational structure retained exactly as approved • WorldSkills Philippines Secretariat
   </div>
 
 </div>
 
+<!-- SWT TOGGLE PANEL -->
+<div class="panel">
+  <button class="btn-s" onclick="toggle('strength')">🟢 Strengths</button>
+  <button class="btn-w" onclick="toggle('weakness')">🟠 Weaknesses</button>
+  <button class="btn-t" onclick="toggle('threat')">🔴 Threats</button>
+</div>
+
 <script>
   feather.replace();
+
+  function toggle(type){
+    document.querySelectorAll('.' + type).forEach(el=>{
+      el.style.display = el.style.display === 'none' ? 'flex' : 'none';
+    });
+  }
 </script>
 
 </body>
