@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>WSP Secretariat Organizational Chart</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WSP Governance Dynamics & Scenario Simulator</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -15,186 +12,255 @@
   <script src="https://unpkg.com/feather-icons"></script>
 
   <style>
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
-
-    /* Core Animations */
-    @keyframes floatUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    body {
+      margin: 0;
+      background: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #0f172a;
     }
 
-    @keyframes pulseRisk {
-      0%,100% { opacity: 1 }
-      50% { opacity: .55 }
+    .wsp-container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 40px 16px 80px;
     }
 
-    .animate-float { animation: floatUp .6s ease forwards; }
-    .risk-pulse { animation: pulseRisk 2s infinite; }
-
-    /* Simulation Bars */
-    .memory-bar {
-      transition: width .8s ease, background .5s ease;
+    /* ---------- HEADER ---------- */
+    .wsp-title {
+      text-align: center;
+      font-weight: 800;
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      margin-bottom: 30px;
     }
 
-    .scenario-card:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(0,0,0,.35);
+    /* ---------- COMMON ---------- */
+    .card {
+      border-radius: 16px;
+      padding: 18px 20px;
+      position: relative;
+      transition: transform .3s ease, box-shadow .3s ease;
     }
 
-    .scenario-card {
-      transition: all .4s cubic-bezier(.4,0,.2,1);
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(0,0,0,.12);
     }
 
-    .overlap-pattern {
-      background: repeating-linear-gradient(
-        45deg,
-        rgba(245,158,11,.12),
-        rgba(245,158,11,.12) 10px,
-        transparent 10px,
-        transparent 20px
-      );
+    .leader-card {
+      background: #1e1bb8;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      max-width: 720px;
+      margin: 0 auto 26px;
+    }
+
+    .leader-photo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 4px solid #facc15;
+      background: #fff;
+      flex-shrink: 0;
+    }
+
+    .leader-text {
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .leader-subtext {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .star-flag {
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #fff;
+      border-radius: 8px;
+      padding: 6px;
+      border: 2px solid #0f172a;
+    }
+
+    /* ---------- CONNECTORS ---------- */
+    .connector {
+      width: 2px;
+      height: 32px;
+      background: #0f172a;
+      margin: 0 auto;
+    }
+
+    .branch {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .branch {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ---------- GROUPS ---------- */
+    .group-box {
+      border-radius: 18px;
+      padding: 20px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .admin-group {
+      background: #e5c84c;
+    }
+
+    .tech-group {
+      background: #fff7b2;
+      position: relative;
+    }
+
+    .warning {
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 6px;
+      border: 2px solid #dc2626;
+      color: #dc2626;
+    }
+
+    /* ---------- SUB ROLES ---------- */
+    .sub-box {
+      margin-top: 18px;
+      border-radius: 14px;
+      padding: 14px;
+      font-weight: 700;
+    }
+
+    .yellow {
+      background: #fde047;
+    }
+
+    .light {
+      background: #f1f5f9;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* ---------- FOOT ---------- */
+    .note {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #475569;
     }
   </style>
 </head>
 
-<body class="h-full bg-slate-900 text-slate-100">
+<body>
 
-<!-- ================= HEADER ================= -->
-<header id="wsp-header" class="text-center py-10 px-4 animate-float">
-  <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
-    WSP Governance Dynamics Simulator
-  </h1>
-  <p class="mt-3 text-slate-400 max-w-3xl mx-auto">
-    Visualizing <strong>Fixes That Fail</strong>, <strong>Institutional Agility</strong>, and the <strong>Generalist Trap</strong>
-    within the WorldSkills Philippines Secretariat.
-  </p>
-</header>
+<div class="wsp-container">
 
-<!-- ================= SCENARIO TOGGLER ================= -->
-<section class="max-w-6xl mx-auto px-4 mb-10 animate-float">
-  <div class="bg-slate-800/60 backdrop-blur rounded-3xl p-6 border border-slate-700">
-    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-      <i data-feather="repeat"></i> Scenario Simulation Control
-    </h2>
-
-    <div class="flex flex-wrap gap-4">
-      <button id="btnRapid" class="scenario-btn bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-xl font-semibold transition">
-        Rapid Mobilization (Short-Term Fix)
-      </button>
-
-      <button id="btnInstitutional" class="scenario-btn bg-indigo-600 hover:bg-indigo-700 px-5 py-3 rounded-xl font-semibold transition">
-        Institutionalized Agility (Long-Term)
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- ================= SCENARIO VISUALIZATION ================= -->
-<section class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-8 mb-14">
-
-  <!-- FIXES THAT FAIL -->
-  <div id="fixesCard" class="scenario-card bg-gradient-to-br from-emerald-900/40 to-emerald-900/10 rounded-3xl p-6 border border-emerald-500/30 animate-float">
-    <h3 class="text-xl font-bold mb-2">Fixes That Fail Loop</h3>
-    <p class="text-sm text-slate-400 mb-4">
-      Rapid deployment of ad-hoc personnel resolves immediate competition needs
-      but generates hidden long-term risks.
-    </p>
-
-    <ul class="space-y-3 text-sm">
-      <li class="flex gap-2"><i data-feather="check-circle" class="text-emerald-400"></i> Event delivery success</li>
-      <li class="flex gap-2"><i data-feather="alert-triangle" class="text-amber-400"></i> Structural ambiguity</li>
-      <li class="flex gap-2"><i data-feather="x-circle" class="text-red-400"></i> Institutional fatigue</li>
-    </ul>
+  <div class="wsp-title">
+    WSP Secretariat Strategically Nested<br/>
+    Within TESDA Operations Cluster
   </div>
 
-  <!-- MEMORY DECAY -->
-  <div id="memoryCard" class="scenario-card bg-gradient-to-br from-red-900/40 to-red-900/10 rounded-3xl p-6 border border-red-500/30 animate-float">
-    <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
-      <i data-feather="database"></i> Institutional Memory
-    </h3>
-
-    <p class="text-sm text-slate-400 mb-4">
-      Measures how much expertise is retained across competition cycles.
-    </p>
-
-    <div class="bg-slate-800 rounded-xl overflow-hidden">
-      <div id="memoryBar"
-           class="memory-bar bg-red-500 h-6 w-[30%] flex items-center justify-center text-xs font-bold">
-        30%
+  <!-- DDG -->
+  <div class="card leader-card" id="ddg-operations">
+    <img class="leader-photo" alt="DDG"/>
+    <div>
+      <div class="leader-text">
+        Reporting to the Office of the Deputy Director General for Operations
       </div>
     </div>
-
-    <p id="memoryLabel" class="mt-3 text-xs text-red-400 risk-pulse">
-      ⚠ High knowledge loss risk
-    </p>
+    <div class="star-flag"><i data-feather="star"></i></div>
   </div>
 
-</section>
+  <div class="connector"></div>
 
-<!-- ================= GENERALIST TRAP ================= -->
-<section class="max-w-6xl mx-auto px-4 mb-16 animate-float">
-  <div class="relative bg-slate-800/60 rounded-3xl p-6 border-2 border-dashed border-amber-500 overlap-pattern">
-    <div class="absolute top-0 right-0 bg-amber-500/20 px-4 py-2 rounded-bl-xl border-l border-b border-amber-500/40">
-      <span class="text-amber-400 text-xs font-bold uppercase">Generalist Trap</span>
-    </div>
-
-    <h2 class="text-2xl font-bold mb-3 flex items-center gap-2">
-      <i data-feather="layers"></i> Categorical Overlap Simulator
-    </h2>
-
-    <p class="text-slate-400 max-w-3xl mb-6">
-      Ad-hoc structures blur functional boundaries. While agility increases,
-      deep domain mastery and national quality engineering capacity decline.
-    </p>
-
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-amber-900/30 rounded-xl p-4 border border-amber-500/40">
-        <h4 class="font-semibold">Admin</h4>
-        <p class="text-xs text-slate-400 mt-1">Also doing technical work</p>
+  <!-- ROMO -->
+  <div class="card leader-card" id="romo-office">
+    <img class="leader-photo" alt="ROMO"/>
+    <div>
+      <div class="leader-text">
+        Under the ROMO Executive Director’s Office
       </div>
-      <div class="bg-amber-900/30 rounded-xl p-4 border border-amber-500/40">
-        <h4 class="font-semibold">Technical</h4>
-        <p class="text-xs text-slate-400 mt-1">Also managing logistics</p>
-      </div>
-      <div class="bg-amber-900/30 rounded-xl p-4 border border-amber-500/40">
-        <h4 class="font-semibold">Support</h4>
-        <p class="text-xs text-slate-400 mt-1">Also doing analytics</p>
-      </div>
-      <div class="bg-red-900/40 rounded-xl p-4 border border-red-500/40">
-        <h4 class="font-semibold text-red-400">Result</h4>
-        <p class="text-xs text-red-300 mt-1">Jack-of-all-trades effect</p>
+      <div class="leader-subtext">
+        Functional Management is facilitated through the Regional Operations Management Officer
       </div>
     </div>
+    <div class="star-flag"><i data-feather="star"></i></div>
   </div>
-</section>
 
-<!-- ================= FOOTER ================= -->
-<footer class="text-center text-xs text-slate-500 pb-8">
-  Interactive Governance & Scenario Simulation • WorldSkills Philippines Secretariat
-</footer>
+  <div class="connector"></div>
 
-<!-- ================= SCRIPT ================= -->
+  <!-- WSP Head -->
+  <div class="card leader-card" id="wsp-head">
+    <img class="leader-photo" alt="WSP Head"/>
+    <div>
+      <div class="leader-text">
+        WorldSkills Philippines, Head Chief, TESDO
+      </div>
+      <div class="leader-subtext">
+        Headed by Chief Specialist from TESDO
+      </div>
+    </div>
+    <div class="star-flag"><i data-feather="star"></i></div>
+  </div>
+
+  <!-- GROUPS -->
+  <div class="branch">
+
+    <!-- ADMIN -->
+    <div>
+      <div class="group-box admin-group">
+        ADMIN GROUP
+      </div>
+      <div class="sub-box yellow">
+        Admin Support Staff
+      </div>
+      <div class="sub-box light">
+        Writers / Researchers
+      </div>
+    </div>
+
+    <!-- TECH -->
+    <div>
+      <div class="group-box tech-group">
+        TECHNICAL GROUP
+        <div class="warning">
+          <i data-feather="alert-triangle"></i>
+        </div>
+      </div>
+      <div class="sub-box yellow">
+        Senior Technical Specialists
+      </div>
+      <div class="sub-box light">
+        Technical Support<br/>
+        [Data Analytics, IT Programming,<br/>
+        Partnership Focal, and Project Coordination]
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    Organizational structure retained exactly as approved • WorldSkills Philippines Secretariat
+  </div>
+
+</div>
+
 <script>
   feather.replace();
-
-  const memoryBar = document.getElementById("memoryBar");
-  const memoryLabel = document.getElementById("memoryLabel");
-
-  document.getElementById("btnRapid").onclick = () => {
-    memoryBar.style.width = "30%";
-    memoryBar.textContent = "30%";
-    memoryBar.style.background = "#ef4444";
-    memoryLabel.textContent = "⚠ High knowledge loss risk";
-    memoryLabel.classList.add("risk-pulse");
-  };
-
-  document.getElementById("btnInstitutional").onclick = () => {
-    memoryBar.style.width = "85%";
-    memoryBar.textContent = "85%";
-    memoryBar.style.background = "#22c55e";
-    memoryLabel.textContent = "✓ Institutional memory stabilized";
-    memoryLabel.classList.remove("risk-pulse");
-  };
 </script>
 
 </body>
