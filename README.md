@@ -4,6 +4,8 @@ A high-performance Progressive Web Application (PWA) designed for TESDA (WorldSk
 
 🚀 Key Features
 
+Centralized Command Dashboard
+
 PAPs Management: Track Programs, Activities, and Projects with automated budget totaling.
 
 AI-Powered SWOT Analysis:
@@ -21,12 +23,6 @@ Automated KPI measure suggestions based on objective descriptions.
 Strategic Plan View: A print-ready, professional report generator for official documentation.
 
 Offline Capability: Works as a PWA with local data persistence.
-
-🛠️ Installation & Setup
-
-Clone the repository:
-
-git clone [https://github.com/your-org/strategic-plan-pwa.git](https://github.com/your-org/strategic-plan-pwa.git)
 
 
 Open the App:
