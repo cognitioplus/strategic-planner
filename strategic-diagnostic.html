@@ -6,17 +6,11 @@
   <title>Systems SWOT Strategist</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #6366f1;
-      --secondary: #a855f7;
-    }
     body {
+      font-family: 'Inter', sans-serif;
       box-sizing: border-box;
-      font-family: 'Space Grotesk', sans-serif;
     }
     .mono { font-family: 'JetBrains Mono', monospace; }
     .swot-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -305,7 +299,7 @@
       text_color: '#e2e8f0',
       primary_action: '#6366f1',
       secondary_action: '#a855f7',
-      font_family: 'Space Grotesk',
+      font_family: 'Inter',
       font_size: 16
     };
 
@@ -321,14 +315,14 @@
 
     // === CANONICAL SVG CLDs (All 8) ===
     const archetypeSVGs = {
-      'limits-growth': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-lg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-lg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Growing Action</text><circle cx="300" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Limiting Condition</text><path d="M140,100 Q200,60 260,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-lg)"/><path d="M260,100 Q200,140 140,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-lg)"/><text x="200" y="40" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R</text><text x="200" y="170" text-anchor="middle" fill="#f87171" font-size="12" font-family="Space Grotesk">B</text></svg>`,
-      'shifting-burden': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-sb" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-sb" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="60" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="65" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Symptomatic Solution</text><circle cx="100" cy="140" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="145" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Fundamental Solution</text><circle cx="300" cy="100" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Problem Symptom</text><path d="M300,65 Q180,30 135,60" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-sb)"/><path d="M135,140 Q180,170 300,135" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-sb)"/><path d="M135,60 Q180,100 135,140" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-sb)"/><text x="200" y="30" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R1</text><text x="200" y="180" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R2</text><text x="100" y="105" text-anchor="middle" fill="#f87171" font-size="12" font-family="Space Grotesk">B</text></svg>`,
-      'eroding-goals': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-eg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-eg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><rect x="60" y="40" width="100" height="40" rx="8" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="110" y="65" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Goal</text><rect x="60" y="120" width="100" height="40" rx="8" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="110" y="145" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Current Condition</text><rect x="240" y="80" width="100" height="40" rx="8" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="290" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Gap</text><path d="M160,60 Q200,60 240,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-eg)"/><path d="M240,100 Q200,140 160,140" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-eg)"/><path d="M110,120 L110,80" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-eg)"/><text x="200" y="180" text-anchor="middle" fill="#f87171" font-size="12" font-family="Space Grotesk">B</text></svg>`,
-      'escalation': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-es" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker></defs><circle cx="100" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Party A Action</text><circle cx="300" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Party B Action</text><path d="M140,100 Q200,60 260,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-es)"/><path d="M260,100 Q200,140 140,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-es)"/><text x="200" y="40" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R</text><text x="200" y="170" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R</text></svg>`,
-      'success-successful': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-ss" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-ss" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="70" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="75" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Activity A</text><circle cx="100" cy="130" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="135" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Activity B</text><circle cx="300" cy="70" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="75" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Resources to A</text><circle cx="300" cy="130" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="135" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Resources to B</text><path d="M135,70 L265,70" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ss)"/><path d="M265,130 L135,130" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ss)"/><path d="M300,105 L300,95" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-ss)"/><path d="M100,95 L100,105" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-ss)"/><text x="200" y="50" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R1</text><text x="200" y="160" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R2</text></svg>`,
-      'tragedy-commons': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-tc" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-tc" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Individual Activity</text><circle cx="300" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Resource Limit</text><path d="M140,100 Q200,60 260,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-tc)"/><path d="M260,100 Q200,140 140,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-tc)"/><text x="200" y="40" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R</text><text x="200" y="170" text-anchor="middle" fill="#f87171" font-size="12" font-family="Space Grotesk">B</text></svg>`,
-      'fixes-fail': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-ff" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-ff" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Space Grotesk">Problem</text><circle cx="200" cy="60" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="200" y="65" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Fix</text><circle cx="300" cy="100" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Unintended Consequence</text><path d="M140,100 Q170,80 185,70" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ff)"/><path d="M215,70 Q250,80 270,90" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ff)"/><path d="M270,110 Q250,120 215,130" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ff)"/><path d="M185,130 Q170,120 140,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-ff)"/><text x="200" y="30" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R</text><text x="200" y="180" text-anchor="middle" fill="#f87171" font-size="12" font-family="Space Grotesk">B</text></svg>`,
-      'growth-underinvestment': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-gu" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-gu" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="80" cy="100" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="80" y="105" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Demand</text><circle cx="180" cy="100" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="180" y="105" text-anchor="middle" fill="white" font-size="9" font-family="Space Grotesk">Capacity</text><circle cx="280" cy="60" r="30" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="280" y="65" text-anchor="middle" fill="white" font-size="8" font-family="Space Grotesk">Performance</text><circle cx="280" cy="140" r="30" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="280" y="145" text-anchor="middle" fill="white" font-size="8" font-family="Space Grotesk">Investment</text><path d="M115,100 L145,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-gu)"/><path d="M215,100 Q240,80 260,70" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-gu)"/><path d="M260,130 Q240,120 215,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-gu)"/><path d="M280,90 L280,110" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-gu)"/><text x="150" y="80" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Space Grotesk">R</text><text x="230" y="180" text-anchor="middle" fill="#f87171" font-size="12" font-family="Space Grotesk">B</text></svg>`
+      'limits-growth': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-lg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-lg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Growing Action</text><circle cx="300" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Limiting Condition</text><path d="M140,100 Q200,60 260,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-lg)"/><path d="M260,100 Q200,140 140,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-lg)"/><text x="200" y="40" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R</text><text x="200" y="170" text-anchor="middle" fill="#f87171" font-size="12" font-family="Inter">B</text></svg>`,
+      'shifting-burden': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-sb" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-sb" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="60" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="65" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Symptomatic Solution</text><circle cx="100" cy="140" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="145" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Fundamental Solution</text><circle cx="300" cy="100" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Problem Symptom</text><path d="M300,65 Q180,30 135,60" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-sb)"/><path d="M135,140 Q180,170 300,135" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-sb)"/><path d="M135,60 Q180,100 135,140" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-sb)"/><text x="200" y="30" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R1</text><text x="200" y="180" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R2</text><text x="100" y="105" text-anchor="middle" fill="#f87171" font-size="12" font-family="Inter">B</text></svg>`,
+      'eroding-goals': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-eg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-eg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><rect x="60" y="40" width="100" height="40" rx="8" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="110" y="65" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Goal</text><rect x="60" y="120" width="100" height="40" rx="8" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="110" y="145" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Current Condition</text><rect x="240" y="80" width="100" height="40" rx="8" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="290" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Gap</text><path d="M160,60 Q200,60 240,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-eg)"/><path d="M240,100 Q200,140 160,140" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-eg)"/><path d="M110,120 L110,80" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-eg)"/><text x="200" y="180" text-anchor="middle" fill="#f87171" font-size="12" font-family="Inter">B</text></svg>`,
+      'escalation': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-es" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker></defs><circle cx="100" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Party A Action</text><circle cx="300" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Party B Action</text><path d="M140,100 Q200,60 260,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-es)"/><path d="M260,100 Q200,140 140,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-es)"/><text x="200" y="40" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R</text><text x="200" y="170" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R</text></svg>`,
+      'success-successful': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-ss" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-ss" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="70" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="75" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Activity A</text><circle cx="100" cy="130" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="135" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Activity B</text><circle cx="300" cy="70" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="75" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Resources to A</text><circle cx="300" cy="130" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="135" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Resources to B</text><path d="M135,70 L265,70" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ss)"/><path d="M265,130 L135,130" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ss)"/><path d="M300,105 L300,95" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-ss)"/><path d="M100,95 L100,105" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-ss)"/><text x="200" y="50" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R1</text><text x="200" y="160" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R2</text></svg>`,
+      'tragedy-commons': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-tc" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-tc" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Individual Activity</text><circle cx="300" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Resource Limit</text><path d="M140,100 Q200,60 260,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-tc)"/><path d="M260,100 Q200,140 140,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-tc)"/><text x="200" y="40" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R</text><text x="200" y="170" text-anchor="middle" fill="#f87171" font-size="12" font-family="Inter">B</text></svg>`,
+      'fixes-fail': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-ff" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-ff" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="100" cy="100" r="40" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="100" y="105" text-anchor="middle" fill="white" font-size="10" font-family="Inter">Problem</text><circle cx="200" cy="60" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="200" y="65" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Fix</text><circle cx="300" cy="100" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="300" y="105" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Unintended Consequence</text><path d="M140,100 Q170,80 185,70" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ff)"/><path d="M215,70 Q250,80 270,90" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ff)"/><path d="M270,110 Q250,120 215,130" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-ff)"/><path d="M185,130 Q170,120 140,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-ff)"/><text x="200" y="30" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R</text><text x="200" y="180" text-anchor="middle" fill="#f87171" font-size="12" font-family="Inter">B</text></svg>`,
+      'growth-underinvestment': `<svg viewBox="0 0 400 200" class="w-full h-48"><defs><marker id="plus-gu" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="green"/></marker><marker id="minus-gu" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L6,3 z" fill="red"/></marker></defs><circle cx="80" cy="100" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="80" y="105" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Demand</text><circle cx="180" cy="100" r="35" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="180" y="105" text-anchor="middle" fill="white" font-size="9" font-family="Inter">Capacity</text><circle cx="280" cy="60" r="30" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="280" y="65" text-anchor="middle" fill="white" font-size="8" font-family="Inter">Performance</text><circle cx="280" cy="140" r="30" fill="#1e293b" stroke="#4f46e5" stroke-width="2"/><text x="280" y="145" text-anchor="middle" fill="white" font-size="8" font-family="Inter">Investment</text><path d="M115,100 L145,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-gu)"/><path d="M215,100 Q240,80 260,70" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#plus-gu)"/><path d="M260,130 Q240,120 215,100" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-gu)"/><path d="M280,90 L280,110" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#minus-gu)"/><text x="150" y="80" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Inter">R</text><text x="230" y="180" text-anchor="middle" fill="#f87171" font-size="12" font-family="Inter">B</text></svg>`
     };
 
     // Simplified BOT data templates
@@ -397,65 +391,54 @@
       { type: 'swot', category: 'threat', content: 'Untrained staff potentially compromising credibility with professional global partners.', archetype: 'limits-growth', element_role: 'slowing-action', leverage_point: 'Mandate pre-event certification for all mobilized staff' }
     ];
 
-    // === DATA HANDLER ===
-    const dataHandler = {
-      onDataChanged(data) {
-        allItems = data;
-        renderSwotLists();
-        updateCounts();
-        renderLeveragePoints();
-        renderArchetypeButtons();
+    // === MOCK SDKs for GitHub Pages ===
+    let mockData = [];
+    window.elementSdk = {
+      init: async (config) => {
+        if (config.onConfigChange) config.onConfigChange(config.defaultConfig || {});
+      },
+      setConfig: () => {}
+    };
+    window.dataSdk = {
+      init: async (handler) => {
+        if (handler?.onDataChanged) handler.onDataChanged(mockData);
+        return { isOk: true };
+      },
+      create: async (item) => {
+        item.__backendId = 'mock-' + Date.now() + Math.random().toString(36).substr(2, 9);
+        mockData.push(item);
+        return { isOk: true, item };
+      },
+      read: async () => mockData,
+      update: async (updated) => {
+        mockData = mockData.map(i => i.__backendId === updated.__backendId ? updated : i);
+        return { isOk: true };
+      },
+      delete: async (item) => {
+        mockData = mockData.filter(i => i.__backendId !== item.__backendId);
+        return { isOk: true };
       }
     };
 
     // === INIT WITH SAMPLE DATA ===
     async function initAppWithWSPData() {
-      if (window.elementSdk) {
-        window.elementSdk.init({
-          defaultConfig,
-          onConfigChange: async (config) => applyConfig(config),
-          mapToCapabilities: (config) => ({
-            recolorables: [
-              { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
-              { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
-              { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
-              { get: () => config.primary_action || defaultConfig.primary_action, set: (v) => { config.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); } },
-              { get: () => config.secondary_action || defaultConfig.secondary_action, set: (v) => { config.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); } }
-            ],
-            fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
-            fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
-          }),
-          mapToEditPanelValues: (config) => new Map([
-            ['analysis_title', config.analysis_title || defaultConfig.analysis_title],
-            ['organization_name', config.organization_name || defaultConfig.organization_name]
-          ])
-        });
-      }
-
-      if (window.dataSdk) {
-        const result = await window.dataSdk.init(dataHandler);
-        if (!result.isOk) console.error('Failed to initialize Data SDK');
-      }
-
-      applyConfig(window.elementSdk?.config || defaultConfig);
+      applyConfig(defaultConfig);
       renderArchetypeButtons();
 
-      // Load sample data only if empty
-      if (allItems.length === 0) {
-        const promises = wspSimulatedSWOT.map(item =>
-          window.dataSdk.create({
+      if (mockData.length === 0) {
+        for (const item of wspSimulatedSWOT) {
+          await window.dataSdk.create({
             ...item,
             created_at: new Date().toISOString()
-          })
-        );
-        await Promise.all(promises);
-        allItems = await window.dataSdk.read();
+          });
+        }
+        allItems = mockData;
         renderSwotLists();
         updateCounts();
         renderLeveragePoints();
       }
 
-      // Handle external navigation
+      // Handle deep links
       setTimeout(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const hash = window.location.hash.replace('#', '');
@@ -467,7 +450,7 @@
             document.getElementById('archetype-detail')?.scrollIntoView({ behavior: 'smooth' });
           }, 300);
         }
-      }, 1000);
+      }, 500);
     }
 
     function applyConfig(config) {
@@ -476,7 +459,7 @@
       document.getElementById('org-name').textContent = cfg.organization_name;
       document.body.style.backgroundColor = cfg.background_color;
       document.body.style.color = cfg.text_color;
-      document.body.style.fontFamily = `${cfg.font_family}, Space Grotesk, sans-serif`;
+      document.body.style.fontFamily = `'Inter', sans-serif`;
       document.body.style.fontSize = `${cfg.font_size}px`;
       document.documentElement.style.setProperty('--primary', cfg.primary_action);
       document.documentElement.style.setProperty('--secondary', cfg.secondary_action);
@@ -568,10 +551,12 @@
             const data = await response.json();
             if (data.choices?.[0]?.message?.content) {
               narrativeEl.innerHTML = `<div class="text-sm text-slate-300">${data.choices[0].message.content.replace(/\n/g, '<br>')}</div>`;
+            } else {
+              showToast('AI returned empty response', 'error');
             }
           } catch (e) {
             console.error('AI failed:', e);
-            showToast('AI generation failed. Using rule-based narrative.', 'error');
+            showToast('AI failed: ' + (e.message || 'Invalid API key'), 'error');
           }
         }
       }
@@ -690,16 +675,16 @@
 
       document.getElementById('archetype-detail').innerHTML = detailHTML;
 
-      // Render BOT chart
+      // Render BOT chart — ✅ FIXED SYNTAX
       if (arch.botPattern) {
         const ctx = document.getElementById(`bot-chart-${archetypeId}`).getContext('2d');
         new Chart(ctx, {
           type: 'line',
-           {
+          data: {  // ✅ ADDED "data:" KEY
             labels: arch.botPattern.x,
             datasets: [{
               label: 'System Behavior',
-               arch.botPattern.y,
+              data: arch.botPattern.y,  // ✅ ADDED "data:"
               borderColor: '#6366f1',
               backgroundColor: 'rgba(99, 102, 241, 0.1)',
               tension: 0.3,
@@ -736,8 +721,15 @@
           linkStartNode = id;
           node.style.borderColor = '#10b981';
         } else if (linkStartNode !== id) {
-          const polarity = prompt('Link polarity? Enter "+" or "–"', '+');
-          if (polarity === '+' || polarity === '–') {
+          let polarity = prompt('Link polarity? Enter "+" or "–"', '+');
+          if (polarity) {
+            polarity = polarity.trim().toLowerCase();
+            if (['+', 'plus', 'positive'].includes(polarity)) polarity = '+';
+            else if (['-', 'minus', 'negative', '–'].includes(polarity)) polarity = '–';
+            else {
+              alert('Please enter "+" or "–"');
+              return;
+            }
             cldLinks.push({ from: linkStartNode, to: id, polarity });
             drawCLDLinks();
           }
@@ -815,7 +807,8 @@
       linkStartNode = null;
     }
 
-    function exportCLD(format) {
+    // === EXPORT CLD ===
+    async function exportCLD(format) {
       if (format === 'json') {
         const data = { nodes: cldNodes, links: cldLinks };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -828,19 +821,19 @@
       } else if (format === 'png') {
         if (!window.html2canvas) {
           showToast('Loading exporter...', 'info');
-          const script = document.createElement('script');
-          script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-          script.onload = () => exportCLD('png');
-          document.head.appendChild(script);
-          return;
+          await new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+            script.onload = resolve;
+            document.head.appendChild(script);
+          });
         }
         const canvasEl = document.getElementById('cld-canvas');
-        window.html2canvas(canvasEl).then(canvas => {
-          const link = document.createElement('a');
-          link.download = `cld-diagram-${new Date().toISOString().slice(0,10)}.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        });
+        const canvas = await window.html2canvas(canvasEl);
+        const link = document.createElement('a');
+        link.download = `cld-diagram-${new Date().toISOString().slice(0,10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
       }
     }
 
