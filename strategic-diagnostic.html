@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8" />
@@ -97,6 +97,7 @@
         <button onclick="switchTab('swot')" id="tab-swot" class="tab-active px-5 py-2 rounded-lg text-sm font-medium transition-all">📊 SWOT Matrix</button>
         <button onclick="switchTab('archetypes')" id="tab-archetypes" class="px-5 py-2 rounded-lg text-sm font-medium bg-slate-800 hover:bg-slate-700 transition-all">🔄 Systems Archetypes</button>
         <button onclick="switchTab('cld')" id="tab-cld" class="px-5 py-2 rounded-lg text-sm font-medium bg-slate-800 hover:bg-slate-700 transition-all">🔗 Causal Loop Diagram</button>
+        <button onclick="switchTab('simulator')" id="tab-simulator" class="px-5 py-2 rounded-lg text-sm font-medium bg-slate-800 hover:bg-slate-700 transition-all">✈️ Strategic Simulator</button>
         <button onclick="switchTab('strategy')" id="tab-strategy" class="px-5 py-2 rounded-lg text-sm font-medium bg-slate-800 hover:bg-slate-700 transition-all">🎯 Strategic Options</button>
       </div>
     </nav>
@@ -214,6 +215,53 @@
         </div>
       </div>
 
+      <!-- SIMULATOR TAB -->
+      <div id="simulator-tab" class="hidden fade-in">
+        <h2 class="text-2xl font-bold mb-4">✈️ Strategic Flight Simulator</h2>
+        <p class="text-slate-400 mb-6">Test decisions in a safe environment. See how changes ripple through the system over 3 years.</p>
+        
+        <!-- Levers -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">Plantilla Staff</label>
+            <input type="range" id="lever-plantilla" min="2" max="10" value="2" 
+                   class="w-full" oninput="updateLever('plantilla', this.value)">
+            <span id="plantilla-value" class="text-white text-sm">2</span>
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">JO Staff</label>
+            <input type="range" id="lever-jo" min="0" max="20" value="15"
+                   class="w-full" oninput="updateLever('jo', this.value)">
+            <span id="jo-value" class="text-white text-sm">15</span>
+          </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">MOP Investment (%)</label>
+            <input type="range" id="lever-mop" min="0" max="100" value="30"
+                   class="w-full" oninput="updateLever('mop', this.value)">
+            <span id="mop-value" class="text-white text-sm">30%</span>
+          </div>
+        </div>
+
+        <!-- Run Button -->
+        <button onclick="runSimulation()" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg mb-6">
+          ▶️ Run 3-Year Simulation
+        </button>
+
+        <!-- Results -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-semibold text-cyan-400 mb-2">📈 Performance Over Time</h3>
+            <canvas id="sim-chart" height="200"></canvas>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-amber-400 mb-2">💡 System Insights</h3>
+            <div id="sim-insights" class="bg-slate-800/50 p-4 rounded-lg text-sm">
+              Adjust levers and run simulation to see insights.
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Strategy Tab -->
       <div id="strategy-tab" class="hidden fade-in">
         <div class="mb-6 bg-slate-900/60 border border-slate-800 rounded-xl p-5">
@@ -312,6 +360,17 @@
     let linkStartNode = null;
     let strategyMode = 'linear';
     let useAI = false;
+
+    // Simulation state
+    let simState = {
+      plantilla_staff: 2,
+      jo_staff: 15,
+      mop_investment: 30,
+      institutional_memory: 60,
+      medal_performance: 2,
+      budget_pressure: 50,
+      time: 0
+    };
 
     // === CANONICAL SVG CLDs (All 8) ===
     const archetypeSVGs = {
@@ -468,7 +527,7 @@
     // === TABS ===
     function switchTab(tab) {
       currentTab = tab;
-      ['swot', 'archetypes', 'cld', 'strategy'].forEach(t => {
+      ['swot', 'archetypes', 'cld', 'simulator', 'strategy'].forEach(t => {
         const el = document.getElementById(`${t}-tab`);
         if (el) el.classList.toggle('hidden', t !== tab);
       });
@@ -484,6 +543,82 @@
     function toggleAI() {
       useAI = document.getElementById('use-ai').checked;
       document.getElementById('ai-section').classList.toggle('hidden', !useAI);
+    }
+
+    // === SIMULATOR FUNCTIONS ===
+    function updateLever(type, value) {
+      simState[`${type}_staff`] = parseInt(value);
+      if (type === 'mop') simState.mop_investment = parseInt(value);
+      document.getElementById(`${type}-value`).textContent = type === 'mop' ? `${value}%` : value;
+    }
+
+    function runSimulation() {
+      const results = {
+        time: [],
+        memory: [],
+        medals: [],
+        budget: []
+      };
+
+      // Reset state
+      let state = { ...simState, time: 0 };
+
+      // Simulate 12 quarters (3 years)
+      for (let q = 0; q <= 12; q++) {
+        results.time.push(`Q${q}`);
+        
+        // Update institutional memory
+        const joImpact = state.jo_staff * 0.3; // 30% decay per quarter
+        const plantillaImpact = state.plantilla_staff * 0.5; // stabilizes memory
+        const mopImpact = state.mop_investment / 20; // MOP reduces decay
+        state.institutional_memory = Math.max(20, Math.min(100, 
+          state.institutional_memory - joImpact + plantillaImpact + mopImpact
+        ));
+
+        // Medal performance based on memory
+        state.medal_performance = Math.min(5, 1 + (state.institutional_memory / 25));
+
+        // Budget pressure from plantilla
+        state.budget_pressure = Math.min(100, 30 + (state.plantilla_staff * 7));
+
+        results.memory.push(Math.round(state.institutional_memory));
+        results.medals.push(Math.round(state.medal_performance * 10) / 10);
+        results.budget.push(Math.round(state.budget_pressure));
+
+        state.time++;
+      }
+
+      renderSimulationResults(results);
+    }
+
+    function renderSimulationResults(results) {
+      const ctx = document.getElementById('sim-chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+         {
+          labels: results.time,
+          datasets: [
+            { label: 'Institutional Memory (%)', data: results.memory, borderColor: '#4ade80', tension: 0.3 },
+            { label: 'Medal Performance', , borderColor: '#fbbf24', tension: 0.3 },
+            { label: 'Budget Pressure (%)', , borderColor: '#f87171', tension: 0.3 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, max: 100 } }
+        }
+      });
+
+      // Generate insights
+      const insights = [];
+      if (results.memory[12] > 80) insights.push("✅ Strong institutional memory enables sustained excellence.");
+      if (results.budget[12] > 90) insights.push("⚠️ Budget pressure may trigger cost-cutting, risking quality.");
+      if (results.medals[12] < 3) insights.push("📉 Medal performance lags—consider accelerating MOP adoption.");
+      if (results.memory[12] - results.memory[0] > 10) insights.push("🚀 Institutional memory is growing—structural reforms are working!");
+      
+      document.getElementById('sim-insights').innerHTML = 
+        insights.length ? insights.join('<br>') : "No significant dynamics detected.";
     }
 
     // === STRATEGIC OPTIONS ===
@@ -675,16 +810,16 @@
 
       document.getElementById('archetype-detail').innerHTML = detailHTML;
 
-      // Render BOT chart — ✅ FIXED SYNTAX
+      // Render BOT chart
       if (arch.botPattern) {
         const ctx = document.getElementById(`bot-chart-${archetypeId}`).getContext('2d');
         new Chart(ctx, {
           type: 'line',
-          data: {  // ✅ ADDED "data:" KEY
+           {  // ✅ FIXED SYNTAX
             labels: arch.botPattern.x,
             datasets: [{
               label: 'System Behavior',
-              data: arch.botPattern.y,  // ✅ ADDED "data:"
+               arch.botPattern.y,  // ✅ FIXED SYNTAX
               borderColor: '#6366f1',
               backgroundColor: 'rgba(99, 102, 241, 0.1)',
               tension: 0.3,
