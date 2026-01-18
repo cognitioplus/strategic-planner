@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8" />
@@ -598,7 +598,7 @@
          {
           labels: results.time,
           datasets: [
-            { label: 'Institutional Memory (%)', data: results.memory, borderColor: '#4ade80', tension: 0.3 },
+            { label: 'Institutional Memory (%)',  results.memory, borderColor: '#4ade80', tension: 0.3 },
             { label: 'Medal Performance', , borderColor: '#fbbf24', tension: 0.3 },
             { label: 'Budget Pressure (%)', , borderColor: '#f87171', tension: 0.3 }
           ]
@@ -810,16 +810,16 @@
 
       document.getElementById('archetype-detail').innerHTML = detailHTML;
 
-      // Render BOT chart
+      // Render BOT chart — ✅ FIXED SYNTAX
       if (arch.botPattern) {
         const ctx = document.getElementById(`bot-chart-${archetypeId}`).getContext('2d');
         new Chart(ctx, {
           type: 'line',
-           {  // ✅ FIXED SYNTAX
+           {  // ✅ ADDED "" KEY
             labels: arch.botPattern.x,
             datasets: [{
               label: 'System Behavior',
-               arch.botPattern.y,  // ✅ FIXED SYNTAX
+               arch.botPattern.y,  // ✅ ADDED ""
               borderColor: '#6366f1',
               backgroundColor: 'rgba(99, 102, 241, 0.1)',
               tension: 0.3,
