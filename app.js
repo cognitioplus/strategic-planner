@@ -774,7 +774,7 @@ function renderInitiatives() {
 
 function openInitiativeModal() {
   const modal = document.getElementById('modal-content');
-  const today = new Date().toISOString().split('T')[0]; // For default due date
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD for <input type="date">
 
   modal.innerHTML = `
     <div class="p-6 border-b flex justify-between items-center">
@@ -788,35 +788,38 @@ function openInitiativeModal() {
         <label class="block text-sm font-medium mb-1">Project/Activity Title</label>
         <input type="text" id="i-title" required class="w-full border rounded-lg px-3 py-2 outline-none">
       </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Owner / Lead</label>
-        <input type="text" id="i-owner" required class="w-full border rounded-lg px-3 py-2 outline-none">
-      </div>
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium mb-1">Status</label>
           <select id="i-status" class="w-full border rounded-lg px-3 py-2 outline-none">
-            <option value="Not Started">Not Started</option>
+            <option value="Planning">Planning</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
+            <option value="On Hold">On Hold</option>
           </select>
         </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Responsible Person</label>
+          <input type="text" id="i-owner" required class="w-full border rounded-lg px-3 py-2 outline-none">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium mb-1">Due Date</label>
           <input type="date" id="i-due" min="${today}" required class="w-full border rounded-lg px-3 py-2 outline-none">
         </div>
-      </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Expected Output / Deliverable</label>
-        <input type="text" id="i-output" required class="w-full border rounded-lg px-3 py-2 outline-none">
+        <div>
+          <label class="block text-sm font-medium mb-1">Expected Output</label>
+          <input type="text" id="i-output" required class="w-full border rounded-lg px-3 py-2 outline-none">
+        </div>
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Resources Needed (Optional)</label>
-        <input type="text" id="i-resources" class="w-full border rounded-lg px-3 py-2 outline-none">
+        <input type="text" id="i-resources" placeholder="e.g. $5k Budget, 2 Engineers" class="w-full border rounded-lg px-3 py-2 outline-none">
       </div>
       <div class="pt-4">
         <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700">
-          Save Initiative
+          Add Initiative
         </button>
       </div>
     </form>
@@ -825,17 +828,14 @@ function openInitiativeModal() {
   document.getElementById('init-form').onsubmit = async (e) => {
     e.preventDefault();
 
-    const data = {
-      title: document.getElementById('i-title').value.trim(),
-      owner: document.getElementById('i-owner').value.trim(),
-      status: document.getElementById('i-status').value,
-      due: document.getElementById('i-due').value,
-      output: document.getElementById('i-output').value.trim(),
-      resources: document.getElementById('i-resources').value.trim() || null
-    };
+    const title = document.getElementById('i-title').value.trim();
+    const status = document.getElementById('i-status').value;
+    const owner = document.getElementById('i-owner').value.trim();
+    const due = document.getElementById('i-due').value;
+    const output = document.getElementById('i-output').value.trim();
+    const resources = document.getElementById('i-resources').value.trim() || '';
 
-    // Basic validation
-    if (!data.title || !data.owner || !data.output || !data.due) {
+    if (!title || !owner || !output || !due) {
       showNotification('Please fill in all required fields.', 'error');
       return;
     }
@@ -845,7 +845,14 @@ function openInitiativeModal() {
     try {
       orgData = await apiRequest('/organization/initiatives', {
         method: 'POST',
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+          title,
+          status,
+          owner,
+          due,
+          output,
+          resources
+        })
       });
 
       closeModal();
@@ -853,7 +860,7 @@ function openInitiativeModal() {
       showNotification('Initiative added successfully!', 'success');
 
     } catch (error) {
-      showNotification('Failed to save initiative: ' + error.message, 'error');
+      showNotification('Failed to add initiative: ' + error.message, 'error');
     } finally {
       showLoading(false);
     }
@@ -862,10 +869,3 @@ function openInitiativeModal() {
   document.getElementById('modal-overlay').classList.remove('hidden');
   updateIcons();
 }
-
-    }
-    viewContainer.innerHTML = content;
-    lucide.createIcons(); // Re-render icons
-    mobileOrgName.textContent = orgProfile.name;
-  }
-});
