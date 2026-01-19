@@ -3,42 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorldSkills Philippines Dashboard 2026-2030</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <title>WSP MEL Dashboard 2026-2030</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .status-green { background-color: #dcfce7; color: #166534; }
-        .status-yellow { background-color: #fef3c7; color: #854d0e; }
-        .status-red { background-color: #fee2e2; color: #991b1b; }
-        .progress-bar-green { background-color: #22c55e; }
-        .progress-bar-yellow { background-color: #eab308; }
-        .progress-bar-red { background-color: #ef4444; }
-        .expanded-row { display: none; }
-        .expanded-row.show { display: table-row; }
-        @media print {
-            .no-print { display: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .perspective-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .strategy-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .strategy-details.open {
+            max-height: 1000px;
+        }
+
+        /* Custom scrollbar for a more "production" feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        .table-glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg p-6 mb-6">
-        <div class="container mx-auto">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h1 class="text-3xl font-bold mb-2">WorldSkills Philippines</h1>
-                    <p class="text-blue-100 text-lg"> Strategic Plan Dashboard 2026-2030</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm text-blue-100">Total Budget</p>
-                    <p class="text-2xl font-bold">PHP 500M</p>
-                    <p class="text-xs text-blue-200 mt-1" id="lastUpdated"></p>
-                </div>
-            </div>
-        </div>
-    </header>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4 md:p-8">
 
-    <main class="container mx-auto px-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                WorldSkills Philippines MEL Dashboard 2026-2030
+            </h1>
+            <p class="text-lg md:text-xl text-blue-200 italic">
+                "Transforming Demonstrated Excellence into a Lasting Legacy"
+            </p>
+        </header>
+
         <!-- Summary Metrics -->
         <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-white rounded-lg shadow p-5">
@@ -117,373 +140,328 @@
             </div>
         </section>
 
-        <!-- Filters and Charts Row -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <!-- Filters -->
-            <div class="bg-white rounded-lg shadow p-5">
-                <div class="flex items-center mb-4">
-                    <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-                    </svg>
-                    <h3 class="font-semibold text-gray-800">Filters</h3>
-                </div>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Perspective</label>
-                        <select id="perspectiveFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="all">All Perspectives</option>
-                            <option value="Stakeholder">Stakeholder</option>
-                            <option value="Finance">Finance</option>
-                            <option value="Internal Process">Internal Process</option>
-                            <option value="Learning & Growth">Learning & Growth</option>
-                        </select>
-                    </div>
+        <!-- Strategy Map Layers Container -->
+        <div id="strategy-map-container" class="space-y-6">
+            <!-- Content will be injected by JavaScript -->
+        </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Pillar</label>
-                        <select id="pillarFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="all">All Pillars</option>
-                            <option value="Governance (1)">Governance (1)</option>
-                            <option value="Pipeline (2)">Pipeline (2)</option>
-                            <option value="Professionalism (3)">Professionalism (3)</option>
-                            <option value="COE (4)">COE (4)</option>
-                            <option value="Standards (5)">Standards (5)</option>
-                            <option value="Partnerships (6)">Partnerships (6)</option>
-                            <option value="Sustainability (7)">Sustainability (7)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Range</label>
-                        <select id="timeFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="2026">2026</option>
-                            <option value="2027">2027</option>
-                            <option value="2028">2028</option>
-                            <option value="2029">2029</option>
-                            <option value="2030">2030</option>
-                        </select>
-                    </div>
-                </div>
+        <!-- Reference Industry Standards Table -->
+        <div class="mt-12 overflow-hidden rounded-xl shadow-2xl table-glass">
+            <div class="bg-white bg-opacity-10 px-6 py-4 border-b border-white border-opacity-10">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i data-lucide="shield-check" class="text-yellow-400"></i>
+                    Reference Industry Standards & KPI Benchmarks
+                </h3>
             </div>
-
-            <!-- Budget Allocation Chart -->
-            <div class="bg-white rounded-lg shadow p-5">
-                <h3 class="font-semibold text-gray-800 mb-4">Budget Allocation</h3>
-                <canvas id="budgetChart" width="300" height="200"></canvas>
-                <div class="mt-4 space-y-1">
-                    <div class="flex justify-between text-sm">
-                        <span class="flex items-center">
-                            <div class="w-3 h-3 rounded mr-2 bg-blue-500"></div>
-                            Personal Services (PS)
-                        </span>
-                        <span class="font-medium">PHP 150M</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="flex items-center">
-                            <div class="w-3 h-3 rounded mr-2 bg-green-500"></div>
-                            MOOE
-                        </span>
-                        <span class="font-medium">PHP 250M</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="flex items-center">
-                            <div class="w-3 h-3 rounded mr-2 bg-yellow-500"></div>
-                            Capital Outlay (CO)
-                        </span>
-                        <span class="font-medium">PHP 100M</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alerts Panel -->
-            <div class="bg-white rounded-lg shadow p-5">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-semibold text-gray-800">Critical Alerts</h3>
-                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
-                </div>
-                
-                <div class="space-y-3 max-h-64 overflow-y-auto" id="alertsContainer"></div>
-                
-                <button class="w-full mt-4 bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition text-sm font-medium" id="viewAllAlerts">
-                    View All Alerts (<span id="totalAlerts">0</span>)
-                </button>
-            </div>
-        </section>
-
-        <!-- KPI Performance Table -->
-        <section class="bg-white rounded-lg shadow overflow-hidden mb-6">
-            <div class="bg-gray-100 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="font-semibold text-gray-800 text-lg">KPI Performance Tracking</h3>
-                <button class="no-print flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm" onclick="window.print()">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                    </svg>
-                    Export Report
-                </button>
-            </div>
-
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200" id="kpiTable">
-                    <thead class="bg-gray-50">
+                <table class="w-full text-left text-sm text-blue-100">
+                    <thead class="bg-black bg-opacity-30 text-xs uppercase tracking-wider text-yellow-300">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Perspective</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pillar</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KPI</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Target</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider no-print">Action</th>
+                            <th class="px-6 py-4 font-bold">Metric / Standard Label</th>
+                            <th class="px-6 py-4 font-bold">Industry Target</th>
+                            <th class="px-6 py-4 font-bold">Benchmarking Authority</th>
+                            <th class="px-6 py-4 font-bold">M&E Mechanism</th>
+                            <th class="px-6 py-4 font-bold text-center">Owner</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200" id="kpiTableBody">
-                        <!-- Populated by JavaScript -->
+                    <tbody class="divide-y divide-white divide-opacity-5">
+                        <tr class="hover:bg-white hover:bg-opacity-5 transition-colors">
+                            <td class="px-6 py-4 font-semibold text-white">Tech Partnership Density</td>
+                            <td class="px-6 py-4 text-green-300">15+ Strategic Partners</td>
+                            <td class="px-6 py-4">UNESCO-UNEVOC (2021)</td>
+                            <td class="px-6 py-4 italic text-blue-300">Partnership Registry & MOU DB</td>
+                            <td class="px-6 py-4 text-center"><span class="bg-blue-500 bg-opacity-30 px-2 py-1 rounded text-[10px] uppercase font-bold">Admin</span></td>
+                        </tr>
+                        <tr class="hover:bg-white hover:bg-opacity-5 transition-colors">
+                            <td class="px-6 py-4 font-semibold text-white">Global Participation Rate</td>
+                            <td class="px-6 py-4 text-green-300">100% of Hosted Skills</td>
+                            <td class="px-6 py-4">WorldSkills Int'l (WSI, 2024)</td>
+                            <td class="px-6 py-4 italic text-blue-300">Official WSI Reports</td>
+                            <td class="px-6 py-4 text-center"><span class="bg-purple-500 bg-opacity-30 px-2 py-1 rounded text-[10px] uppercase font-bold">Tech</span></td>
+                        </tr>
+                        <!-- Additional rows can be added here -->
                     </tbody>
                 </table>
             </div>
-        </section>
+        </div>
 
-        <!-- Footer -->
-        <footer class="text-center text-sm text-gray-500 pb-6">
-            <p>WorldSkills Philippines MEL Dashboard • Strategic Period 2026-2030</p>
-            <p class="mt-1">Integrated with Strategic Planner • Real-time data synchronization enabled</p>
+        <!-- Strategic Priorities Footer -->
+        <footer class="mt-8 bg-gradient-to-r from-purple-900 to-blue-900 rounded-lg p-6 shadow-2xl">
+            <h3 class="text-xl font-bold text-white mb-4">2030 Strategic Priorities</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <h4 class="font-bold text-yellow-300 mb-2">Event → System Driven</h4>
+                    <p class="text-sm text-blue-100">Permanent organizational structure</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <h4 class="font-bold text-yellow-300 mb-2">National Integration</h4>
+                    <p class="text-sm text-blue-100">WSOS into Philippine TVET system</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <h4 class="font-bold text-yellow-300 mb-2">Human Capital Retention</h4>
+                    <p class="text-sm text-blue-100">Stable, accredited Experts Pool</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <h4 class="font-bold text-yellow-300 mb-2">Legacy Preservation</h4>
+                    <p class="text-sm text-blue-100">Digitized knowledge systems</p>
+                </div>
+            </div>
         </footer>
-    </main>
+
+        <!-- Instructions -->
+        <div class="mt-6 text-center text-blue-200 text-sm">
+            <p>Click on each perspective to expand strategies • Click strategies to view their contribution to goals</p>
+        </div>
+    </div>
 
     <script>
-        // KPI Data
-        const kpiData = [
+        const perspectives = [
             {
-                id: 1, perspective: 'Stakeholder', pillar: 'COE (4)', kpi: 'Tech Partnership Density',
-                current: 2, target: 15, status: 'red', unit: 'Admin',
-                notes: '2025 HRDC baseline; ramping to 3 per priority skill',
-                trend: [1, 1.5, 2, 2.5, 3], budget: 15000000
+                id: 'stakeholder',
+                name: 'STAKEHOLDER PERSPECTIVE',
+                color: 'bg-blue-600',
+                icon: 'users',
+                strategies: [
+                    {
+                        pillar: 'Pillar 4: COE',
+                        action: 'Strengthen COEs via high-growth tech partnerships',
+                        kpi: 'Tech Partnership Density',
+                        target: '15+ partnerships',
+                        contributes: ['Goal 4: Centers of Excellence', 'Goal 6: Global Positioning']
+                    },
+                    {
+                        pillar: 'Pillar 2: Pipeline',
+                        action: 'Ensure world-class competition participation',
+                        kpi: 'Global Participation Rate',
+                        target: '100% hosted skills',
+                        contributes: ['Goal 2: Sustainable Pipeline', 'Goal 6: Global Positioning']
+                    },
+                    {
+                        pillar: 'Pillar 6: Partnerships',
+                        action: 'Institutionalize legally binding partnerships',
+                        kpi: 'Industry Value Score',
+                        target: '50+ Active Partners',
+                        contributes: ['Goal 6: Industry Partnerships', 'Goal 7: Sustainability']
+                    }
+                ]
             },
-            // ... (other KPI objects)
+            {
+                id: 'finance',
+                name: 'FINANCIAL PERSPECTIVE',
+                color: 'bg-green-600',
+                icon: 'dollar-sign',
+                strategies: [
+                    {
+                        pillar: 'Pillar 1: Governance',
+                        action: 'Transition to sustained, program-based budgeting',
+                        kpi: 'Budgetary Permanence',
+                        target: '100% PBB Integration',
+                        contributes: ['Goal 1: Governance', 'Goal 7: Sustainability']
+                    },
+                    {
+                        pillar: 'Pillar 7: Sustainability',
+                        action: 'Implement cost-sharing frameworks',
+                        kpi: 'PPP Cost-Sharing Ratio',
+                        target: '30% Industry Offset',
+                        contributes: ['Goal 6: Partnerships', 'Goal 7: Sustainability']
+                    },
+                    {
+                        pillar: 'Pillar 2: Pipeline',
+                        action: 'Secure multi-year competition funding',
+                        kpi: 'Fiscal Predictability Index',
+                        target: 'Multi-year PBB Approval',
+                        contributes: ['Goal 2: Pipeline', 'Goal 7: Sustainability']
+                    }
+                ]
+            },
+            {
+                id: 'process',
+                name: 'INTERNAL PROCESS PERSPECTIVE',
+                color: 'bg-orange-600',
+                icon: 'cog',
+                strategies: [
+                    {
+                        pillar: 'Pillar 5: Standards',
+                        action: 'Align WSOS with national competency frameworks',
+                        kpi: 'WSOS Integration Index',
+                        target: '100% TR Alignment',
+                        contributes: ['Goal 5: Standards Integration', 'National Integration Priority']
+                    },
+                    {
+                        pillar: 'Pillar 1: Governance',
+                        action: 'Establish permanent national-regional structure',
+                        kpi: 'Structural Integrity Ratio',
+                        target: '20:0 Plantilla',
+                        contributes: ['Goal 1: Governance', 'System-Driven Priority']
+                    },
+                    {
+                        pillar: 'Pillar 1: Governance',
+                        action: 'Develop and approve WSP Manual of Operations',
+                        kpi: 'MOP Compliance Rate',
+                        target: '100% Documented SOPs',
+                        contributes: ['Goal 1: Governance', 'Legacy Preservation Priority']
+                    }
+                ]
+            },
+            {
+                id: 'learning',
+                name: 'LEARNING & GROWTH PERSPECTIVE',
+                color: 'bg-red-600',
+                icon: 'graduation-cap',
+                strategies: [
+                    {
+                        pillar: 'Pillar 7: Sustainability',
+                        action: 'Adopt Digital MEL and Strategic Planner',
+                        kpi: 'Digital Visibility Rate',
+                        target: '100% Digital Tracking',
+                        contributes: ['Goal 7: Legacy & Impact', 'Legacy Preservation Priority']
+                    },
+                    {
+                        pillar: 'Pillar 4: COE',
+                        action: 'Upskill trainers amid tech change',
+                        kpi: 'Emerging Tech Certification Rate',
+                        target: '100% Certification',
+                        contributes: ['Goal 3: Professionalism', 'Goal 4: COE']
+                    },
+                    {
+                        pillar: 'Pillar 3: Professionalism',
+                        action: 'Utilize LMS to resolve expert turnover',
+                        kpi: 'Institutional Memory Coverage',
+                        target: '100% LMS Coverage',
+                        contributes: ['Goal 3: Professionalism', 'Human Capital Retention Priority']
+                    },
+                    {
+                        pillar: 'Pillar 3: Professionalism',
+                        action: 'Professionalize and incentivize Experts',
+                        kpi: 'Gold Standard Accreditation',
+                        target: '100% WSMP Certification',
+                        contributes: ['Goal 3: Professionalism', 'Human Capital Retention Priority']
+                    }
+                ]
+            }
         ];
 
-        // Update timestamp
-        document.getElementById('lastUpdated').textContent = 'Last Updated: ' + new Date().toLocaleString();
+        let expandedPerspective = null;
+        let selectedStrategy = null;
 
-        // Calculate summary metrics
-        function calculateMetrics() {
-            const totalKPIs = kpiData.length;
-            const overallCompletion = (kpiData.reduce((sum, k) => sum + (k.current / k.target * 100), 0) / totalKPIs).toFixed(1);
-            const budgetSpent = 230;
-            const budgetUtilization = ((budgetSpent / 500) * 100).toFixed(1);
-            
-            const stakeholderKPIs = kpiData.filter(k => ['Pipeline (2)', 'Partnerships (6)', 'COE (4)'].includes(k.pillar));
-            const stakeholderScore = (stakeholderKPIs.reduce((sum, k) => sum + (k.current / k.target * 100), 0) / stakeholderKPIs.length).toFixed(1);
+        function render() {
+            const container = document.getElementById('strategy-map-container');
+            container.innerHTML = '';
 
-            const redCount = kpiData.filter(k => k.status === 'red').length;
-            const yellowCount = kpiData.filter(k => k.status === 'yellow').length;
-            const greenCount = kpiData.filter(k => k.status === 'green').length;
-
-            document.getElementById('overallCompletion').textContent = overallCompletion + '%';
-            document.getElementById('overallProgress').style.width = overallCompletion + '%';
-            document.getElementById('budgetUtilization').textContent = budgetUtilization + '%';
-            document.getElementById('budgetProgress').style.width = budgetUtilization + '%';
-            document.getElementById('budgetSpent').textContent = budgetSpent;
-            document.getElementById('stakeholderScore').textContent = stakeholderScore + '%';
-            document.getElementById('greenCount').textContent = greenCount;
-            document.getElementById('yellowCount').textContent = yellowCount;
-            document.getElementById('redCount').textContent = redCount;
-        }
-
-        // Render KPI table
-        function renderKPITable(data = kpiData) {
-            const tbody = document.getElementById('kpiTableBody');
-            tbody.innerHTML = '';
-
-            data.forEach(kpi => {
-                const percentage = ((kpi.current / kpi.target) * 100).toFixed(1);
-                const statusClass = `status-${kpi.status}`;
-                const progressClass = `progress-bar-${kpi.status}`;
-
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50 transition';
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${kpi.perspective}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${kpi.pillar}</td>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900">${kpi.kpi}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">${kpi.current}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${kpi.target}</td>
-                    <td class="px-6 py-4">
-                        <div class="w-32">
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="${progressClass} h-2.5 rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">${percentage}%</p>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
-                            ${kpi.status.toUpperCase()}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${kpi.unit}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm no-print">
-                        <button onclick="toggleDetails(${kpi.id})" class="text-blue-600 hover:text-blue-800 font-medium">
-                            <span id="btn-${kpi.id}">▶ Details</span>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-
-                const detailsRow = document.createElement('tr');
-                detailsRow.id = `details-${kpi.id}`;
-                detailsRow.className = 'expanded-row';
-                detailsRow.innerHTML = `
-                    <td colspan="9" class="px-6 py-4 bg-gray-50">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h4 class="font-semibold text-gray-800 mb-2">Notes & Context</h4>
-                                <p class="text-sm text-gray-600 mb-3">${kpi.notes}</p>
-                                
-                                <h4 class="font-semibold text-gray-800 mb-2">Budget Allocation</h4>
-                                <p class="text-sm text-gray-600">PHP ${(kpi.budget / 1000000).toFixed(1)}M</p>
-                                
-                                <h4 class="font-semibold text-gray-800 mt-4 mb-2">Responsible Unit</h4>
-                                <p class="text-sm text-gray-600">${kpi.unit}</p>
-                            </div>
-                            
-                            <div>
-                                <h4 class="font-semibold text-gray-800 mb-3">5-Year Trend</h4>
-                                <canvas id="trend-${kpi.id}" width="400" height="200"></canvas>
-                            </div>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(detailsRow);
-            });
-        }
-
-        // Toggle details
-        function toggleDetails(id) {
-            const detailsRow = document.getElementById(`details-${id}`);
-            const btn = document.getElementById(`btn-${id}`);
-            
-            if (detailsRow.classList.contains('show')) {
-                detailsRow.classList.remove('show');
-                btn.textContent = '▶ Details';
-            } else {
-                detailsRow.classList.add('show');
-                btn.textContent = '▼ Details';
+            perspectives.forEach((perspective, idx) => {
+                const isExpanded = expandedPerspective === perspective.id;
                 
-                const kpi = kpiData.find(k => k.id === id);
-                renderTrendChart(id, kpi.trend);
-            }
-        }
+                const perspectiveDiv = document.createElement('div');
+                perspectiveDiv.className = 'relative';
 
-        // Render trend chart
-        function renderTrendChart(id, trendData) {
-            const ctx = document.getElementById(`trend-${id}`);
-            if (!ctx) return;
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['2026', '2027', '2028', '2029', '2030'],
-                    datasets: [{
-                        label: 'Progress',
-                        data: trendData,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
+                // Connection Lines
+                if (idx > 0) {
+                    const line = document.createElement('div');
+                    line.className = 'absolute -top-6 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-gradient-to-b from-blue-400 to-transparent opacity-50';
+                    perspectiveDiv.appendChild(line);
                 }
-            });
-        }
 
-        // Render alerts
-        function renderAlerts() {
-            const container = document.getElementById('alertsContainer');
-            const redKPIs = kpiData.filter(k => k.status === 'red').slice(0, 5);
-            
-            container.innerHTML = redKPIs.map(kpi => {
-                const percentage = ((kpi.current / kpi.target) * 100).toFixed(0);
-                return `
-                    <div class="border-l-4 border-red-500 pl-3 py-2 bg-red-50">
-                        <p class="text-sm font-medium text-gray-900">${kpi.kpi}</p>
-                        <p class="text-xs text-gray-600">${kpi.pillar}</p>
-                        <p class="text-xs text-red-600 mt-1">${kpi.current}/${kpi.target} (${percentage}%)</p>
-                        <p class="text-xs text-gray-500 mt-1">Owner: ${kpi.unit}</p>
+                // Card Container
+                const card = document.createElement('div');
+                card.className = `${perspective.color} rounded-lg shadow-2xl overflow-hidden perspective-transition ${isExpanded ? 'ring-4 ring-white' : ''}`;
+
+                // Header Button
+                const header = document.createElement('button');
+                header.className = 'w-full px-6 py-4 flex items-center justify-between text-white hover:bg-white hover:bg-opacity-10 transition-all';
+                header.onclick = () => togglePerspective(perspective.id);
+                
+                const headerLeft = `
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="${perspective.icon}" class="w-6 h-6"></i>
+                        <h2 class="text-xl font-bold uppercase tracking-wide">${perspective.name}</h2>
                     </div>
                 `;
-            }).join('');
-            
-            document.getElementById('totalAlerts').textContent = kpiData.filter(k => k.status === 'red').length;
-        }
 
-        // Initialize budget chart
-        function initBudgetChart() {
-            const ctx = document.getElementById('budgetChart');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Personal Services (PS)', 'MOOE', 'Capital Outlay (CO)'],
-                    datasets: [{
-                        data: [150, 250, 100],
-                        backgroundColor: ['#3b82f6', '#10b981', '#eab308'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.label + ': PHP ' + context.parsed + 'M';
-                                }
-                            }
-                        }
-                    }
+                const headerRight = perspective.strategies ? `
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                            ${perspective.strategies.length} Strategies
+                        </span>
+                        <i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}"></i>
+                    </div>
+                ` : '';
+
+                header.innerHTML = headerLeft + headerRight;
+                card.appendChild(header);
+
+                // Strategies Body
+                if (perspective.strategies && isExpanded) {
+                    const strategiesDiv = document.createElement('div');
+                    strategiesDiv.className = 'px-6 py-4 bg-white bg-opacity-10 space-y-3';
+
+                    perspective.strategies.forEach((strategy, i) => {
+                        const strategyId = `${perspective.id}-${i}`;
+                        const isSelected = selectedStrategy === strategyId;
+                        
+                        const strategyCard = document.createElement('div');
+                        strategyCard.className = `bg-white bg-opacity-10 p-4 rounded-lg cursor-pointer hover:bg-opacity-20 transition-all ${isSelected ? 'ring-2 ring-white shadow-lg' : ''}`;
+                        strategyCard.onclick = (e) => {
+                            e.stopPropagation();
+                            toggleStrategy(strategyId);
+                        };
+
+                        strategyCard.innerHTML = `
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="text-xs font-semibold text-yellow-300 uppercase tracking-tighter">${strategy.pillar}</span>
+                                <span class="text-xs bg-white bg-opacity-20 px-2 py-1 rounded text-white">
+                                    Target: ${strategy.target}
+                                </span>
+                            </div>
+                            <h4 class="font-bold text-white mb-2 leading-tight">${strategy.action}</h4>
+                            <p class="text-sm text-blue-100 mb-2 font-medium">KPI: ${strategy.kpi}</p>
+                            ${isSelected ? `
+                                <div class="mt-3 pt-3 border-t border-white border-opacity-20 animate-fade-in">
+                                    <p class="text-xs font-semibold text-yellow-300 mb-2">Contributes to:</p>
+                                    <div class="space-y-1">
+                                        ${strategy.contributes.map(contrib => `
+                                            <div class="text-xs text-green-200 flex items-center gap-2">
+                                                <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                                                ${contrib}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        `;
+                        strategiesDiv.appendChild(strategyCard);
+                    });
+                    card.appendChild(strategiesDiv);
                 }
+
+                perspectiveDiv.appendChild(card);
+                container.appendChild(perspectiveDiv);
             });
+
+            lucide.createIcons();
         }
 
-        // Apply filters
-        function applyFilters() {
-            const perspective = document.getElementById('perspectiveFilter').value;
-            const pillar = document.getElementById('pillarFilter').value;
-            
-            const filtered = kpiData.filter(kpi => {
-                const perspectiveMatch = perspective === 'all' || kpi.perspective === perspective;
-                const pillarMatch = pillar === 'all' || kpi.pillar === pillar;
-                return perspectiveMatch && pillarMatch;
-            });
-            
-            renderKPITable(filtered);
+        function togglePerspective(id) {
+            expandedPerspective = (expandedPerspective === id) ? null : id;
+            selectedStrategy = null; // Reset selection on change
+            render();
+        }
+
+        function toggleStrategy(id) {
+            selectedStrategy = (selectedStrategy === id) ? null : id;
+            render();
+        }
+
+        // Initialize dashboard metrics
+        function calculateMetrics() {
+            // Metrics calculation logic here
+            // This should set the values for overallCompletion, budgetUtilization, stakeholderScore, etc.
         }
 
         // Event listeners
-        document.getElementById('perspectiveFilter').addEventListener('change', applyFilters);
-        document.getElementById('pillarFilter').addEventListener('change', applyFilters);
-
-        // Initialize dashboard
-        calculateMetrics();
-        renderKPITable();
-        renderAlerts();
-        initBudgetChart();
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateMetrics();
+            render();
+        });
     </script>
 </body>
 </html>
