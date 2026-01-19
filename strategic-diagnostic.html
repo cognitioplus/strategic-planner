@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Systems SWOT Strategist</title>
+  <title>Systems Strategic Planner</title>
 
   <!-- Tailwind (CDN for prototyping) -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -260,7 +260,7 @@
       <!-- Strategy -->
       <section id="strategy-tab" class="hidden fade-in">
         <div class="mb-6 bg-slate-900/60 border border-slate-800 rounded-xl p-5">
-          <h3 class="text-lg font-semibold text-indigo-300 mb-3">GenerationStrategy Mode</h3>
+          <h3 class="text-lg font-semibold text-indigo-300 mb-3">Generation Strategy Mode</h3>
           <div class="flex items-center gap-4">
             <label class="flex items-center gap-2">
               <input type="radio" name="mode" value="linear" checked> Linear (SWOT only)
@@ -404,7 +404,6 @@
     let selectedMappingItemId = null;
     let chartInstances = {}; // keep chart instances
 
- <script>
     // --- Data & Archetype Definitions ---
     const archetypes = {
       'limits-growth': {
@@ -425,7 +424,7 @@
         leverage: 'Strengthen fundamental solutions and reduce dependency on quick fixes.',
         bot: { labels: [1,2,3,4,5,6,7,8,9,10], datasets: [
             {label:'Symptom', data:[80,40,30,50,70,90,100,110,120,130], color:'#fbbf24'},
-            {label:'Capabilty', data:[100,95,85,70,55,40,30,20,10,5], color:'#f87171'}
+            {label:'Capability', data:[100,95,85,70,55,40,30,20,10,5], color:'#f87171'}
         ]}
       },
       'fixes-fail': {
@@ -476,7 +475,7 @@
 
     async function addSwotItem() {
       const content = document.getElementById('new-content').value;
-      if(!content) return;
+      if (!content) return;
       const item = {
         id: Date.now(),
         category: document.getElementById('new-category').value,
@@ -670,7 +669,7 @@
         btn.className = 'w-full text-left px-3 py-2 border border-slate-700 rounded-lg flex items-center gap-3 hover:border-indigo-500';
         btn.type = 'button';
         btn.dataset.id = key;
-        btn.innerHTML = `<span class="text-xl">${a.icon}</span><div class="flex-1"><div class="text-sm font-medium text-slate-200">${escapeHtml(a.name)}</div><div class="text-xs text-slate-400">${escapeHtml(a.description)}</div></div>`;
+        btn.innerHTML = `<span class="text-xl">${a.icon}</span><div class="flex-1"><div class="text-sm font-medium text-slate-200">${escapeHtml(a.name)}</div><div class="text-xs text-slate-400">${escapeHtml(a.desc)}</div></div>`;
         btn.addEventListener('click', (ev) => selectArchetype(key, ev.currentTarget));
         container.appendChild(btn);
       });
@@ -910,8 +909,6 @@
         label.style.top = (midY - 12) + 'px';
         label.style.color = link.polarity === '+' ? '#4ade80' : '#f87171';
         canvas.appendChild(label);
-
-        // optional: draw an SVG path overlay if desired (left out for simplicity)
       });
     }
 
@@ -956,193 +953,6 @@
       }
     }
 
-  <section id="simulator-tab" class="hidden fade-in space-y-6">
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-1 space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-        <h3 class="text-white font-bold mb-4 flex items-center gap-2">🕹️ Strategic Levers</h3>
-        
-        <div class="space-y-5">
-          <div>
-            <div class="flex justify-between mb-2">
-              <label class="text-xs text-slate-400 uppercase">Plantilla % (Option 1)</label>
-              <span id="v-plantilla" class="text-indigo-400 font-mono text-xs">20%</span>
-            </div>
-            <input type="range" id="lever-plantilla" min="10" max="100" value="20" class="w-full accent-indigo-500">
-            <p class="text-[10px] text-slate-500 mt-1">Disrupts "Shifting the Burden" by reducing JO reliance.</p>
-          </div>
-
-          <div>
-            <div class="flex justify-between mb-2">
-              <label class="text-xs text-slate-400 uppercase">Standards Integration (Option 2)</label>
-              <span id="v-standards" class="text-indigo-400 font-mono text-xs">15%</span>
-            </div>
-            <input type="range" id="lever-standards" min="5" max="100" value="15" class="w-full accent-indigo-500">
-            <p class="text-[10px] text-slate-500 mt-1">Drives "Quality Engine" but increases staff fatigue.</p>
-          </div>
-
-          <div>
-            <div class="flex justify-between mb-2">
-              <label class="text-xs text-slate-400 uppercase">Partnership Depth (Option 3)</label>
-              <span id="v-partners" class="text-indigo-400 font-mono text-xs">10%</span>
-            </div>
-            <input type="range" id="lever-partners" min="0" max="100" value="10" class="w-full accent-indigo-500">
-            <p class="text-[10px] text-slate-500 mt-1">Plugs the "Human Capital Leak" via industry mastery.</p>
-          </div>
-        </div>
-
-        <div class="mt-8 pt-6 border-t border-slate-800">
-          <h4 class="text-xs font-bold text-slate-500 mb-3 uppercase">Preset Scenarios</h4>
-          <div class="grid grid-cols-1 gap-2">
-            <button onclick="applyScenario('gov')" class="text-left p-2 rounded bg-indigo-600/10 border border-indigo-600/30 text-[10px] text-indigo-300 hover:bg-indigo-600/20">Option 1: Governance Pivot</button>
-            <button onclick="applyScenario('std')" class="text-left p-2 rounded bg-emerald-600/10 border border-emerald-600/30 text-[10px] text-emerald-300 hover:bg-emerald-600/20">Option 2: Standards Sprint</button>
-            <button onclick="applyScenario('hybrid')" class="text-left p-2 rounded bg-amber-600/10 border border-amber-600/30 text-[10px] text-amber-300 hover:bg-amber-600/20">Recommended: Hybrid Pivot</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="lg:col-span-2 space-y-6">
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-8 h-[500px] relative">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-white font-bold italic">WSP 2030 Flight Path: "National Quality Engine"</h3>
-          <div class="flex gap-4">
-             <div class="text-right">
-                <span class="block text-[10px] text-slate-500">Stability Score</span>
-                <span id="score-stability" class="text-xl font-bold text-indigo-400">0%</span>
-             </div>
-             <div class="text-right">
-                <span class="block text-[10px] text-slate-500">Excellence Index</span>
-                <span id="score-excellence" class="text-xl font-bold text-emerald-400">0%</span>
-             </div>
-          </div>
-        </div>
-        <canvas id="simChart"></canvas>
-      </div>
-
-      <div id="sim-feedback" class="bg-indigo-950/20 border border-indigo-900/40 p-5 rounded-xl">
-        <h4 class="text-xs font-bold text-indigo-400 uppercase mb-2">Systemic Insight</h4>
-        <p id="insight-text" class="text-sm text-slate-300 italic">Adjust levers to begin the simulation...</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<script>
-  // --- Simulation Logic ---
-  let simChart = null;
-
-  function initSim() {
-    const ctx = document.getElementById('simChart').getContext('2d');
-    simChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['2024', '2025', '2026', '2027', '2028', '2029', '2030'],
-        datasets: [
-          { label: 'Excellence (Output)', data: [], borderColor: '#10b981', tension: 0.4 },
-          { label: 'Institutional Memory (Stock)', data: [], borderColor: '#6366f1', tension: 0.4 },
-          { label: 'Staff Fatigue (Drain)', data: [], borderColor: '#f43f5e', borderDash: [5,5], tension: 0.4 }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } },
-        scales: {
-          y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#475569' } },
-          x: { grid: { display: false }, ticks: { color: '#475569' } }
-        }
-      }
-    });
-  }
-
-  function runSimulation() {
-    const p = parseInt(document.getElementById('lever-plantilla').value);
-    const s = parseInt(document.getElementById('lever-standards').value);
-    const r = parseInt(document.getElementById('lever-partners').value);
-
-    // Dynamic Math Models
-    let excellence = [10];
-    let memory = [10];
-    let fatigue = [5];
-
-    for(let i=1; i<7; i++) {
-      // Memory grows based on Governance (Plantilla) and MOP Codification
-      let memoryGrowth = (p * 0.8) - (fatigue[i-1] * 0.2);
-      memory.push(Math.max(0, memory[i-1] + (memoryGrowth / 2)));
-
-      // Fatigue grows if Standards are high but Governance is low
-      let fatigueGrowth = (s * 1.2) - (p * 0.5);
-      fatigue.push(Math.max(0, fatigue[i-1] + (fatigueGrowth / 3)));
-
-      // Excellence is a product of (Standards + Partners) * (Memory / Fatigue Ratio)
-      let efficiency = memory[i] / (fatigue[i] + 1);
-      let stepExcellence = (s * 0.5 + r * 0.5) * (efficiency / 10);
-      excellence.push(excellence[i-1] + stepExcellence);
-    }
-
-    simChart.data.datasets[0].data = excellence;
-    simChart.data.datasets[1].data = memory;
-    simChart.data.datasets[2].data = fatigue;
-    simChart.update();
-
-    // Update UI Scores
-    document.getElementById('score-stability').innerText = Math.round(memory[6]) + '%';
-    document.getElementById('score-excellence').innerText = Math.round(excellence[6]) + '%';
-
-    // Insight Logic
-    let insight = "";
-    if (p < 40 && s > 60) {
-        insight = "⚠️ ARCHETYPE ALERT: You are experiencing 'Fixes that Fail'. High standards without permanent staff are causing system-wide burnout.";
-    } else if (p > 70 && r > 50) {
-        insight = "🌟 OPTIMAL: The 'National Quality Engine' is self-sustaining. Governance supports mastery, creating a lasting legacy.";
-    } else if (r < 20) {
-        insight = "📉 VULNERABILITY: You have a 'Human Capital Leak'. Without Option 3 (Partnerships), your trained experts will eventually leave for industry.";
-    } else {
-        insight = "The system is stabilizing. Focus on Pillar 1 to ensure technical gains don't evaporate.";
-    }
-    document.getElementById('insight-text').innerText = insight;
-  }
-
-  function applyScenario(type) {
-    if(type === 'gov') {
-      document.getElementById('lever-plantilla').value = 90;
-      document.getElementById('lever-standards').value = 20;
-      document.getElementById('lever-partners').value = 30;
-    } else if (type === 'std') {
-      document.getElementById('lever-plantilla').value = 20;
-      document.getElementById('lever-standards').value = 90;
-      document.getElementById('lever-partners').value = 40;
-    } else {
-      document.getElementById('lever-plantilla').value = 75;
-      document.getElementById('lever-standards').value = 60;
-      document.getElementById('lever-partners').value = 80;
-    }
-    updateDisplays();
-    runSimulation();
-  }
-
-  function updateDisplays() {
-    document.getElementById('v-plantilla').innerText = document.getElementById('lever-plantilla').value + '%';
-    document.getElementById('v-standards').innerText = document.getElementById('lever-standards').value + '%';
-    document.getElementById('v-partners').innerText = document.getElementById('lever-partners').value + '%';
-  }
-
-  // Listeners
-  ['lever-plantilla', 'lever-standards', 'lever-partners'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
-      updateDisplays();
-      runSimulation();
-    });
-  });
-
-  // Init on load
-  window.addEventListener('DOMContentLoaded', () => {
-    initSim();
-    runSimulation();
-  });
-</script>
-
     // ====================
     // Archetype selection & details
     // ====================
@@ -1161,7 +971,7 @@
             <span class="text-3xl">${arch.icon}</span>
             <h3 class="text-xl font-semibold text-indigo-300">${escapeHtml(arch.name)}</h3>
           </div>
-          <p class="text-slate-300 text-sm mb-4">${escapeHtml(arch.description)}</p>
+          <p class="text-slate-300 text-sm mb-4">${escapeHtml(arch.desc)}</p>
       `;
       if (arch.botPattern) {
         html += `
@@ -1320,4 +1130,4 @@
     })();
   </script>
 </body>
-</html>  
+</html>
