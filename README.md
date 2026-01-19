@@ -1,27 +1,18 @@
 #Strategic Planner
 
-A high-performance Progressive Web Application (PWA) designed for TESDA (WorldSkills/HRDC) to streamline the 2026-2030 strategic planning cycle. The tool automates the transition from environmental analysis (SWOT) to performance management (Balanced Scorecard).
+A high-performance Progressive platform designed for organizations and institutions to streamline the strategic planning cycle. The tool automates the transition from environmental analysis (SWOT) to performance management (Balanced Scorecard).
 
 🚀 Key Features
 
 Centralized Command Dashboard
-
 PAPs Management: Track Programs, Activities, and Projects with automated budget totaling.
-
 AI-Powered SWOT Analysis:
-
 Input Strengths, Weaknesses, Opportunities, and Threats.
-
 Use the AI Strategy Generator (Gemini 2.5 Flash) to automatically derive SO, ST, WO, and WT strategic options.
-
 AI Balanced Scorecard (BSC):
-
 Smart categorization of strategic objectives into the four perspectives (Stakeholder, Internal Process, Learning & Growth, Financial).
-
 Automated KPI measure suggestions based on objective descriptions.
-
 Strategic Plan View: A print-ready, professional report generator for official documentation.
-
 Offline Capability: Works as a PWA with local data persistence.
 
 
