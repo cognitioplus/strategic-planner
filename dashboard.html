@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WSP MEL Dashboard 2026-2030</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        .status-green { background-color: #dcfce7; color: #166534; }
+        .status-yellow { background-color: #fef3c7; color: #854d0e; }
+        .status-red { background-color: #fee2e2; color: #991b1b; }
+        .progress-bar-green { background-color: #22c55e; }
+        .progress-bar-yellow { background-color: #eab308; }
+        .progress-bar-red { background-color: #ef4444; }
+        .expanded-row { display: none; }
+        .expanded-row.show { display: table-row; }
+        @media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg p-6 mb-6">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">WorldSkills Philippines</h1>
+                    <p class="text-blue-100 text-lg">Visual MEL Dashboard 2026-2030</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-blue-100">Total Budget</p>
+                    <p class="text-2xl font-bold">PHP 500M</p>
+                    <p class="text-xs text-blue-200 mt-1" id="lastUpdated"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4">
+        <!-- Summary Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-lg shadow p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Overall Completion</p>
+                        <p class="text-3xl font-bold text-blue-600" id="overallCompletion">0%</p>
+                    </div>
+                    <svg class="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <div class="mt-3">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="progress-bar-yellow h-2.5 rounded-full transition-all duration-500" id="overallProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Budget Utilization</p>
+                        <p class="text-3xl font-bold text-green-600" id="budgetUtilization">0%</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-gray-500">PHP <span id="budgetSpent">0</span>M</p>
+                        <p class="text-xs text-gray-400">of PHP 500M</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="progress-bar-green h-2.5 rounded-full transition-all duration-500" id="budgetProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Stakeholder Score</p>
+                        <p class="text-3xl font-bold text-purple-600" id="stakeholderScore">0%</p>
+                    </div>
+                    <svg class="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Pillars 2, 4, 6 Weighted Avg</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-5">
+                <p class="text-sm text-gray-600 mb-3">KPI Status Distribution</p>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center text-sm">
+                            <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                            Green
+                        </span>
+                        <span class="font-semibold" id="greenCount">0</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center text-sm">
+                            <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                            Yellow
+                        </span>
+                        <span class="font-semibold" id="yellowCount">0</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center text-sm">
+                            <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                            Red
+                        </span>
+                        <span class="font-semibold" id="redCount">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Filters -->
+            <div class="bg-white rounded-lg shadow p-5">
+                <div class="flex items-center mb-4">
+                    <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    <h3 class="font-semibold text-gray-800">Filters</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Perspective</label>
+                        <select id="perspectiveFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="all">All Perspectives</option>
+                            <option value="Stakeholder">Stakeholder</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Internal Process">Internal Process</option>
+                            <option value="Learning & Growth">Learning & Growth</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pillar</label>
+                        <select id="pillarFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="all">All Pillars</option>
+                            <option value="Governance (1)">Governance (1)</option>
+                            <option value="Pipeline (2)">Pipeline (2)</option>
+                            <option value="Professionalism (3)">Professionalism (3)</option>
+                            <option value="COE (4)">COE (4)</option>
+                            <option value="Standards (5)">Standards (5)</option>
+                            <option value="Partnerships (6)">Partnerships (6)</option>
+                            <option value="Sustainability (7)">Sustainability (7)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Range</label>
+                        <select id="timeFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Allocation Chart -->
+            <div class="bg-white rounded-lg shadow p-5">
+                <h3 class="font-semibold text-gray-800 mb-4">Budget Allocation</h3>
+                <canvas id="budgetChart" width="300" height="200"></canvas>
+                <div class="mt-4 space-y-1">
+                    <div class="flex justify-between text-sm">
+                        <span class="flex items-center">
+                            <div class="w-3 h-3 rounded mr-2 bg-blue-500"></div>
+                            Personal Services (PS)
+                        </span>
+                        <span class="font-medium">PHP 150M</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="flex items-center">
+                            <div class="w-3 h-3 rounded mr-2 bg-green-500"></div>
+                            MOOE
+                        </span>
+                        <span class="font-medium">PHP 250M</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="flex items-center">
+                            <div class="w-3 h-3 rounded mr-2 bg-yellow-500"></div>
+                            Capital Outlay (CO)
+                        </span>
+                        <span class="font-medium">PHP 100M</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Panel -->
+            <div class="bg-white rounded-lg shadow p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">Critical Alerts</h3>
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                
+                <div class="space-y-3 max-h-64 overflow-y-auto" id="alertsContainer"></div>
+                
+                <button class="w-full mt-4 bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition text-sm font-medium" id="viewAllAlerts">
+                    View All Alerts (<span id="totalAlerts">0</span>)
+                </button>
+            </div>
+        </div>
+
+        <!-- KPI Performance Table -->
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+            <div class="bg-gray-100 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-semibold text-gray-800 text-lg">KPI Performance Tracking</h3>
+                <button class="no-print flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm" onclick="window.print()">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Export Report
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="kpiTable">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Perspective</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pillar</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KPI</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Target</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="kpiTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-sm text-gray-500 pb-6">
+            <p>WorldSkills Philippines MEL Dashboard • Strategic Period 2026-2030</p>
+            <p class="mt-1">Integrated with Strategic Planner • Real-time data synchronization enabled</p>
+        </div>
+    </div>
+
+    <script>
+        // KPI Data
+        const kpiData = [
+            {
+                id: 1, perspective: 'Stakeholder', pillar: 'COE (4)', kpi: 'Tech Partnership Density',
+                current: 2, target: 15, status: 'red', unit: 'Admin',
+                notes: '2025 HRDC baseline; ramping to 3 per priority skill',
+                trend: [1, 1.5, 2, 2.5, 3], budget: 15000000
+            },
+            {
+                id: 2, perspective: 'Stakeholder', pillar: 'Pipeline (2)', kpi: 'Global Participation Rate',
+                current: 100, target: 100, status: 'green', unit: 'Technical',
+                notes: 'On track - Hosted 2025', trend: [85, 90, 95, 98, 100], budget: 25000000
+            },
+            {
+                id: 3, perspective: 'Stakeholder', pillar: 'Partnerships (6)', kpi: 'Industry Value Score',
+                current: 50, target: 50, status: 'green', unit: 'Admin',
+                notes: 'Active-Deep MOAs in place', trend: [35, 40, 45, 48, 50], budget: 12000000
+            },
+            {
+                id: 4, perspective: 'Stakeholder', pillar: 'Partnerships (6)', kpi: 'Partner Engagement Index',
+                current: 75, target: 100, status: 'yellow', unit: 'Support',
+                notes: 'Digital MEL portal testing', trend: [50, 60, 65, 70, 75], budget: 8000000
+            },
+            {
+                id: 5, perspective: 'Finance', pillar: 'Governance (1)', kpi: 'Budgetary Permanence',
+                current: 0, target: 100, status: 'red', unit: 'Admin',
+                notes: 'PBB integration pending', trend: [0, 0, 0, 0, 0], budget: 20000000
+            },
+            {
+                id: 6, perspective: 'Finance', pillar: 'Sustainability (7)', kpi: 'PPP Cost-Sharing Ratio',
+                current: 8, target: 30, status: 'yellow', unit: 'Admin',
+                notes: 'Targeting World Bank standard', trend: [5, 6, 7, 7.5, 8], budget: 18000000
+            },
+            {
+                id: 7, perspective: 'Finance', pillar: 'Pipeline (2)', kpi: 'Fiscal Predictability Index',
+                current: 90, target: 100, status: 'green', unit: 'Admin',
+                notes: 'Multi-year PPMP in progress', trend: [60, 70, 80, 85, 90], budget: 10000000
+            },
+            {
+                id: 8, perspective: 'Internal Process', pillar: 'Standards (5)', kpi: 'WSOS Integration Index',
+                current: 85, target: 100, status: 'yellow', unit: 'Technical',
+                notes: 'Phased TR alignment ongoing', trend: [60, 70, 75, 80, 85], budget: 22000000
+            },
+            {
+                id: 9, perspective: 'Internal Process', pillar: 'Governance (1)', kpi: 'Structural Integrity Ratio',
+                current: 20, target: 100, status: 'red', unit: 'Admin',
+                notes: 'Plan for permanent Secretariat underway', trend: [15, 16, 17, 18, 20], budget: 30000000
+            },
+            {
+                id: 10, perspective: 'Internal Process', pillar: 'Governance (1)', kpi: 'MOP Compliance Rate',
+                current: 0, target: 100, status: 'red', unit: 'Admin',
+                notes: 'SOPs under development', trend: [0, 0, 0, 0, 0], budget: 5000000
+            },
+            {
+                id: 11, perspective: 'Internal Process', pillar: 'Partnerships (6)', kpi: 'Operational Lead-Time Compliance',
+                current: 40, target: 100, status: 'red', unit: 'Admin',
+                notes: 'Procurements & MOAs require advance planning', trend: [20, 25, 30, 35, 40], budget: 8000000
+            },
+            {
+                id: 12, perspective: 'Learning & Growth', pillar: 'Sustainability (7)', kpi: 'Digital Visibility Rate',
+                current: 80, target: 100, status: 'yellow', unit: 'Support',
+                notes: 'Strategic Planner deployment ongoing', trend: [40, 55, 65, 72, 80], budget: 15000000
+            },
+            {
+                id: 13, perspective: 'Learning & Growth', pillar: 'COE (4)', kpi: 'Emerging Tech Certification Rate',
+                current: 85, target: 100, status: 'yellow', unit: 'Technical',
+                notes: 'Certification program starting 2026', trend: [50, 65, 72, 78, 85], budget: 20000000
+            },
+            {
+                id: 14, perspective: 'Learning & Growth', pillar: 'Professionalism (3)', kpi: 'Institutional Memory Coverage',
+                current: 88, target: 100, status: 'yellow', unit: 'Support',
+                notes: 'LMS content in development', trend: [60, 70, 78, 83, 88], budget: 12000000
+            },
+            {
+                id: 15, perspective: 'Learning & Growth', pillar: 'Professionalism (3)', kpi: 'Gold Standard Accreditation',
+                current: 92, target: 100, status: 'yellow', unit: 'Technical',
+                notes: 'WSMP rollout planned', trend: [75, 82, 86, 89, 92], budget: 10000000
+            }
+        ];
+
+        // Update timestamp
+        document.getElementById('lastUpdated').textContent = 'Last Updated: ' + new Date().toLocaleString();
+
+        // Calculate summary metrics
+        function calculateMetrics() {
+            const totalKPIs = kpiData.length;
+            const overallCompletion = (kpiData.reduce((sum, k) => sum + (k.current / k.target * 100), 0) / totalKPIs).toFixed(1);
+            const budgetSpent = 230;
+            const budgetUtilization = ((budgetSpent / 500) * 100).toFixed(1);
+            
+            const stakeholderKPIs = kpiData.filter(k => ['Pipeline (2)', 'Partnerships (6)', 'COE (4)'].includes(k.pillar));
+            const stakeholderScore = (stakeholderKPIs.reduce((sum, k) => sum + (k.current / k.target * 100), 0) / stakeholderKPIs.length).toFixed(1);
+
+            const redCount = kpiData.filter(k => k.status === 'red').length;
+            const yellowCount = kpiData.filter(k => k.status === 'yellow').length;
+            const greenCount = kpiData.filter(k => k.status === 'green').length;
+
+            document.getElementById('overallCompletion').textContent = overallCompletion + '%';
+            document.getElementById('overallProgress').style.width = overallCompletion + '%';
+            document.getElementById('budgetUtilization').textContent = budgetUtilization + '%';
+            document.getElementById('budgetProgress').style.width = budgetUtilization + '%';
+            document.getElementById('budgetSpent').textContent = budgetSpent;
+            document.getElementById('stakeholderScore').textContent = stakeholderScore + '%';
+            document.getElementById('greenCount').textContent = greenCount;
+            document.getElementById('yellowCount').textContent = yellowCount;
+            document.getElementById('redCount').textContent = redCount;
+        }
+
+        // Render KPI table
+        function renderKPITable(data = kpiData) {
+            const tbody = document.getElementById('kpiTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(kpi => {
+                const percentage = ((kpi.current / kpi.target) * 100).toFixed(1);
+                const statusClass = `status-${kpi.status}`;
+                const progressClass = `progress-bar-${kpi.status}`;
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${kpi.perspective}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${kpi.pillar}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">${kpi.kpi}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">${kpi.current}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${kpi.target}</td>
+                    <td class="px-6 py-4">
+                        <div class="w-32">
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="${progressClass} h-2.5 rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">${percentage}%</p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                            ${kpi.status.toUpperCase()}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${kpi.unit}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm no-print">
+                        <button onclick="toggleDetails(${kpi.id})" class="text-blue-600 hover:text-blue-800 font-medium">
+                            <span id="btn-${kpi.id}">▶ Details</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+
+                const detailsRow = document.createElement('tr');
+                detailsRow.id = `details-${kpi.id}`;
+                detailsRow.className = 'expanded-row';
+                detailsRow.innerHTML = `
+                    <td colspan="9" class="px-6 py-4 bg-gray-50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-2">Notes & Context</h4>
+                                <p class="text-sm text-gray-600 mb-3">${kpi.notes}</p>
+                                
+                                <h4 class="font-semibold text-gray-800 mb-2">Budget Allocation</h4>
+                                <p class="text-sm text-gray-600">PHP ${(kpi.budget / 1000000).toFixed(1)}M</p>
+                                
+                                <h4 class="font-semibold text-gray-800 mt-4 mb-2">Responsible Unit</h4>
+                                <p class="text-sm text-gray-600">${kpi.unit}</p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-3">5-Year Trend</h4>
+                                <canvas id="trend-${kpi.id}" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(detailsRow);
+            });
+        }
+
+        // Toggle details
+        function toggleDetails(id) {
+            const detailsRow = document.getElementById(`details-${id}`);
+            const btn = document.getElementById(`btn-${id}`);
+            
+            if (detailsRow.classList.contains('show')) {
+                detailsRow.classList.remove('show');
+                btn.textContent = '▶ Details';
+            } else {
+                detailsRow.classList.add('show');
+                btn.textContent = '▼ Details';
+                
+                const kpi = kpiData.find(k => k.id === id);
+                renderTrendChart(id, kpi.trend);
+            }
+        }
+
+        // Render trend chart
+        function renderTrendChart(id, trendData) {
+            const ctx = document.getElementById(`trend-${id}`);
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['2026', '2027', '2028', '2029', '2030'],
+                    datasets: [{
+                        label: 'Progress',
+                        data: trendData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // Render alerts
+        function renderAlerts() {
+            const container = document.getElementById('alertsContainer');
+            const redKPIs = kpiData.filter(k => k.status === 'red').slice(0, 5);
+            
+            container.innerHTML = redKPIs.map(kpi => {
+                const percentage = ((kpi.current / kpi.target) * 100).toFixed(0);
+                return `
+                    <div class="border-l-4 border-red-500 pl-3 py-2 bg-red-50">
+                        <p class="text-sm font-medium text-gray-900">${kpi.kpi}</p>
+                        <p class="text-xs text-gray-600">${kpi.pillar}</p>
+                        <p class="text-xs text-red-600 mt-1">${kpi.current}/${kpi.target} (${percentage}%)</p>
+                        <p class="text-xs text-gray-500 mt-1">Owner: ${kpi.unit}</p>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('totalAlerts').textContent = kpiData.filter(k => k.status === 'red').length;
+        }
+
+        // Initialize budget chart
+        function initBudgetChart() {
+            const ctx = document.getElementById('budgetChart');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Personal Services (PS)', 'MOOE', 'Capital Outlay (CO)'],
+                    datasets: [{
+                        data: [150, 250, 100],
+                        backgroundColor: ['#3b82f6', '#10b981', '#eab308'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': PHP ' + context.parsed + 'M';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const perspective = document.getElementById('perspectiveFilter').value;
+            const pillar = document.getElementById('pillarFilter').value;
+            
+            const filtered = kpiData.filter(kpi => {
+                const perspectiveMatch = perspective === 'all' || kpi.perspective === perspective;
+                const pillarMatch = pillar === 'all' || kpi.pillar === pillar;
+                return perspectiveMatch && pillarMatch;
+            });
+            
+            renderKPITable(filtered);
+        }
+
+        // Event listeners
+        document.getElementById('perspectiveFilter').addEventListener('change', applyFilters);
+        document.getElementById('pillarFilter').addEventListener('change', applyFilters);
+
+        // Initialize dashboard
+        calculateMetrics();
+        renderKPITable();
+        renderAlerts();
+        initBudgetChart();
+    </script>
+</body>
+</html>
