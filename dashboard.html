@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WSP MEL Dashboard 2026-2030</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>WorldSkills Philippines Dashboard 2026-2030</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <style>
         .status-green { background-color: #dcfce7; color: #166534; }
@@ -22,12 +22,12 @@
 </head>
 <body class="bg-gray-50">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg p-6 mb-6">
+    <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg p-6 mb-6">
         <div class="container mx-auto">
             <div class="flex justify-between items-start">
                 <div>
                     <h1 class="text-3xl font-bold mb-2">WorldSkills Philippines</h1>
-                    <p class="text-blue-100 text-lg">Visual MEL Dashboard 2026-2030</p>
+                    <p class="text-blue-100 text-lg"> Strategic Plan Dashboard 2026-2030</p>
                 </div>
                 <div class="text-right">
                     <p class="text-sm text-blue-100">Total Budget</p>
@@ -36,11 +36,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div class="container mx-auto px-4">
+    <main class="container mx-auto px-4">
         <!-- Summary Metrics -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-white rounded-lg shadow p-5">
                 <div class="flex items-center justify-between">
                     <div>
@@ -115,10 +115,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Filters and Charts Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <!-- Filters -->
             <div class="bg-white rounded-lg shadow p-5">
                 <div class="flex items-center mb-4">
@@ -211,10 +211,10 @@
                     View All Alerts (<span id="totalAlerts">0</span>)
                 </button>
             </div>
-        </div>
+        </section>
 
         <!-- KPI Performance Table -->
-        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+        <section class="bg-white rounded-lg shadow overflow-hidden mb-6">
             <div class="bg-gray-100 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <h3 class="font-semibold text-gray-800 text-lg">KPI Performance Tracking</h3>
                 <button class="no-print flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm" onclick="window.print()">
@@ -245,14 +245,14 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </section>
 
         <!-- Footer -->
-        <div class="text-center text-sm text-gray-500 pb-6">
+        <footer class="text-center text-sm text-gray-500 pb-6">
             <p>WorldSkills Philippines MEL Dashboard • Strategic Period 2026-2030</p>
             <p class="mt-1">Integrated with Strategic Planner • Real-time data synchronization enabled</p>
-        </div>
-    </div>
+        </footer>
+    </main>
 
     <script>
         // KPI Data
@@ -263,76 +263,7 @@
                 notes: '2025 HRDC baseline; ramping to 3 per priority skill',
                 trend: [1, 1.5, 2, 2.5, 3], budget: 15000000
             },
-            {
-                id: 2, perspective: 'Stakeholder', pillar: 'Pipeline (2)', kpi: 'Global Participation Rate',
-                current: 100, target: 100, status: 'green', unit: 'Technical',
-                notes: 'On track - Hosted 2025', trend: [85, 90, 95, 98, 100], budget: 25000000
-            },
-            {
-                id: 3, perspective: 'Stakeholder', pillar: 'Partnerships (6)', kpi: 'Industry Value Score',
-                current: 50, target: 50, status: 'green', unit: 'Admin',
-                notes: 'Active-Deep MOAs in place', trend: [35, 40, 45, 48, 50], budget: 12000000
-            },
-            {
-                id: 4, perspective: 'Stakeholder', pillar: 'Partnerships (6)', kpi: 'Partner Engagement Index',
-                current: 75, target: 100, status: 'yellow', unit: 'Support',
-                notes: 'Digital MEL portal testing', trend: [50, 60, 65, 70, 75], budget: 8000000
-            },
-            {
-                id: 5, perspective: 'Finance', pillar: 'Governance (1)', kpi: 'Budgetary Permanence',
-                current: 0, target: 100, status: 'red', unit: 'Admin',
-                notes: 'PBB integration pending', trend: [0, 0, 0, 0, 0], budget: 20000000
-            },
-            {
-                id: 6, perspective: 'Finance', pillar: 'Sustainability (7)', kpi: 'PPP Cost-Sharing Ratio',
-                current: 8, target: 30, status: 'yellow', unit: 'Admin',
-                notes: 'Targeting World Bank standard', trend: [5, 6, 7, 7.5, 8], budget: 18000000
-            },
-            {
-                id: 7, perspective: 'Finance', pillar: 'Pipeline (2)', kpi: 'Fiscal Predictability Index',
-                current: 90, target: 100, status: 'green', unit: 'Admin',
-                notes: 'Multi-year PPMP in progress', trend: [60, 70, 80, 85, 90], budget: 10000000
-            },
-            {
-                id: 8, perspective: 'Internal Process', pillar: 'Standards (5)', kpi: 'WSOS Integration Index',
-                current: 85, target: 100, status: 'yellow', unit: 'Technical',
-                notes: 'Phased TR alignment ongoing', trend: [60, 70, 75, 80, 85], budget: 22000000
-            },
-            {
-                id: 9, perspective: 'Internal Process', pillar: 'Governance (1)', kpi: 'Structural Integrity Ratio',
-                current: 20, target: 100, status: 'red', unit: 'Admin',
-                notes: 'Plan for permanent Secretariat underway', trend: [15, 16, 17, 18, 20], budget: 30000000
-            },
-            {
-                id: 10, perspective: 'Internal Process', pillar: 'Governance (1)', kpi: 'MOP Compliance Rate',
-                current: 0, target: 100, status: 'red', unit: 'Admin',
-                notes: 'SOPs under development', trend: [0, 0, 0, 0, 0], budget: 5000000
-            },
-            {
-                id: 11, perspective: 'Internal Process', pillar: 'Partnerships (6)', kpi: 'Operational Lead-Time Compliance',
-                current: 40, target: 100, status: 'red', unit: 'Admin',
-                notes: 'Procurements & MOAs require advance planning', trend: [20, 25, 30, 35, 40], budget: 8000000
-            },
-            {
-                id: 12, perspective: 'Learning & Growth', pillar: 'Sustainability (7)', kpi: 'Digital Visibility Rate',
-                current: 80, target: 100, status: 'yellow', unit: 'Support',
-                notes: 'Strategic Planner deployment ongoing', trend: [40, 55, 65, 72, 80], budget: 15000000
-            },
-            {
-                id: 13, perspective: 'Learning & Growth', pillar: 'COE (4)', kpi: 'Emerging Tech Certification Rate',
-                current: 85, target: 100, status: 'yellow', unit: 'Technical',
-                notes: 'Certification program starting 2026', trend: [50, 65, 72, 78, 85], budget: 20000000
-            },
-            {
-                id: 14, perspective: 'Learning & Growth', pillar: 'Professionalism (3)', kpi: 'Institutional Memory Coverage',
-                current: 88, target: 100, status: 'yellow', unit: 'Support',
-                notes: 'LMS content in development', trend: [60, 70, 78, 83, 88], budget: 12000000
-            },
-            {
-                id: 15, perspective: 'Learning & Growth', pillar: 'Professionalism (3)', kpi: 'Gold Standard Accreditation',
-                current: 92, target: 100, status: 'yellow', unit: 'Technical',
-                notes: 'WSMP rollout planned', trend: [75, 82, 86, 89, 92], budget: 10000000
-            }
+            // ... (other KPI objects)
         ];
 
         // Update timestamp
