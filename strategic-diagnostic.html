@@ -404,57 +404,187 @@
     let selectedMappingItemId = null;
     let chartInstances = {}; // keep chart instances
 
-    // Archetypes (trimmed/complete for demo)
+ <script>
+    // --- Data & Archetype Definitions ---
     const archetypes = {
       'limits-growth': {
         name: 'Limits to Growth',
         icon: '📈',
-        description: 'A reinforcing process drives growth which eventually encounters limits that slow or stop growth.',
-        elements: [
-          { id: 'growing-action', label: 'Reinforcing Action', desc: 'Action that fuels growth' },
-          { id: 'limiting-condition', label: 'Limiting Condition', desc: 'Constraint that slows growth' }
-        ],
-        leveragePoints: ['Increase capacity', 'Reduce limit pressure'],
-        narrative: 'When growth hits limits, invest in capacity or reduce limit impact to sustain growth.',
-        botPattern: { x: Array.from({length:20},(_,i)=>i), y: [1,2,4,8,15,25,35,42,46,48,49,49,48,46,42,35,25,15,8,4] }
+        desc: 'A reinforcing cycle drives growth until a constraint is hit, causing the growth to level off or crash.',
+        loops: 'Loop 1: Reinforcing (Action -> State -> Action). Loop 2: Balancing (State -> Constraint -> Slowing Action).',
+        elements: [{id:'growth-act', label:'Growing Action'}, {id:'limit', label:'Limiting Condition'}],
+        leverage: 'Focus on managing the limit, not forcing more growth action.',
+        bot: { labels: [1,2,3,4,5,6,7,8,9,10], datasets: [{label:'System State', data:[2,8,22,45,68,82,90,94,95,95], color:'#4ade80'}] }
       },
       'shifting-burden': {
         name: 'Shifting the Burden',
-        icon: '🔄',
-        description: 'Short-term fixes are used in place of addressing the underlying cause, creating dependency.',
-        elements: [
-          { id: 'symptom', label: 'Symptom', desc: 'Visible problem' },
-          { id: 'side-effect', label: 'Side Effect', desc: 'Consequences from fixes' }
-        ],
-        leveragePoints: ['Address root cause', 'Reduce dependence on fix'],
-        narrative: 'Avoid quick fixes that create dependency; solve the root cause.',
-        botPattern: { x: Array.from({length:20},(_,i)=>i), y: [10,9,8,7,6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6,-7,-8,-9] }
+        icon: '🩹',
+        desc: 'A short-term fix is used for a problem, which works briefly but makes the system less able to fix the root cause.',
+        loops: 'Loop 1: Balancing (Symptom fix). Loop 2: Balancing (Root cause fix). Loop 3: Reinforcing (Dependency side-effect).',
+        elements: [{id:'symptom', label:'Problem Symptom'}, {id:'quick-fix', label:'Symptomatic Fix'}, {id:'root-fix', label:'Fundamental Solution'}],
+        leverage: 'Strengthen fundamental solutions and reduce dependency on quick fixes.',
+        bot: { labels: [1,2,3,4,5,6,7,8,9,10], datasets: [
+            {label:'Symptom', data:[80,40,30,50,70,90,100,110,120,130], color:'#fbbf24'},
+            {label:'Capabilty', data:[100,95,85,70,55,40,30,20,10,5], color:'#f87171'}
+        ]}
       },
       'fixes-fail': {
         name: 'Fixes that Fail',
         icon: '🔧',
-        description: 'Short-term solutions create long-term side effects that neutralize the fix.',
-        elements: [
-          { id: 'fix', label: 'Fix', desc: 'Immediate corrective action' },
-          { id: 'unintended', label: 'Unintended Consequence', desc: 'Side-effects' }
-        ],
-        leveragePoints: ['Monitor side-effects', 'Invest in durable solutions'],
-        narrative: 'Track side-effects and transition to durable solutions.',
-        botPattern: { x: Array.from({length:20},(_,i)=>i), y: [10,9,8,7,6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6,-7,-8,-9] }
+        desc: 'A fix has immediate results but creates long-term unintended consequences that require more of the fix.',
+        loops: 'Loop 1: Balancing (The Fix). Loop 2: Reinforcing (The Delay/Consequence).',
+        elements: [{id:'fix', label:'The Fix'}, {id:'consequence', label:'Unintended Consequence'}],
+        leverage: 'Acknowledge the delay. Fix the cause, don\'t just react to the symptom.',
+        bot: { labels: [1,2,3,4,5,6,7,8,9,10], datasets: [{label:'Problem Level', data:[90,40,20,35,60,95,120,150,180,210], color:'#f87171'}] }
+      },
+      'escalation': {
+        name: 'Escalation',
+        icon: '⚔️',
+        desc: 'Two parties see each other\'s actions as a threat and respond by increasing their own, creating a "ratchet" effect.',
+        loops: 'Two Balancing loops that form one large Reinforcing loop.',
+        elements: [{id:'act-a', label:'Party A Action'}, {id:'act-b', label:'Party B Action'}],
+        leverage: 'Unilateral de-escalation or identifying common goals.',
+        bot: { labels: [1,2,3,4,5,6,7,8,9,10], datasets: [{label:'Intensity', data:[5,12,25,50,90,160,280,450,700,1000], color:'#f43f5e'}] }
       },
       'success-successful': {
         name: 'Success to Successful',
         icon: '🏆',
-        description: 'Success begets more success; uneven resource allocation can starve other activities.',
-        elements: [
-          { id: 'activity-a', label: 'Activity A', desc: 'Successful activity' },
-          { id: 'activity-b', label: 'Activity B', desc: 'Competing activity' }
-        ],
-        leveragePoints: ['Equitable resource allocation', 'Support emerging activities'],
-        narrative: 'Balance resources to avoid over-concentration of benefits.',
-        botPattern: { x: Array.from({length:20},(_,i)=>i), y: [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24] }
+        desc: 'Two activities compete for limited resources. The one that succeeds initially gets more resources, starving the other.',
+        loops: 'Two Reinforcing loops that are interconnected.',
+        elements: [{id:'winner', label:'Winning Activity'}, {id:'loser', label:'Losing Activity'}],
+        leverage: 'Decouple the resource allocation or provide equity to the losing activity.',
+        bot: { labels: [1,2,3,4,5,6,7,8,9,10], datasets: [
+            {label:'Activity A', data:[10,25,45,70,100,140,190,250,320,400], color:'#4ade80'},
+            {label:'Activity B', data:[10,8,6,4,2,1,0,0,0,0], color:'#94a3b8'}
+        ]}
       }
     };
+
+    let items = [];
+    let currentId = null;
+    let charts = {};
+
+    // --- Core Functions ---
+
+    function switchTab(tab) {
+      document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(`${tab}-tab`).classList.remove('hidden');
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active', 'bg-slate-800'));
+      document.getElementById(`tab-${tab}`).classList.add('tab-active');
+      if (tab === 'archetypes') renderArchetypes();
+    }
+
+    async function addSwotItem() {
+      const content = document.getElementById('new-content').value;
+      if(!content) return;
+      const item = {
+        id: Date.now(),
+        category: document.getElementById('new-category').value,
+        content: content,
+        archetype: null,
+        role: null,
+        leverage: ''
+      };
+      items.push(item);
+      document.getElementById('new-content').value = '';
+      renderSwot();
+    }
+
+    function renderSwot() {
+      const cats = ['strength', 'weakness', 'opportunity', 'threat'];
+      cats.forEach(c => {
+        const list = document.getElementById(`${c}-list`);
+        const count = document.getElementById(`${c}-count`);
+        const filtered = items.filter(i => i.category === c);
+        count.innerText = filtered.length;
+        list.innerHTML = filtered.map(i => `
+          <div class="swot-card bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
+            <p class="text-sm text-slate-200 leading-relaxed">${i.content}</p>
+            <div class="flex justify-between items-center">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">${i.archetype ? '✅ Mapped' : '⚪ Unmapped'}</span>
+                <button onclick="openModal(${i.id})" class="text-[10px] bg-indigo-600/20 text-indigo-400 px-3 py-1 rounded hover:bg-indigo-600 hover:text-white transition-all">MAP SYSTEM</button>
+            </div>
+          </div>
+        `).join('');
+      });
+    }
+
+    function renderArchetypes() {
+      const container = document.getElementById('archetype-buttons');
+      container.innerHTML = Object.entries(archetypes).map(([id, a]) => `
+        <button onclick="selectArchetype('${id}')" class="w-full text-left p-4 rounded-xl border border-slate-800 hover:border-indigo-500 transition-all bg-slate-900/50">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">${a.icon}</span>
+            <div>
+              <div class="text-xs font-bold text-white">${a.name}</div>
+              <div class="text-[10px] text-slate-500 truncate w-32">${a.desc}</div>
+            </div>
+          </div>
+        </button>
+      `).join('');
+    }
+
+    function selectArchetype(id) {
+      const a = archetypes[id];
+      const mapped = items.filter(i => i.archetype === id);
+      const detail = document.getElementById('archetype-detail');
+      
+      detail.innerHTML = `
+        <div class="fade-in space-y-8">
+          <div class="flex justify-between items-start">
+            <div class="space-y-2">
+              <h2 class="text-3xl font-bold text-white flex items-center gap-3">${a.icon} ${a.name}</h2>
+              <p class="text-slate-400 max-w-xl text-sm leading-relaxed">${a.desc}</p>
+            </div>
+            <div class="bg-indigo-600/10 border border-indigo-600/20 p-4 rounded-xl">
+               <span class="text-[10px] font-bold text-indigo-400 block mb-1 uppercase tracking-widest">Leverage Strategy</span>
+               <p class="text-xs text-white italic">"${a.leverage}"</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl h-[280px]">
+              <h4 class="text-xs font-bold text-slate-500 uppercase mb-4">Behavior Over Time (BOT)</h4>
+              <canvas id="botChart"></canvas>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl">
+              <h4 class="text-xs font-bold text-slate-500 uppercase mb-4">Systemic Loop Logic</h4>
+              <p class="text-sm text-slate-300 leading-relaxed">${a.loops}</p>
+              <div class="mt-6 space-y-4">
+                 <h4 class="text-[10px] font-bold text-slate-500 uppercase">Mapped SWOT Variables (${mapped.length})</h4>
+                 ${mapped.map(m => `<div class="text-xs bg-slate-900 p-3 rounded-lg border-l-2 border-indigo-500 text-slate-300">${m.content} <b class="text-indigo-400 ml-2">(${m.role})</b></div>`).join('') || '<p class="text-xs italic text-slate-600">No items mapped yet.</p>'}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const ctx = document.getElementById('botChart').getContext('2d');
+      if(charts.bot) charts.bot.destroy();
+      charts.bot = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: a.bot.labels,
+          datasets: a.bot.datasets.map(d => ({
+            label: d.label,
+            data: d.data,
+            borderColor: d.color,
+            tension: 0.4,
+            borderWidth: 3,
+            pointRadius: 0
+          }))
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#64748b', font: { size: 10 } } } },
+          scales: {
+            x: { display: false },
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b', font: { size: 10 } } }
+          }
+        }
+      });
+    }
 
     // Sample SWOT dataset (small for demo)
     const sampleSWOT = [
@@ -826,88 +956,192 @@
       }
     }
 
-    // ====================
-    // Simulation
-    // ====================
-    let simState = {
-      plantilla_staff: 2,
-      jo_staff: 15,
-      mop_investment: 30,
-      institutional_memory: 60,
-      medal_performance: 2,
-      budget_pressure: 50,
-      time: 0
-    };
+  <section id="simulator-tab" class="hidden fade-in space-y-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-1 space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h3 class="text-white font-bold mb-4 flex items-center gap-2">🕹️ Strategic Levers</h3>
+        
+        <div class="space-y-5">
+          <div>
+            <div class="flex justify-between mb-2">
+              <label class="text-xs text-slate-400 uppercase">Plantilla % (Option 1)</label>
+              <span id="v-plantilla" class="text-indigo-400 font-mono text-xs">20%</span>
+            </div>
+            <input type="range" id="lever-plantilla" min="10" max="100" value="20" class="w-full accent-indigo-500">
+            <p class="text-[10px] text-slate-500 mt-1">Disrupts "Shifting the Burden" by reducing JO reliance.</p>
+          </div>
 
-    function updateLeverUI(type, value) {
-      if (type === 'plantilla') {
-        simState.plantilla_staff = parseInt(value);
-        document.getElementById('plantilla-value').textContent = value;
-      } else if (type === 'jo') {
-        simState.jo_staff = parseInt(value);
-        document.getElementById('jo-value').textContent = value;
-      } else if (type === 'mop') {
-        simState.mop_investment = parseInt(value);
-        document.getElementById('mop-value').textContent = value + '%';
-      }
-    }
+          <div>
+            <div class="flex justify-between mb-2">
+              <label class="text-xs text-slate-400 uppercase">Standards Integration (Option 2)</label>
+              <span id="v-standards" class="text-indigo-400 font-mono text-xs">15%</span>
+            </div>
+            <input type="range" id="lever-standards" min="5" max="100" value="15" class="w-full accent-indigo-500">
+            <p class="text-[10px] text-slate-500 mt-1">Drives "Quality Engine" but increases staff fatigue.</p>
+          </div>
 
-    function runSimulation() {
-      const results = { time: [], memory: [], medals: [], budget: [] };
-      let state = { ...simState, time: 0 };
+          <div>
+            <div class="flex justify-between mb-2">
+              <label class="text-xs text-slate-400 uppercase">Partnership Depth (Option 3)</label>
+              <span id="v-partners" class="text-indigo-400 font-mono text-xs">10%</span>
+            </div>
+            <input type="range" id="lever-partners" min="0" max="100" value="10" class="w-full accent-indigo-500">
+            <p class="text-[10px] text-slate-500 mt-1">Plugs the "Human Capital Leak" via industry mastery.</p>
+          </div>
+        </div>
 
-      for (let q = 0; q <= 12; q++) {
-        results.time.push(`Q${q}`);
-        // simplistic dynamics
-        const joImpact = state.jo_staff * 0.3;
-        const plantillaImpact = state.plantilla_staff * 0.5;
-        const mopImpact = state.mop_investment / 20;
-        state.institutional_memory = Math.max(10, Math.min(100, state.institutional_memory - joImpact + plantillaImpact + mopImpact));
-        state.medal_performance = Math.min(5, 1 + (state.institutional_memory / 25));
-        state.budget_pressure = Math.min(100, 30 + (state.plantilla_staff * 7));
+        <div class="mt-8 pt-6 border-t border-slate-800">
+          <h4 class="text-xs font-bold text-slate-500 mb-3 uppercase">Preset Scenarios</h4>
+          <div class="grid grid-cols-1 gap-2">
+            <button onclick="applyScenario('gov')" class="text-left p-2 rounded bg-indigo-600/10 border border-indigo-600/30 text-[10px] text-indigo-300 hover:bg-indigo-600/20">Option 1: Governance Pivot</button>
+            <button onclick="applyScenario('std')" class="text-left p-2 rounded bg-emerald-600/10 border border-emerald-600/30 text-[10px] text-emerald-300 hover:bg-emerald-600/20">Option 2: Standards Sprint</button>
+            <button onclick="applyScenario('hybrid')" class="text-left p-2 rounded bg-amber-600/10 border border-amber-600/30 text-[10px] text-amber-300 hover:bg-amber-600/20">Recommended: Hybrid Pivot</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        results.memory.push(Math.round(state.institutional_memory));
-        results.medals.push(Math.round(state.medal_performance * 10) / 10);
-        results.budget.push(Math.round(state.budget_pressure));
-        state.time++;
-      }
-      renderSimulationResults(results);
-    }
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-8 h-[500px] relative">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-white font-bold italic">WSP 2030 Flight Path: "National Quality Engine"</h3>
+          <div class="flex gap-4">
+             <div class="text-right">
+                <span class="block text-[10px] text-slate-500">Stability Score</span>
+                <span id="score-stability" class="text-xl font-bold text-indigo-400">0%</span>
+             </div>
+             <div class="text-right">
+                <span class="block text-[10px] text-slate-500">Excellence Index</span>
+                <span id="score-excellence" class="text-xl font-bold text-emerald-400">0%</span>
+             </div>
+          </div>
+        </div>
+        <canvas id="simChart"></canvas>
+      </div>
 
-    function renderSimulationResults(results) {
-      const ctx = document.getElementById('sim-chart').getContext('2d');
-      const cfg = {
-        type: 'line',
-        data: {
-          labels: results.time,
-          datasets: [
-            { label: 'Institutional Memory (%)', data: results.memory, borderColor: '#4ade80', backgroundColor: 'rgba(74,222,128,0.08)', tension: 0.3, fill: true },
-            { label: 'Medal Performance', data: results.medals, borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.08)', tension: 0.3, fill: true },
-            { label: 'Budget Pressure (%)', data: results.budget, borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,0.06)', tension: 0.3, fill: true }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: { y: { beginAtZero: true, max: 100 } },
-          plugins: { legend: { position: 'top' } }
+      <div id="sim-feedback" class="bg-indigo-950/20 border border-indigo-900/40 p-5 rounded-xl">
+        <h4 class="text-xs font-bold text-indigo-400 uppercase mb-2">Systemic Insight</h4>
+        <p id="insight-text" class="text-sm text-slate-300 italic">Adjust levers to begin the simulation...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // --- Simulation Logic ---
+  let simChart = null;
+
+  function initSim() {
+    const ctx = document.getElementById('simChart').getContext('2d');
+    simChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['2024', '2025', '2026', '2027', '2028', '2029', '2030'],
+        datasets: [
+          { label: 'Excellence (Output)', data: [], borderColor: '#10b981', tension: 0.4 },
+          { label: 'Institutional Memory (Stock)', data: [], borderColor: '#6366f1', tension: 0.4 },
+          { label: 'Staff Fatigue (Drain)', data: [], borderColor: '#f43f5e', borderDash: [5,5], tension: 0.4 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#475569' } },
+          x: { grid: { display: false }, ticks: { color: '#475569' } }
         }
-      };
-      if (chartInstances.sim) chartInstances.sim.destroy();
-      chartInstances.sim = new Chart(ctx, cfg);
+      }
+    });
+  }
 
-      // insights
-      const insights = [];
-      const last = results.memory[results.memory.length - 1] || 0;
-      const lastBudget = results.budget[results.budget.length - 1] || 0;
-      const lastMedals = results.medals[results.medals.length - 1] || 0;
-      if (last > 80) insights.push("✅ Strong institutional memory enables sustained excellence.");
-      if (lastBudget > 90) insights.push("⚠️ Budget pressure may trigger cost-cutting, risking quality.");
-      if (lastMedals < 3) insights.push("📉 Medal performance lags—consider accelerating MOP adoption.");
-      if ((last - results.memory[0]) > 10) insights.push("🚀 Institutional memory is growing—structural reforms are working!");
+  function runSimulation() {
+    const p = parseInt(document.getElementById('lever-plantilla').value);
+    const s = parseInt(document.getElementById('lever-standards').value);
+    const r = parseInt(document.getElementById('lever-partners').value);
 
-      document.getElementById('sim-insights').innerHTML = insights.length ? insights.join('<br>') : "No significant dynamics detected.";
+    // Dynamic Math Models
+    let excellence = [10];
+    let memory = [10];
+    let fatigue = [5];
+
+    for(let i=1; i<7; i++) {
+      // Memory grows based on Governance (Plantilla) and MOP Codification
+      let memoryGrowth = (p * 0.8) - (fatigue[i-1] * 0.2);
+      memory.push(Math.max(0, memory[i-1] + (memoryGrowth / 2)));
+
+      // Fatigue grows if Standards are high but Governance is low
+      let fatigueGrowth = (s * 1.2) - (p * 0.5);
+      fatigue.push(Math.max(0, fatigue[i-1] + (fatigueGrowth / 3)));
+
+      // Excellence is a product of (Standards + Partners) * (Memory / Fatigue Ratio)
+      let efficiency = memory[i] / (fatigue[i] + 1);
+      let stepExcellence = (s * 0.5 + r * 0.5) * (efficiency / 10);
+      excellence.push(excellence[i-1] + stepExcellence);
     }
+
+    simChart.data.datasets[0].data = excellence;
+    simChart.data.datasets[1].data = memory;
+    simChart.data.datasets[2].data = fatigue;
+    simChart.update();
+
+    // Update UI Scores
+    document.getElementById('score-stability').innerText = Math.round(memory[6]) + '%';
+    document.getElementById('score-excellence').innerText = Math.round(excellence[6]) + '%';
+
+    // Insight Logic
+    let insight = "";
+    if (p < 40 && s > 60) {
+        insight = "⚠️ ARCHETYPE ALERT: You are experiencing 'Fixes that Fail'. High standards without permanent staff are causing system-wide burnout.";
+    } else if (p > 70 && r > 50) {
+        insight = "🌟 OPTIMAL: The 'National Quality Engine' is self-sustaining. Governance supports mastery, creating a lasting legacy.";
+    } else if (r < 20) {
+        insight = "📉 VULNERABILITY: You have a 'Human Capital Leak'. Without Option 3 (Partnerships), your trained experts will eventually leave for industry.";
+    } else {
+        insight = "The system is stabilizing. Focus on Pillar 1 to ensure technical gains don't evaporate.";
+    }
+    document.getElementById('insight-text').innerText = insight;
+  }
+
+  function applyScenario(type) {
+    if(type === 'gov') {
+      document.getElementById('lever-plantilla').value = 90;
+      document.getElementById('lever-standards').value = 20;
+      document.getElementById('lever-partners').value = 30;
+    } else if (type === 'std') {
+      document.getElementById('lever-plantilla').value = 20;
+      document.getElementById('lever-standards').value = 90;
+      document.getElementById('lever-partners').value = 40;
+    } else {
+      document.getElementById('lever-plantilla').value = 75;
+      document.getElementById('lever-standards').value = 60;
+      document.getElementById('lever-partners').value = 80;
+    }
+    updateDisplays();
+    runSimulation();
+  }
+
+  function updateDisplays() {
+    document.getElementById('v-plantilla').innerText = document.getElementById('lever-plantilla').value + '%';
+    document.getElementById('v-standards').innerText = document.getElementById('lever-standards').value + '%';
+    document.getElementById('v-partners').innerText = document.getElementById('lever-partners').value + '%';
+  }
+
+  // Listeners
+  ['lever-plantilla', 'lever-standards', 'lever-partners'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      updateDisplays();
+      runSimulation();
+    });
+  });
+
+  // Init on load
+  window.addEventListener('DOMContentLoaded', () => {
+    initSim();
+    runSimulation();
+  });
+</script>
 
     // ====================
     // Archetype selection & details
@@ -1086,4 +1320,4 @@
     })();
   </script>
 </body>
-</html>
+</html>  
