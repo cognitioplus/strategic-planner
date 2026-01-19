@@ -1,361 +1,322 @@
-<!doctype html>
-<html lang="en" class="h-full">
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WSP Strategic Planner Pro v3.0</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WSP National Quality Engine | Strategic Planner Pro</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-
-  <style>
-    :root { --primary: #6366f1; --secondary: #a855f7; --accent: #10b981; }
-    body { font-family: 'Inter', sans-serif; background: #020617; color: #e2e8f0; scroll-behavior: smooth; }
-    .mono { font-family: 'JetBrains Mono', monospace; }
-    .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.5); }
-    .tab-active { background: var(--primary); color: white; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
-    .kpi-card { transition: transform 0.2s; cursor: pointer; }
-    .kpi-card:hover { transform: translateY(-5px); border-color: var(--primary); }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-  </style>
+    <style>
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.5); }
+        input, select, textarea { background: #0f172a !important; border: 1px solid #1e293b !important; color: white !important; transition: all 0.2s; }
+        input:focus { border-color: #6366f1 !important; outline: none; ring: 2px #6366f1; }
+    </style>
 </head>
-<body class="h-full flex flex-col overflow-hidden">
+<body x-data="stratApp()" x-init="init()" class="text-slate-200 h-full overflow-hidden flex flex-col">
 
-  <header class="glass border-b border-slate-800 px-8 py-4 flex justify-between items-center z-50">
-    <div class="flex items-center gap-4">
-      <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">WSP</div>
-      <div>
-        <h1 class="text-lg font-bold text-white tracking-tight">National Quality Engine <span class="text-indigo-500">2030</span></h1>
-        <p id="nav-subtitle" class="text-slate-500 text-[10px] uppercase tracking-widest font-bold">Strategic Management System</p>
-      </div>
-    </div>
-    <div class="flex gap-3">
-       <button onclick="switchTab('report')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all">Generate Strategic Plan</button>
-       <button onclick="switchTab('settings')" class="bg-slate-800 p-2 rounded-lg hover:bg-slate-700">⚙️</button>
-    </div>
-  </header>
-
-  <div class="flex flex-1 overflow-hidden">
-    <nav class="w-64 bg-slate-950 border-r border-slate-900 flex flex-col p-4 gap-2">
-      <p class="text-[10px] text-slate-600 font-bold uppercase px-3 mb-2">Analysis & Logic</p>
-      <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-link tab-active flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold">📊 Executive Dashboard</button>
-      <button onclick="switchTab('swot')" id="btn-swot" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-900 transition-all">🔍 SWOT & Systems</button>
-      
-      <p class="text-[10px] text-slate-600 font-bold uppercase px-3 mt-6 mb-2">Strategy & Execution</p>
-      <button onclick="switchTab('bsc')" id="btn-bsc" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-900">🎯 Balanced Scorecard</button>
-      <button onclick="switchTab('pap')" id="btn-pap" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-900">📅 90-Day Action Plan</button>
-      <button onclick="switchTab('team')" id="btn-team" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-900">👥 Team Canvas</button>
-    </nav>
-
-    <main class="flex-1 overflow-y-auto p-8 relative">
-      
-      <section id="dashboard-tab" class="tab-content fade-in space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-             <span class="text-[10px] text-slate-500 uppercase font-bold">Overall Goal Progress</span>
-             <h2 class="text-3xl font-bold text-white mt-1">68%</h2>
-             <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden">
-                <div class="bg-indigo-500 h-full w-[68%]"></div>
-             </div>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-             <span class="text-[10px] text-slate-500 uppercase font-bold">Budget Utilization</span>
-             <h2 class="text-3xl font-bold text-emerald-400 mt-1">₱1.2M</h2>
-             <p class="text-[10px] text-slate-500 mt-2">Allocated for Q1 2026</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-             <span class="text-[10px] text-slate-500 uppercase font-bold">Active Initiatives</span>
-             <h2 class="text-3xl font-bold text-amber-400 mt-1">09</h2>
-             <p class="text-[10px] text-slate-500 mt-2">0 Urgent / 9 Pending</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-             <span class="text-[10px] text-slate-500 uppercase font-bold">Institutional Memory</span>
-             <h2 class="text-3xl font-bold text-purple-400 mt-1">High</h2>
-             <p class="text-[10px] text-slate-500 mt-2">MOP Drafting in progress</p>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 h-[400px]">
-             <h3 class="text-sm font-bold mb-6 flex justify-between">
-                <span>BSC Strategic Trajectory</span>
-                <span class="text-[10px] text-slate-500 font-normal">Targeting 2030 Valuations</span>
-             </h3>
-             <canvas id="dashChart"></canvas>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 overflow-y-auto max-h-[400px]">
-             <h3 class="text-sm font-bold mb-4">Urgent Task Radar</h3>
-             <div id="radar-tasks" class="space-y-3">
-                </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="bsc-tab" class="tab-content hidden fade-in space-y-6">
-        <div class="flex justify-between items-end">
-          <div>
-            <h2 class="text-2xl font-bold text-white">Balanced Scorecard Matrix</h2>
-            <p class="text-slate-500 text-sm">2026–2030 Quantitative Framework</p>
-          </div>
-          <button class="bg-indigo-600 px-4 py-2 rounded-lg text-xs font-bold">+ New Indicator</button>
-        </div>
-        
-        <div id="bsc-container" class="space-y-8">
-           </div>
-      </section>
-
-      <section id="pap-tab" class="tab-content hidden fade-in space-y-6">
-         <div class="bg-indigo-600/10 border border-indigo-500/20 p-6 rounded-2xl flex justify-between items-center">
+    <header class="h-16 border-b border-slate-800 flex items-center justify-between px-8 glass-card sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <div class="bg-indigo-600 p-2 rounded-lg font-bold text-white shadow-lg shadow-indigo-500/20">WSP</div>
             <div>
-               <h2 class="text-xl font-bold text-white">90-Day Transition Phase (Q1 2026)</h2>
-               <p class="text-slate-400 text-xs">Institutionalizing WSP momentum into formal governance.</p>
-            </div>
-            <div class="flex gap-4">
-               <div class="text-right">
-                  <span class="block text-[10px] text-slate-500 uppercase">Total Q1 Budget</span>
-                  <span class="text-lg font-mono font-bold text-emerald-400">₱2,025,000</span>
-               </div>
-            </div>
-         </div>
-
-         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-            <table class="w-full text-left text-xs">
-               <thead class="bg-slate-950 text-slate-500 uppercase font-bold border-b border-slate-800">
-                  <tr>
-                     <th class="p-4">PAP / Initiative</th>
-                     <th class="p-4">KPI/Target</th>
-                     <th class="p-4">Timeline</th>
-                     <th class="p-4">Responsible</th>
-                     <th class="p-4">Status</th>
-                  </tr>
-               </thead>
-               <tbody id="pap-table-body" class="divide-y divide-slate-800">
-                  </tbody>
-            </table>
-         </div>
-      </section>
-
-      <section id="team-tab" class="tab-content hidden fade-in space-y-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-           <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl border-t-4 border-indigo-500">
-              <h3 class="font-bold text-white mb-1">The Shield</h3>
-              <p class="text-[10px] text-slate-500 uppercase mb-4 tracking-widest">Admin & Governance</p>
-              <div id="team-shield" class="space-y-2"></div>
-           </div>
-           <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl border-t-4 border-emerald-500">
-              <h3 class="font-bold text-white mb-1">The Core</h3>
-              <p class="text-[10px] text-slate-500 uppercase mb-4 tracking-widest">Technical Specialists</p>
-              <div id="team-core" class="space-y-2"></div>
-           </div>
-           <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl border-t-4 border-amber-500">
-              <h3 class="font-bold text-white mb-1">The Nervous System</h3>
-              <p class="text-[10px] text-slate-500 uppercase mb-4 tracking-widest">Support & Infrastructure</p>
-              <div id="team-support" class="space-y-2"></div>
-           </div>
-        </div>
-      </section>
-
-      <section id="settings-tab" class="tab-content hidden fade-in space-y-6">
-        <h2 class="text-2xl font-bold">Organizational Configuration</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-           <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl space-y-6">
-              <div>
-                 <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Vision Statement</label>
-                 <textarea id="config-vision" class="w-full bg-slate-950 border-slate-800 rounded-xl p-4 text-sm focus:ring-2 ring-indigo-500" rows="3">A world-class National Quality Engine that transforms demonstrated excellence into a lasting legacy of skilled professionalization.</textarea>
-              </div>
-              <div>
-                 <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Mission Statement</label>
-                 <textarea id="config-mission" class="w-full bg-slate-950 border-slate-800 rounded-xl p-4 text-sm focus:ring-2 ring-indigo-500" rows="3">To institutionalize competitive standards, codify systems of excellence, and sustain industry partnerships for the Filipino workforce.</textarea>
-              </div>
-           </div>
-           <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl">
-              <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-widest">Strategic Pillars</h4>
-              <div id="pillar-config-list" class="space-y-3">
-                 </div>
-           </div>
-        </div>
-      </section>
-
-      <section id="swot-tab" class="tab-content hidden fade-in">
-         <p class="text-slate-500 text-sm mb-6 italic">Integrate SWOT variables into the Systems Archetype Engine to identify structural leverage.</p>
-         <div id="swot-engine-mount"></div>
-         </section>
-
-    </main>
-  </div>
-
-  <script>
-    // --- CENTRAL APP STATE ---
-    const appData = {
-      config: {
-        vision: "A world-class National Quality Engine...",
-        pillars: ["Governance", "Talent Pipeline", "Professionalism", "COE Hubs", "Standards Integration", "Partnerships", "Sustainability"]
-      },
-      bsc: [
-        { perspective: 'STAKEHOLDER', pillar: 'Pillar 4: COE', goal: 'Tech Partnership Density', current: 2, target: 15, unit: 'partners' },
-        { perspective: 'STAKEHOLDER', pillar: 'Pillar 6: Partnerships', goal: 'Industry Value Score', current: 0, target: 50, unit: 'MOAs' },
-        { perspective: 'FINANCE', pillar: 'Pillar 1: Governance', goal: 'Budgetary Permanence', current: 0, target: 100, unit: '%' },
-        { perspective: 'INTERNAL PROCESS', pillar: 'Pillar 5: Standards', goal: 'WSOS Integration Index', current: 20, target: 100, unit: '%' },
-        { perspective: 'LEARNING & GROWTH', pillar: 'Pillar 7: Sustainability', goal: 'Digital Visibility Rate', current: 5, target: 100, unit: '%' }
-      ],
-      pap: [
-        { id: 1, title: 'Secretariat Legal Formalization', kpi: 'AO Draft Policy', timeline: 'Month 1', resp: 'D. Hulleza', status: 'In-Progress', budget: 50000 },
-        { id: 2, title: 'WSP Manual of Operations (MOP)', kpi: '100% Documentation', timeline: 'Month 2', resp: 'WSP Admin', status: 'Pending', budget: 100000 },
-        { id: 3, title: 'WSOS-TR Benchmarking', kpi: '10 Skill Alignment', timeline: 'Month 2', resp: 'N. Soriano', status: 'Pending', budget: 300000 },
-        { id: 4, title: 'LMS Infrastructure Deployment', kpi: '5 Initial Courses', timeline: 'Month 3', resp: 'R. Barcayan', status: 'Pending', budget: 500000 }
-      ],
-      team: [
-         { name: 'D. Hulleza', group: 'shield', role: 'Governance Lead' },
-         { name: 'M.T. Marin', group: 'shield', role: 'Legal Liaison' },
-         { name: 'N. Soriano', group: 'core', role: 'Technical Delegate' },
-         { name: 'R. Barcayan', group: 'support', role: 'Digital Strategy' }
-      ]
-    };
-
-    // --- NAVIGATION ---
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.getElementById(`${tabId}-tab`).classList.remove('hidden');
-      
-      document.querySelectorAll('.nav-link').forEach(el => {
-        el.classList.remove('tab-active', 'bg-slate-900', 'text-white');
-        el.classList.add('text-slate-400');
-      });
-      
-      const activeBtn = document.getElementById(`btn-${tabId}`);
-      if(activeBtn) {
-        activeBtn.classList.add('tab-active', 'text-white');
-        activeBtn.classList.remove('text-slate-400');
-      }
-
-      if(tabId === 'dashboard') renderDashboardCharts();
-      if(tabId === 'bsc') renderBSC();
-      if(tabId === 'pap') renderPAP();
-      if(tabId === 'team') renderTeam();
-    }
-
-    // --- RENDERERS ---
-
-    function renderBSC() {
-      const container = document.getElementById('bsc-container');
-      const perspectives = ['STAKEHOLDER', 'FINANCE', 'INTERNAL PROCESS', 'LEARNING & GROWTH'];
-      
-      container.innerHTML = perspectives.map(p => `
-        <div class="space-y-4">
-           <h3 class="text-[10px] font-bold text-indigo-400 tracking-[0.3em] uppercase">${p} Perspective</h3>
-           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              ${appData.bsc.filter(x => x.perspective === p).map(item => `
-                <div class="kpi-card bg-slate-900 border border-slate-800 p-5 rounded-2xl">
-                   <p class="text-[9px] text-slate-500 font-bold uppercase mb-1">${item.pillar}</p>
-                   <h4 class="text-sm font-bold text-white mb-4">${item.goal}</h4>
-                   <div class="flex justify-between items-end">
-                      <div>
-                         <span class="block text-[10px] text-slate-500">Target</span>
-                         <span class="text-lg font-mono font-bold text-white">${item.target}${item.unit}</span>
-                      </div>
-                      <div class="text-right">
-                         <span class="block text-[10px] text-slate-500">Progress</span>
-                         <span class="text-xs font-bold text-indigo-400">${Math.round((item.current/item.target)*100)}%</span>
-                      </div>
-                   </div>
+                <h1 class="text-sm font-bold text-white uppercase tracking-tighter">National Quality Engine <span class="text-indigo-500">2030</span></h1>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">AI Core Active</span>
                 </div>
-              `).join('')}
-           </div>
+            </div>
         </div>
-      `).join('');
-    }
 
-    function renderPAP() {
-       const tbody = document.getElementById('pap-table-body');
-       tbody.innerHTML = appData.pap.map(item => `
-          <tr class="hover:bg-slate-900/50 transition-colors">
-             <td class="p-4">
-                <div class="font-bold text-white">${item.title}</div>
-                <div class="text-[10px] text-slate-500">Budget: ₱${item.budget.toLocaleString()}</div>
-             </td>
-             <td class="p-4 text-slate-300">${item.kpi}</td>
-             <td class="p-4 text-slate-400 font-mono">${item.timeline}</td>
-             <td class="p-4 text-slate-300">${item.resp}</td>
-             <td class="p-4">
-                <span class="px-2 py-1 rounded-full text-[9px] font-bold uppercase ${item.status === 'In-Progress' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-slate-800 text-slate-500'}">
-                   ${item.status}
-                </span>
-             </td>
-          </tr>
-       `).join('');
-    }
+        <div class="flex items-center gap-4">
+            <button @click="generateAIReport()" class="bg-slate-800 hover:bg-slate-700 text-[10px] font-bold px-4 py-2 rounded-md transition-all border border-slate-700">✨ SYNTHESIZE STRATEGY</button>
+            <button @click="saveData()" class="bg-indigo-600 hover:bg-indigo-500 text-[10px] font-bold px-4 py-2 rounded-md transition-all">💾 SAVE PLAN</button>
+            <button @click="activeTab = 'settings'" class="text-slate-400 hover:text-white">⚙️</button>
+        </div>
+    </header>
 
-    function renderTeam() {
-       ['shield', 'core', 'support'].forEach(group => {
-          const container = document.getElementById(`team-${group}`);
-          container.innerHTML = appData.team.filter(t => t.group === group).map(member => `
-             <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-                <div>
-                   <p class="text-xs font-bold text-white">${member.name}</p>
-                   <p class="text-[10px] text-slate-500">${member.role}</p>
+    <div class="flex flex-1 overflow-hidden">
+        <aside class="w-64 border-r border-slate-900 bg-slate-950 p-4 space-y-1">
+            <p class="text-[10px] text-slate-600 font-bold uppercase px-3 py-4 tracking-[0.2em]">Management</p>
+            <nav class="space-y-1">
+                <template x-for="tab in tabs" :key="tab.id">
+                    <button @click="activeTab = tab.id" 
+                            :class="activeTab === tab.id ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 hover:bg-slate-900'"
+                            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold transition-all">
+                        <span x-text="tab.icon"></span>
+                        <span x-text="tab.name"></span>
+                    </button>
+                </template>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto p-8 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+            
+            <div x-show="activeTab === 'dashboard'" class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="glass-card p-6 rounded-2xl">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Total PAPs</p>
+                        <h2 class="text-3xl font-bold" x-text="paps.length">0</h2>
+                        <div class="mt-4 text-[10px] text-emerald-400 font-bold">↑ Active Q1 Implementation</div>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Budget Allocation</p>
+                        <h2 class="text-3xl font-bold" x-text="'₱' + totalBudget().toLocaleString()">₱0</h2>
+                        <div class="mt-4 text-[10px] text-indigo-400 font-bold">Approved Regular Fund</div>
+                    </div>
                 </div>
-                <div class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center text-[10px]">👤</div>
-             </div>
-          `).join('');
-       });
-    }
 
-    let dashChart = null;
-    function renderDashboardCharts() {
-       const ctx = document.getElementById('dashChart').getContext('2d');
-       if(dashChart) dashChart.destroy();
-       
-       dashChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-             labels: ['2025', '2026', '2027', '2028', '2029', '2030'],
-             datasets: [
-                { label: 'Stakeholder Satisfaction', data: [10, 25, 45, 70, 85, 100], borderColor: '#6366f1', tension: 0.4 },
-                { label: 'Standards Integration', data: [5, 15, 30, 55, 80, 100], borderColor: '#10b981', tension: 0.4 },
-                { label: 'Budget Stability', data: [0, 20, 40, 60, 90, 100], borderColor: '#f59e0b', tension: 0.4 }
-             ]
-          },
-          options: {
-             responsive: true,
-             maintainAspectRatio: false,
-             plugins: { legend: { position: 'bottom', labels: { color: '#64748b', font: { size: 10 } } } },
-             scales: {
-                y: { grid: { color: '#1e293b' }, ticks: { color: '#475569' } },
-                x: { grid: { display: false }, ticks: { color: '#475569' } }
-             }
-          }
-       });
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 glass-card p-8 rounded-3xl h-[400px]">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-6">Execution Velocity (2030 Path)</h3>
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                    <div class="glass-card p-6 rounded-3xl space-y-4">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase">Recent System Alerts</h3>
+                        <div class="space-y-3">
+                            <template x-for="item in swot.filter(s => s.type === 'weakness').slice(0,3)">
+                                <div class="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl">
+                                    <p class="text-[10px] text-rose-400 font-bold uppercase">Critical Weakness</p>
+                                    <p class="text-xs text-slate-300 italic" x-text="item.text"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-       // Render Tasks
-       const taskRadar = document.getElementById('radar-tasks');
-       taskRadar.innerHTML = appData.pap.slice(0,3).map(t => `
-          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-             <div class="flex justify-between items-start mb-1">
-                <p class="text-xs font-bold text-white">${t.title}</p>
-                <span class="text-[9px] text-amber-500 font-bold">URGENT</span>
-             </div>
-             <p class="text-[10px] text-slate-500">${t.timeline} Dependency: Legal</p>
-          </div>
-       `).join('');
-    }
+            <div x-show="activeTab === 'swot'" class="space-y-6">
+                <div class="flex justify-between items-center bg-slate-900 p-6 rounded-2xl border border-slate-800">
+                    <div>
+                        <h2 class="text-xl font-bold">SWOT Matrix & Systemic Roles</h2>
+                        <p class="text-xs text-slate-500">Map SWOT items to systemic archetypes to identify leverage points.</p>
+                    </div>
+                    <button @click="showModal('swot')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-bold">+ New Item</button>
+                </div>
 
-    // --- INITIALIZE ---
-    window.onload = () => {
-       switchTab('dashboard');
-       
-       // Populate Pillar Settings
-       const pList = document.getElementById('pillar-config-list');
-       pList.innerHTML = appData.config.pillars.map((p, i) => `
-          <div class="flex items-center gap-3">
-             <span class="w-6 h-6 rounded bg-indigo-600 text-[10px] flex items-center justify-center font-bold">${i+1}</span>
-             <input type="text" value="${p}" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs">
-          </div>
-       `).join('');
-    };
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <template x-for="type in ['strength', 'weakness', 'opportunity', 'threat']">
+                        <div class="glass-card rounded-2xl overflow-hidden">
+                            <div class="px-6 py-4 border-b border-slate-800 bg-slate-900/50 flex justify-between">
+                                <h3 class="text-[10px] font-bold uppercase tracking-widest" :class="{'text-emerald-400': type === 'strength', 'text-amber-400': type === 'weakness', 'text-blue-400': type === 'opportunity', 'text-rose-400': type === 'threat'}" x-text="type + 's'"></h3>
+                            </div>
+                            <div class="p-4 space-y-2 min-h-[150px]">
+                                <template x-for="(item, index) in swot.filter(s => s.type === type)">
+                                    <div class="group flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                        <span class="text-xs" x-text="item.text"></span>
+                                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button @click="editSwot(item.id)" class="text-[9px] text-slate-500">Edit</button>
+                                            <button @click="deleteSwot(item.id)" class="text-[9px] text-rose-500">Delete</button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
 
-  </script>
+            <div x-show="activeTab === 'pap'" class="space-y-6">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-bold">90-Day PAP Engine</h2>
+                        <p class="text-sm text-slate-500 italic">Transforming Strategy into Projects.</p>
+                    </div>
+                    <button @click="showModal('pap')" class="bg-indigo-600 px-6 py-3 rounded-xl text-xs font-bold">+ Create Initiative</button>
+                </div>
+
+                <div class="glass-card rounded-3xl overflow-hidden">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-900/80 text-slate-500 uppercase font-bold">
+                            <tr>
+                                <th class="p-5">PAP / Project</th>
+                                <th class="p-5">Strategic KPI</th>
+                                <th class="p-5">Budget</th>
+                                <th class="p-5">Lead</th>
+                                <th class="p-5">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            <template x-for="p in paps">
+                                <tr class="hover:bg-indigo-600/5 transition-colors">
+                                    <td class="p-5">
+                                        <p class="font-bold text-white text-sm" x-text="p.title"></p>
+                                        <p class="text-[10px] text-slate-500 uppercase" x-text="p.pillar"></p>
+                                    </td>
+                                    <td class="p-5" x-text="p.kpi"></td>
+                                    <td class="p-5 font-mono text-emerald-400" x-text="'₱' + parseInt(p.budget).toLocaleString()"></td>
+                                    <td class="p-5" x-text="p.lead"></td>
+                                    <td class="p-5">
+                                        <button @click="deletePap(p.id)" class="text-rose-500 hover:underline">Remove</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div x-show="activeTab === 'team'" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <template x-for="role in ['The Shield', 'The Core', 'The Nervous System']">
+                        <div class="glass-card rounded-2xl p-6">
+                            <h3 class="text-sm font-bold text-white mb-4" x-text="role"></h3>
+                            <div class="space-y-3">
+                                <template x-for="m in team.filter(t => t.group === role)">
+                                    <div class="flex items-center gap-3 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                        <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-xs font-bold" x-text="m.name.charAt(0)"></div>
+                                        <div>
+                                            <p class="text-xs font-bold text-white" x-text="m.name"></p>
+                                            <p class="text-[10px] text-slate-500 uppercase" x-text="m.role"></p>
+                                        </div>
+                                    </div>
+                                </template>
+                                <button @click="addTeam(role)" class="w-full py-3 border-2 border-dashed border-slate-800 rounded-xl text-[10px] text-slate-500 hover:border-indigo-500 hover:text-indigo-400 transition-all">+ Add Team Member</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div x-show="modal.show" class="fixed inset-0 z-[100] flex items-center justify-center p-6" x-cloak>
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="modal.show = false"></div>
+        <div class="relative bg-slate-900 border border-slate-700 w-full max-w-lg rounded-3xl p-8 shadow-2xl">
+            <h2 class="text-xl font-bold mb-6" x-text="modal.title"></h2>
+            
+            <div class="space-y-4">
+                <template x-if="modal.type === 'swot'">
+                    <div class="space-y-4">
+                        <select x-model="modal.data.type" class="w-full p-3 rounded-xl">
+                            <option value="strength">Strength</option>
+                            <option value="weakness">Weakness</option>
+                            <option value="opportunity">Opportunity</option>
+                            <option value="threat">Threat</option>
+                        </select>
+                        <textarea x-model="modal.data.text" placeholder="Strategic factor description..." class="w-full p-3 rounded-xl h-24"></textarea>
+                    </div>
+                </template>
+
+                <template x-if="modal.type === 'pap'">
+                    <div class="space-y-4">
+                        <input x-model="modal.data.title" placeholder="Initiative Title" class="w-full p-3 rounded-xl">
+                        <input x-model="modal.data.pillar" placeholder="Strategic Pillar (e.g., Governance)" class="w-full p-3 rounded-xl">
+                        <input x-model="modal.data.kpi" placeholder="Target KPI" class="w-full p-3 rounded-xl">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input x-model="modal.data.budget" type="number" placeholder="Budget (₱)" class="w-full p-3 rounded-xl">
+                            <input x-model="modal.data.lead" placeholder="Lead Official" class="w-full p-3 rounded-xl">
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="mt-8 flex gap-3">
+                <button @click="modal.show = false" class="flex-1 py-3 bg-slate-800 rounded-xl text-xs font-bold uppercase">Cancel</button>
+                <button @click="confirmModal()" class="flex-1 py-3 bg-indigo-600 rounded-xl text-xs font-bold uppercase">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function stratApp() {
+            return {
+                activeTab: 'dashboard',
+                tabs: [
+                    { id: 'dashboard', name: 'Dashboard', icon: '📊' },
+                    { id: 'swot', name: 'SWOT & Logic', icon: '🔍' },
+                    { id: 'pap', name: '90-Day PAP', icon: '📅' },
+                    { id: 'team', name: 'Team Canvas', icon: '👥' }
+                ],
+                swot: [],
+                paps: [],
+                team: [],
+                modal: { show: false, type: '', title: '', data: {} },
+                
+                init() {
+                    const saved = localStorage.getItem('wsp_strat_v3');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        this.swot = parsed.swot || [];
+                        this.paps = parsed.paps || [];
+                        this.team = parsed.team || [];
+                    } else {
+                        // Seed Sample Data for First Run
+                        this.swot = [
+                            { id: 1, type: 'strength', text: 'Elite Competition Agility' },
+                            { id: 2, type: 'weakness', text: 'High Reliance on JO Staff' }
+                        ];
+                        this.paps = [
+                            { id: 1, title: 'Legal Secretariat Framework', pillar: 'Governance', kpi: 'Approved AO', budget: 150000, lead: 'Hulleza' }
+                        ];
+                    }
+                    this.initChart();
+                },
+
+                saveData() {
+                    localStorage.setItem('wsp_strat_v3', JSON.stringify({
+                        swot: this.swot,
+                        paps: this.paps,
+                        team: this.team
+                    }));
+                    alert('Strategic Plan synchronized to secure local storage.');
+                },
+
+                showModal(type) {
+                    this.modal.type = type;
+                    this.modal.title = type === 'swot' ? 'Add SWOT Variable' : 'New 90-Day Initiative';
+                    this.modal.data = type === 'swot' ? { type: 'strength', text: '' } : { title: '', pillar: '', kpi: '', budget: 0, lead: '' };
+                    this.modal.show = true;
+                },
+
+                confirmModal() {
+                    const item = { ...this.modal.data, id: Date.now() };
+                    if (this.modal.type === 'swot') this.swot.push(item);
+                    if (this.modal.type === 'pap') this.paps.push(item);
+                    this.modal.show = false;
+                },
+
+                deleteSwot(id) { this.swot = this.swot.filter(s => s.id !== id); },
+                deletePap(id) { this.paps = this.paps.filter(p => p.id !== id); },
+                
+                totalBudget() { return this.paps.reduce((sum, p) => sum + parseInt(p.budget || 0), 0); },
+
+                initChart() {
+                    setTimeout(() => {
+                        const ctx = document.getElementById('mainChart').getContext('2d');
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: ['2025', '2026', '2027', '2028', '2029', '2030'],
+                                datasets: [{
+                                    label: 'Excellence Target',
+                                    data: [10, 35, 55, 75, 90, 100],
+                                    borderColor: '#6366f1',
+                                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                    fill: true,
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: { 
+                                    y: { display: false },
+                                    x: { grid: { display: false }, ticks: { color: '#475569' } } 
+                                }
+                            }
+                        });
+                    }, 100);
+                }
+            }
+        }
+    </script>
 </body>
 </html>
