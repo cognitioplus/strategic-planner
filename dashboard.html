@@ -1,467 +1,294 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WSP MEL Dashboard 2026-2030</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .perspective-transition {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .strategy-details {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .strategy-details.open {
-            max-height: 1000px;
-        }
-
-        /* Custom scrollbar for a more "production" feel */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
-
-        .table-glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WorldSkills Philippines MEL Dashboard 2026–2030</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #0056b3;
+      padding-bottom: 20px;
+    }
+    h1 {
+      color: #0056b3;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      font-style: italic;
+      color: #555;
+    }
+    .summary-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      flex: 1;
+      min-width: 200px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .card h3 {
+      margin: 0 0 10px;
+      color: #0056b3;
+      font-size: 1em;
+    }
+    .card .value {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #0056b3;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    .core-driver {
+      background-color: #fff8e1;
+    }
+    .tool-link {
+      color: #0056b3;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .tool-link:hover {
+      text-decoration: underline;
+    }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+    }
+    @media (max-width: 768px) {
+      .summary-cards {
+        flex-direction: column;
+      }
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      td {
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+      }
+      td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+      }
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4 md:p-8">
+<body>
 
-    <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <header class="text-center mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                WorldSkills Philippines MEL Dashboard 2026-2030
-            </h1>
-            <p class="text-lg md:text-xl text-blue-200 italic">
-                "Transforming Demonstrated Excellence into a Lasting Legacy"
-            </p>
-        </header>
+<header>
+  <h1>WorldSkills Philippines MEL Dashboard 2026–2030</h1>
+  <div class="subtitle">“Transforming Demonstrated Excellence into a Lasting Legacy”</div>
+</header>
 
-        <!-- Summary Metrics -->
-        <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-white rounded-lg shadow p-5">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">Overall Completion</p>
-                        <p class="text-3xl font-bold text-blue-600" id="overallCompletion">0%</p>
-                    </div>
-                    <svg class="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                    </svg>
-                </div>
-                <div class="mt-3">
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="progress-bar-yellow h-2.5 rounded-full transition-all duration-500" id="overallProgress" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
+<div class="summary-cards">
+  <div class="card">
+    <h3>Overall Completion</h3>
+    <div class="value">0%</div>
+  </div>
+  <div class="card">
+    <h3>Budget Utilization</h3>
+    <div class="value">PHP 0M / 500M</div>
+  </div>
+  <div class="card">
+    <h3>Stakeholder Impact</h3>
+    <div class="value">0%</div>
+  </div>
+  <div class="card">
+    <h3>Fiscal Health</h3>
+    <div class="value">PS 60% | MOOE 30% | CO 10%</div>
+  </div>
+</div>
 
-            <div class="bg-white rounded-lg shadow p-5">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">Budget Utilization</p>
-                        <p class="text-3xl font-bold text-green-600" id="budgetUtilization">0%</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-xs text-gray-500">PHP <span id="budgetSpent">0</span>M</p>
-                        <p class="text-xs text-gray-400">of PHP 500M</p>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="progress-bar-green h-2.5 rounded-full transition-all duration-500" id="budgetProgress" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
+<table id="melDashboard">
+  <thead>
+    <tr>
+      <th>Metric / Standard Label</th>
+      <th>Industry Target</th>
+      <th>Benchmarking Authority</th>
+      <th>M&E Mechanism</th>
+      <th>Owner</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- CORE DRIVERS -->
+    <tr class="core-driver">
+      <td><a href="strategy-map.html#structural-integrity" class="tool-link">Structural Integrity Ratio</a></td>
+      <td>20:0 Plantilla-to-JO ratio</td>
+      <td>CSC-COA-DBM (2017)</td>
+      <td>Quarterly Personnel Audit</td>
+      <td>Admin</td>
+    </tr>
+    <tr class="core-driver">
+      <td><a href="strategy-map.html#wsos-integration" class="tool-link">WSOS Integration Index</a></td>
+      <td>100% Alignment</td>
+      <td>WSI (2024)</td>
+      <td>Bi-annual Technical Audit</td>
+      <td>Tech</td>
+    </tr>
+    <tr class="core-driver">
+      <td><a href="strategy-map.html#skills-premium" class="tool-link">Skills Premium Index</a></td>
+      <td>90% placement with ≥30% wage uplift</td>
+      <td>UNESCO-UNEVOC, World Bank</td>
+      <td>Competitor Impact Tracer Study</td>
+      <td>Tech</td>
+    </tr>
+    <tr class="core-driver">
+      <td><a href="strategy-map.html#budgetary-permanence" class="tool-link">Budgetary Permanence</a></td>
+      <td>100% PBB Integration</td>
+      <td>DBM (2022)</td>
+      <td>DBM-Approved AWFP</td>
+      <td>Admin</td>
+    </tr>
+    <tr class="core-driver">
+      <td><a href="strategy-map.html#gold-standard" class="tool-link">Gold Standard Accreditation</a></td>
+      <td>100% WSMP Certification</td>
+      <td>BIBB Germany (2023)</td>
+      <td>WSMP Registry & PQF Recognition</td>
+      <td>Tech</td>
+    </tr>
+    <tr class="core-driver">
+      <td><a href="strategy-map.html#digital-visibility" class="tool-link">Digital Visibility Rate</a></td>
+      <td>100% Real-Time Tracking</td>
+      <td>SSG Singapore (2024)</td>
+      <td>Strategic Planner System Audit</td>
+      <td>Support</td>
+    </tr>
 
-            <div class="bg-white rounded-lg shadow p-5">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">Stakeholder Score</p>
-                        <p class="text-3xl font-bold text-purple-600" id="stakeholderScore">0%</p>
-                    </div>
-                    <svg class="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                    </svg>
-                </div>
-                <p class="text-xs text-gray-500 mt-2">Pillars 2, 4, 6 Weighted Avg</p>
-            </div>
+    <!-- OTHER KPIs -->
+    <tr>
+      <td data-label="Metric">Tech Partnership Density</td>
+      <td data-label="Target">15+ Strategic Partners</td>
+      <td data-label="Authority">UNESCO-UNEVOC (2021)</td>
+      <td data-label="M&E">Partnership Registry & MOU DB</td>
+      <td data-label="Owner">Admin</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">Global Participation Rate</td>
+      <td data-label="Target">100% of Hosted Skills</td>
+      <td data-label="Authority">WorldSkills Int'l (WSI, 2024)</td>
+      <td data-label="M&E">Official WSI Reports</td>
+      <td data-label="Owner">Tech</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">Industry Value Score</td>
+      <td data-label="Target">50+ "Active-Deep" Partners</td>
+      <td data-label="Authority">World Bank (2021)</td>
+      <td data-label="M&E">Partner Portal Analytics</td>
+      <td data-label="Owner">Admin</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">Partner Engagement Index</td>
+      <td data-label="Target">100% Portal Utilization</td>
+      <td data-label="Authority">ISO 10004:2018</td>
+      <td data-label="M&E">Portal Feedback Logs</td>
+      <td data-label="Owner">Support</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">PPP Cost-Sharing Ratio</td>
+      <td data-label="Target">30% Financial Offset</td>
+      <td data-label="Authority">World Bank (2021)</td>
+      <td data-label="M&E">Financial Audit Logs</td>
+      <td data-label="Owner">Admin</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">Fiscal Predictability Index</td>
+      <td data-label="Target">Multi-year PBB Approval</td>
+      <td data-label="Authority">OECD (2019)</td>
+      <td data-label="M&E">Strategic Planner Dashboard</td>
+      <td data-label="Owner">Admin</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">MOP Compliance Rate</td>
+      <td data-label="Target">100% SOP Docu</td>
+      <td data-label="Authority">ISO 9001:2015</td>
+      <td data-label="M&E">Internal Quality Audit</td>
+      <td data-label="Owner">Admin</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">Operational Lead-Time Compliance</td>
+      <td data-label="Target">100% (3-mo lead time)</td>
+      <td data-label="Authority">ISO 9001:2015</td>
+      <td data-label="M&E">Procurement Dashboard</td>
+      <td data-label="Owner">Admin</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">Emerging Tech Cert Rate</td>
+      <td data-label="Target">100% Trainer Cert</td>
+      <td data-label="Authority">EU DigComp (2023)</td>
+      <td data-label="M&E">Trainer Registry</td>
+      <td data-label="Owner">Tech</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">Institutional Memory</td>
+      <td data-label="Target">100% LMS Skills</td>
+      <td data-label="Authority">UNESCO-UNEVOC (2021)</td>
+      <td data-label="M&E">LMS Content Audit</td>
+      <td data-label="Owner">Support</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">Industry NPS on Graduate Readiness</td>
+      <td data-label="Target">NPS ≥ 70</td>
+      <td data-label="Authority">World Bank, UNESCO</td>
+      <td data-label="M&E">Annual Employer Survey</td>
+      <td data-label="Owner">Tech</td>
+    </tr>
+    <tr>
+      <td data-label="Metric">Rural Inclusion Index</td>
+      <td data-label="Target">≥30% initiatives in non-Metro regions</td>
+      <td data-label="Authority">UNESCO-UNEVOC (2021)</td>
+      <td data-label="M&E">Regional Activity Tracker</td>
+      <td data-label="Owner">ROMO</td>
+    </tr>
+  </tbody>
+</table>
 
-            <div class="bg-white rounded-lg shadow p-5">
-                <p class="text-sm text-gray-600 mb-3">KPI Status Distribution</p>
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="flex items-center text-sm">
-                            <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                            Green
-                        </span>
-                        <span class="font-semibold" id="greenCount">0</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="flex items-center text-sm">
-                            <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
-                            Yellow
-                        </span>
-                        <span class="font-semibold" id="yellowCount">0</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="flex items-center text-sm">
-                            <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-                            Red
-                        </span>
-                        <span class="font-semibold" id="redCount">0</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+<footer>
+  <p>🔗 Navigate to: 
+    <a href="home.html" class="tool-link">Strategic Planner Pro</a> | 
+    <a href="strategy-map.html" class="tool-link">Strategy Map</a> | 
+    <a href="wsp-calibrated-structure.html" class="tool-link">Calibrated Structure</a>
+  </p>
+  <p>© 2026 WorldSkills Philippines – TESDA. All rights reserved.</p>
+</footer>
 
-        <!-- Strategy Map Layers Container -->
-        <div id="strategy-map-container" class="space-y-6">
-            <!-- Content will be injected by JavaScript -->
-        </div>
-
-        <!-- Reference Industry Standards Table -->
-        <div class="mt-12 overflow-hidden rounded-xl shadow-2xl table-glass">
-            <div class="bg-white bg-opacity-10 px-6 py-4 border-b border-white border-opacity-10">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                    <i data-lucide="shield-check" class="text-yellow-400"></i>
-                    Reference Industry Standards & KPI Benchmarks
-                </h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-blue-100">
-                    <thead class="bg-black bg-opacity-30 text-xs uppercase tracking-wider text-yellow-300">
-                        <tr>
-                            <th class="px-6 py-4 font-bold">Metric / Standard Label</th>
-                            <th class="px-6 py-4 font-bold">Industry Target</th>
-                            <th class="px-6 py-4 font-bold">Benchmarking Authority</th>
-                            <th class="px-6 py-4 font-bold">M&E Mechanism</th>
-                            <th class="px-6 py-4 font-bold text-center">Owner</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-white divide-opacity-5">
-                        <tr class="hover:bg-white hover:bg-opacity-5 transition-colors">
-                            <td class="px-6 py-4 font-semibold text-white">Tech Partnership Density</td>
-                            <td class="px-6 py-4 text-green-300">15+ Strategic Partners</td>
-                            <td class="px-6 py-4">UNESCO-UNEVOC (2021)</td>
-                            <td class="px-6 py-4 italic text-blue-300">Partnership Registry & MOU DB</td>
-                            <td class="px-6 py-4 text-center"><span class="bg-blue-500 bg-opacity-30 px-2 py-1 rounded text-[10px] uppercase font-bold">Admin</span></td>
-                        </tr>
-                        <tr class="hover:bg-white hover:bg-opacity-5 transition-colors">
-                            <td class="px-6 py-4 font-semibold text-white">Global Participation Rate</td>
-                            <td class="px-6 py-4 text-green-300">100% of Hosted Skills</td>
-                            <td class="px-6 py-4">WorldSkills Int'l (WSI, 2024)</td>
-                            <td class="px-6 py-4 italic text-blue-300">Official WSI Reports</td>
-                            <td class="px-6 py-4 text-center"><span class="bg-purple-500 bg-opacity-30 px-2 py-1 rounded text-[10px] uppercase font-bold">Tech</span></td>
-                        </tr>
-                        <!-- Additional rows can be added here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Strategic Priorities Footer -->
-        <footer class="mt-8 bg-gradient-to-r from-purple-900 to-blue-900 rounded-lg p-6 shadow-2xl">
-            <h3 class="text-xl font-bold text-white mb-4">2030 Strategic Priorities</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-                    <h4 class="font-bold text-yellow-300 mb-2">Event → System Driven</h4>
-                    <p class="text-sm text-blue-100">Permanent organizational structure</p>
-                </div>
-                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-                    <h4 class="font-bold text-yellow-300 mb-2">National Integration</h4>
-                    <p class="text-sm text-blue-100">WSOS into Philippine TVET system</p>
-                </div>
-                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-                    <h4 class="font-bold text-yellow-300 mb-2">Human Capital Retention</h4>
-                    <p class="text-sm text-blue-100">Stable, accredited Experts Pool</p>
-                </div>
-                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-                    <h4 class="font-bold text-yellow-300 mb-2">Legacy Preservation</h4>
-                    <p class="text-sm text-blue-100">Digitized knowledge systems</p>
-                </div>
-            </div>
-        </footer>
-
-        <!-- Instructions -->
-        <div class="mt-6 text-center text-blue-200 text-sm">
-            <p>Click on each perspective to expand strategies • Click strategies to view their contribution to goals</p>
-        </div>
-    </div>
-
-    <script>
-        const perspectives = [
-            {
-                id: 'stakeholder',
-                name: 'STAKEHOLDER PERSPECTIVE',
-                color: 'bg-blue-600',
-                icon: 'users',
-                strategies: [
-                    {
-                        pillar: 'Pillar 4: COE',
-                        action: 'Strengthen COEs via high-growth tech partnerships',
-                        kpi: 'Tech Partnership Density',
-                        target: '15+ partnerships',
-                        contributes: ['Goal 4: Centers of Excellence', 'Goal 6: Global Positioning']
-                    },
-                    {
-                        pillar: 'Pillar 2: Pipeline',
-                        action: 'Ensure world-class competition participation',
-                        kpi: 'Global Participation Rate',
-                        target: '100% hosted skills',
-                        contributes: ['Goal 2: Sustainable Pipeline', 'Goal 6: Global Positioning']
-                    },
-                    {
-                        pillar: 'Pillar 6: Partnerships',
-                        action: 'Institutionalize legally binding partnerships',
-                        kpi: 'Industry Value Score',
-                        target: '50+ Active Partners',
-                        contributes: ['Goal 6: Industry Partnerships', 'Goal 7: Sustainability']
-                    }
-                ]
-            },
-            {
-                id: 'finance',
-                name: 'FINANCIAL PERSPECTIVE',
-                color: 'bg-green-600',
-                icon: 'dollar-sign',
-                strategies: [
-                    {
-                        pillar: 'Pillar 1: Governance',
-                        action: 'Transition to sustained, program-based budgeting',
-                        kpi: 'Budgetary Permanence',
-                        target: '100% PBB Integration',
-                        contributes: ['Goal 1: Governance', 'Goal 7: Sustainability']
-                    },
-                    {
-                        pillar: 'Pillar 7: Sustainability',
-                        action: 'Implement cost-sharing frameworks',
-                        kpi: 'PPP Cost-Sharing Ratio',
-                        target: '30% Industry Offset',
-                        contributes: ['Goal 6: Partnerships', 'Goal 7: Sustainability']
-                    },
-                    {
-                        pillar: 'Pillar 2: Pipeline',
-                        action: 'Secure multi-year competition funding',
-                        kpi: 'Fiscal Predictability Index',
-                        target: 'Multi-year PBB Approval',
-                        contributes: ['Goal 2: Pipeline', 'Goal 7: Sustainability']
-                    }
-                ]
-            },
-            {
-                id: 'process',
-                name: 'INTERNAL PROCESS PERSPECTIVE',
-                color: 'bg-orange-600',
-                icon: 'cog',
-                strategies: [
-                    {
-                        pillar: 'Pillar 5: Standards',
-                        action: 'Align WSOS with national competency frameworks',
-                        kpi: 'WSOS Integration Index',
-                        target: '100% TR Alignment',
-                        contributes: ['Goal 5: Standards Integration', 'National Integration Priority']
-                    },
-                    {
-                        pillar: 'Pillar 1: Governance',
-                        action: 'Establish permanent national-regional structure',
-                        kpi: 'Structural Integrity Ratio',
-                        target: '20:0 Plantilla',
-                        contributes: ['Goal 1: Governance', 'System-Driven Priority']
-                    },
-                    {
-                        pillar: 'Pillar 1: Governance',
-                        action: 'Develop and approve WSP Manual of Operations',
-                        kpi: 'MOP Compliance Rate',
-                        target: '100% Documented SOPs',
-                        contributes: ['Goal 1: Governance', 'Legacy Preservation Priority']
-                    }
-                ]
-            },
-            {
-                id: 'learning',
-                name: 'LEARNING & GROWTH PERSPECTIVE',
-                color: 'bg-red-600',
-                icon: 'graduation-cap',
-                strategies: [
-                    {
-                        pillar: 'Pillar 7: Sustainability',
-                        action: 'Adopt Digital MEL and Strategic Planner',
-                        kpi: 'Digital Visibility Rate',
-                        target: '100% Digital Tracking',
-                        contributes: ['Goal 7: Legacy & Impact', 'Legacy Preservation Priority']
-                    },
-                    {
-                        pillar: 'Pillar 4: COE',
-                        action: 'Upskill trainers amid tech change',
-                        kpi: 'Emerging Tech Certification Rate',
-                        target: '100% Certification',
-                        contributes: ['Goal 3: Professionalism', 'Goal 4: COE']
-                    },
-                    {
-                        pillar: 'Pillar 3: Professionalism',
-                        action: 'Utilize LMS to resolve expert turnover',
-                        kpi: 'Institutional Memory Coverage',
-                        target: '100% LMS Coverage',
-                        contributes: ['Goal 3: Professionalism', 'Human Capital Retention Priority']
-                    },
-                    {
-                        pillar: 'Pillar 3: Professionalism',
-                        action: 'Professionalize and incentivize Experts',
-                        kpi: 'Gold Standard Accreditation',
-                        target: '100% WSMP Certification',
-                        contributes: ['Goal 3: Professionalism', 'Human Capital Retention Priority']
-                    }
-                ]
-            }
-        ];
-
-        let expandedPerspective = null;
-        let selectedStrategy = null;
-
-        function render() {
-            const container = document.getElementById('strategy-map-container');
-            container.innerHTML = '';
-
-            perspectives.forEach((perspective, idx) => {
-                const isExpanded = expandedPerspective === perspective.id;
-                
-                const perspectiveDiv = document.createElement('div');
-                perspectiveDiv.className = 'relative';
-
-                // Connection Lines
-                if (idx > 0) {
-                    const line = document.createElement('div');
-                    line.className = 'absolute -top-6 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-gradient-to-b from-blue-400 to-transparent opacity-50';
-                    perspectiveDiv.appendChild(line);
-                }
-
-                // Card Container
-                const card = document.createElement('div');
-                card.className = `${perspective.color} rounded-lg shadow-2xl overflow-hidden perspective-transition ${isExpanded ? 'ring-4 ring-white' : ''}`;
-
-                // Header Button
-                const header = document.createElement('button');
-                header.className = 'w-full px-6 py-4 flex items-center justify-between text-white hover:bg-white hover:bg-opacity-10 transition-all';
-                header.onclick = () => togglePerspective(perspective.id);
-                
-                const headerLeft = `
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="${perspective.icon}" class="w-6 h-6"></i>
-                        <h2 class="text-xl font-bold uppercase tracking-wide">${perspective.name}</h2>
-                    </div>
-                `;
-
-                const headerRight = perspective.strategies ? `
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm bg-white bg-opacity-20 px-3 py-1 rounded-full">
-                            ${perspective.strategies.length} Strategies
-                        </span>
-                        <i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}"></i>
-                    </div>
-                ` : '';
-
-                header.innerHTML = headerLeft + headerRight;
-                card.appendChild(header);
-
-                // Strategies Body
-                if (perspective.strategies && isExpanded) {
-                    const strategiesDiv = document.createElement('div');
-                    strategiesDiv.className = 'px-6 py-4 bg-white bg-opacity-10 space-y-3';
-
-                    perspective.strategies.forEach((strategy, i) => {
-                        const strategyId = `${perspective.id}-${i}`;
-                        const isSelected = selectedStrategy === strategyId;
-                        
-                        const strategyCard = document.createElement('div');
-                        strategyCard.className = `bg-white bg-opacity-10 p-4 rounded-lg cursor-pointer hover:bg-opacity-20 transition-all ${isSelected ? 'ring-2 ring-white shadow-lg' : ''}`;
-                        strategyCard.onclick = (e) => {
-                            e.stopPropagation();
-                            toggleStrategy(strategyId);
-                        };
-
-                        strategyCard.innerHTML = `
-                            <div class="flex items-start justify-between mb-2">
-                                <span class="text-xs font-semibold text-yellow-300 uppercase tracking-tighter">${strategy.pillar}</span>
-                                <span class="text-xs bg-white bg-opacity-20 px-2 py-1 rounded text-white">
-                                    Target: ${strategy.target}
-                                </span>
-                            </div>
-                            <h4 class="font-bold text-white mb-2 leading-tight">${strategy.action}</h4>
-                            <p class="text-sm text-blue-100 mb-2 font-medium">KPI: ${strategy.kpi}</p>
-                            ${isSelected ? `
-                                <div class="mt-3 pt-3 border-t border-white border-opacity-20 animate-fade-in">
-                                    <p class="text-xs font-semibold text-yellow-300 mb-2">Contributes to:</p>
-                                    <div class="space-y-1">
-                                        ${strategy.contributes.map(contrib => `
-                                            <div class="text-xs text-green-200 flex items-center gap-2">
-                                                <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                                                ${contrib}
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-                        `;
-                        strategiesDiv.appendChild(strategyCard);
-                    });
-                    card.appendChild(strategiesDiv);
-                }
-
-                perspectiveDiv.appendChild(card);
-                container.appendChild(perspectiveDiv);
-            });
-
-            lucide.createIcons();
-        }
-
-        function togglePerspective(id) {
-            expandedPerspective = (expandedPerspective === id) ? null : id;
-            selectedStrategy = null; // Reset selection on change
-            render();
-        }
-
-        function toggleStrategy(id) {
-            selectedStrategy = (selectedStrategy === id) ? null : id;
-            render();
-        }
-
-        // Initialize dashboard metrics
-        function calculateMetrics() {
-            // Metrics calculation logic here
-            // This should set the values for overallCompletion, budgetUtilization, stakeholderScore, etc.
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            calculateMetrics();
-            render();
-        });
-    </script>
 </body>
 </html>
