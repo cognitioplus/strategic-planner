@@ -466,20 +466,146 @@
             border-radius: 0.5rem;
             font-size: 0.875rem;
             line-height: 1.5;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .archetype-diagram {
-            margin-top: 1rem;
+        .swot-item:hover {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        /* Modal Styles for Archetypes */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            color: #cbd5e1;
         }
 
-        .archetype-diagram h5 {
-            color: #fde047;
-            margin-bottom: 0.5rem;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #0ea5e9;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: slideUp 0.3s ease;
+            width: 100%;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #0ea5e9;
+            transition: color 0.2s ease;
+        }
+
+        .close-btn:hover {
+            color: #06b6d4;
+        }
+
+        .cd-diagram {
+            background: #0f172a;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid #0ea5e9;
+            margin: 1rem 0;
+        }
+
+        .cd-element {
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin: 0.5rem;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .cd-symptom {
+            background: #b91c1c;
+            color: white;
+            border: 1px solid #dc2626;
+        }
+
+        .cd-fundamental {
+            background: #059669;
+            color: white;
+            border: 1px solid #10b981;
+        }
+
+        .cd-neutral {
+            background: #0369a1;
+            color: white;
+            border: 1px solid #0ea5e9;
+        }
+
+        .cd-warning {
+            background: #d97706;
+            color: white;
+            border: 1px solid #f59e0b;
+        }
+
+        .cd-arrow {
+            color: #0ea5e9;
+            font-weight: bold;
+            margin: 0 0.5rem;
+        }
+
+        .term-definition {
+            background: rgba(15, 23, 42, 0.5);
+            border-left: 3px solid #0ea5e9;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin: 0.75rem 0;
+        }
+
+        .btn-learn-more {
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-learn-more:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
         }
 
         @media (max-width: 768px) {
@@ -620,6 +746,468 @@
             <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid #334155; border-radius: 0.75rem; padding: 2rem; overflow-x: auto;">
                 <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; color: #60a5fa;">Balanced Scorecard Matrix (2026–2030)</h3>
                 <table id="bsc-table" style="width: 100%; border-collapse: collapse; font-size: 0.875rem;"></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Archetype Modals -->
+    <div id="archetypeModal1" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchetypeModal(1)">×</span>
+            <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">1. Fixes that Fail: Governance Dynamics</h2>
+            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Rapid mobilization of Job Order personnel creates short-term success but undermines long-term institutional capacity.</p>
+
+            <div class="cd-diagram">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem; text-align: center;">🔄 The Reinforcing Loop</h3>
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #dc2626; margin-bottom: 1rem;">
+                    <h4 style="color: #f87171; font-weight: 600; margin-bottom: 0.75rem;">⚠️ Symptomatic Fix Cycle</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-symptom">Event Pressure</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Hire JO Personnel</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Short-Term Success</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Memory Loss</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Higher Future Pressure</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Result:</strong> Each cycle increases dependency on temporary fixes while eroding institutional knowledge.</p>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #10b981;">
+                    <h4 style="color: #86efac; font-weight: 600; margin-bottom: 0.75rem;">✓ Fundamental Solution Path</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-fundamental">Event Pressure</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Build Plantilla Structure</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Permanent Capacity</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Institutional Memory</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Reduced Pressure</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Result:</strong> Permanent structure breaks the dependency cycle and builds lasting capacity.</p>
+                </div>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Addiction Trap</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;">Like an addiction, JO mobilization provides immediate relief but creates long-term dependency. Each "fix" removes pressure to implement permanent solutions, making the fundamental solution seem less urgent.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">🎯 Strategic Response</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Structural Integrity Ratio (Goal 1):</strong> Transition from 4 plantilla positions to 20:0 ratio (20 permanent, 0 JO dependency) through permanent national-regional structure.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="archetypeModal2" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchetypeModal(2)">×</span>
+            <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">2. Support vs. Priority Paradox</h2>
+            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Systemic tension where borrowed staff face conflicting accountability between WSP duties and original departmental KPIs.</p>
+
+            <div class="cd-diagram">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem; text-align: center;">🔄 The Conflicting Accountability Loop</h3>
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #f59e0b; margin-bottom: 1rem;">
+                    <h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 0.75rem;">⚠️ The Paradox Cycle</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-warning">Leadership Mandate</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-warning">Borrow Staff</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Dept KPI Conflict</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">"Additional Workload"</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Burnout & Dilution</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Reduced WSP Priority</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Dynamic:</strong> Support is technically present but operationally diluted because staff remain accountable to original departments.</p>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #10b981;">
+                    <h4 style="color: #86efac; font-weight: 600; margin-bottom: 0.75rem;">✓ Resolution Path</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-fundamental">Create WSP Plantilla</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Dedicated Staff</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Aligned KPIs</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Core Function Status</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Full Priority</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Result:</strong> Permanent positions eliminate conflicting accountability and establish WSP as core function.</p>
+                </div>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: Cultural Resistance</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;">This paradox reflects cultural resistance within TESDA's bureaucracy. While leadership support is strong, institutional culture treats WSP as peripheral because staff incentives remain tied to original departments.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">🎯 Strategic Response</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>MOP Compliance Rate (Goal 1):</strong> Formalize WSP roles through Manual of Operations, creating legal clarity and departmental legitimacy.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="archetypeModal3" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchetypeModal(3)">×</span>
+            <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">3. The Generalist Trap</h2>
+            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Absence of permanent roles forces categorical overlaps where admin, technical, and support functions blur.</p>
+
+            <div class="cd-diagram">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem; text-align: center;">🔄 The Ambiguity Reinforcing Loop</h3>
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #f59e0b; margin-bottom: 1rem;">
+                    <h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 0.75rem;">⚠️ The Flexibility Illusion</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-warning">No Defined Roles</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-warning">Categorical Ambiguity</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-warning">Ad-hoc Task Filling</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Agility Illusion</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">No Deep Expertise</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">More Ambiguity</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Dynamic:</strong> Flexibility appears valuable in short term but prevents specialization and accountability in long term.</p>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #10b981;">
+                    <h4 style="color: #86efac; font-weight: 600; margin-bottom: 0.75rem;">✓ Specialization Path</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-fundamental">Define 3 Groups</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Shield/Core/Nervous System</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Clear Mandates</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Deep Expertise</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Accountability</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Result:</strong> Functional calibration creates specialized roles with clear boundaries and expertise development.</p>
+                </div>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: False Efficiency</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;">What appears as "agile flexibility" is actually structural inefficiency. Generalists can respond quickly but cannot build the specialized competencies needed for world-class standards.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">🎯 Strategic Response</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Functional Calibration (Pillar 1):</strong> Establish three specialized groups (Shield, Core, Nervous System) with distinct mandates, clients, and value streams. See <a href="wsp-calibrated-structure.html" style="color: #60a5fa; text-decoration: underline;">Calibrated Structure</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="archetypeModal4" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchetypeModal(4)">×</span>
+            <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">4. The Mobilization Trap</h2>
+            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Speed vs. Sustainability dilemma where rapid deployment enables events but prevents lasting capacity.</p>
+
+            <div class="cd-diagram">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem; text-align: center;">🔄 The Event Cycle Loop</h3>
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #dc2626; margin-bottom: 1rem;">
+                    <h4 style="color: #f87171; font-weight: 600; margin-bottom: 0.75rem;">⚠️ The Capability Spike-Decline Pattern</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-symptom">Event Announced</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Rapid JO Training</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-neutral">Capability Spike</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-neutral">Event Success</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Contracts End</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Capability Decline</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Restart Learning Curve</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Pattern:</strong> Each cycle requires re-investment in training, preventing accumulation of organizational learning.</p>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #10b981;">
+                    <h4 style="color: #86efac; font-weight: 600; margin-bottom: 0.75rem;">✓ Sustained Capacity Path</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-fundamental">Permanent Staff</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Continuous Learning</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Capability Baseline</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Event Excellence</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Higher Baseline</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Result:</strong> Permanent structure enables cumulative learning where each event builds on previous expertise.</p>
+                </div>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: Training Investment Leak</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;">Technical training invested in JO personnel "leaks out" when contracts end, forcing the organization to restart the learning curve for every event cycle.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">🎯 Strategic Response</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Institutional Memory Coverage (Pillar 3):</strong> Implement LMS to preserve knowledge independent of personnel changes, achieving 100% digital coverage of critical expertise.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="archetypeModal5" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchetypeModal(5)">×</span>
+            <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">5. Red Queen Effect (Drifting Goals)</h2>
+            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Industry 4.0 evolution outpaces bureaucratic TR updates, risking downward drift of quality standards.</p>
+
+            <div class="cd-diagram">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem; text-align: center;">🔄 The Standards Drift Loop</h3>
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #dc2626; margin-bottom: 1rem;">
+                    <h4 style="color: #f87171; font-weight: 600; margin-bottom: 0.75rem;">⚠️ The Competitiveness Erosion Cycle</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-neutral">Global Benchmark ↑</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-warning">Local Gap Widens</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Bureaucratic Delay</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Pressure to Lower Standards</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Local Standard ↓</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Competitiveness Erosion</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Dynamic:</strong> Like Alice in Wonderland's Red Queen, you must run faster just to stay in place. When TR updates lag, standards drift downward.</p>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #10b981;">
+                    <h4 style="color: #86efac; font-weight: 600; margin-bottom: 0.75rem;">✓ Continuous Alignment Path</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-fundamental">WSOS Monitoring</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Rapid TR Updates</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Standards Alignment</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Global Competitiveness</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Upward Pressure</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Result:</strong> Systematic WSOS integration creates upward pressure that maintains global competitiveness.</p>
+                </div>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Quality Ceiling</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;">Global benchmarks represent a moving "quality ceiling." Without active alignment mechanisms, local standards naturally drift downward relative to this ceiling due to bureaucratic inertia.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">🎯 Strategic Response</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>WSOS Integration Index ⭐ (Pillar 5):</strong> Embed WorldSkills Occupational Standards into all Training Regulations, creating structural mechanism for continuous standards elevation.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="archetypeModal6" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchetypeModal(6)">×</span>
+            <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">6. Elite Silo Dynamic (Success to the Successful)</h2>
+            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Resource concentration in high-performing centers creates two-tiered system neglecting provincial integration.</p>
+
+            <div class="cd-diagram">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem; text-align: center;">🔄 The Resource Concentration Loop</h3>
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #f59e0b; margin-bottom: 1rem;">
+                    <h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 0.75rem;">⚠️ The Success Amplification Cycle</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-neutral">HRDC Success</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-warning">Medal Visibility</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-warning">More Investment</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-warning">Greater HRDC Success</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.75rem; margin-top: 0.5rem;">Meanwhile...</p>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-symptom">Provincial RTCs</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Resource Neglect</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Lower Performance</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Less Visibility</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Further Neglect</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Dynamic:</strong> Success begets more resources, which begets more success. Unsuccessful units fall further behind, creating permanent inequality.</p>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #10b981;">
+                    <h4 style="color: #86efac; font-weight: 600; margin-bottom: 0.75rem;">✓ National Integration Path</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-fundamental">Rural Inclusion Index</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">≥30% Provincial Participation</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Distributed Excellence</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">National Coverage</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Broad-Based Success</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Result:</strong> Explicit inclusion targets prevent resource concentration and ensure national reach.</p>
+                </div>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Matthew Effect</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;">"To those who have, more will be given." Without explicit countermeasures, excellence programs naturally concentrate in already-successful centers, leaving the periphery behind.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">🎯 Strategic Response</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Rural Inclusion Index (Pillar 2):</strong> Mandate ≥30% participation from non-Metro regions, creating structural counterbalance to elite concentration.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="archetypeModal7" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchetypeModal(7)">×</span>
+            <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">7. Human Capital Leak (Shifting the Burden)</h2>
+            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Experts leave for industry; retraining new staff drains resources without solving root cause.</p>
+
+            <div class="cd-diagram">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem; text-align: center;">🔄 The Expert Drain Loop</h3>
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #dc2626; margin-bottom: 1rem;">
+                    <h4 style="color: #f87171; font-weight: 600; margin-bottom: 0.75rem;">⚠️ The Retraining Trap</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-symptom">Expert Trained</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Industry Offer</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Expert Leaves</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Capacity Gap</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Retrain New Staff</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Temporary Fix</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">No Career Path</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Archetype:</strong> Classic "Shifting the Burden" — treating symptoms (retraining) instead of root cause (retention).</p>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #10b981;">
+                    <h4 style="color: #86efac; font-weight: 600; margin-bottom: 0.75rem;">✓ Retention Path</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-fundamental">WSMP Certification</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Salary Grade Linkage</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Career Path</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Retention</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Accumulated Expertise</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Result:</strong> Experts stay, building deep institutional knowledge over time.</p>
+                </div>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Expertise Sinkhole</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;">Without career pathways, WSP becomes a "talent pipeline" for industry rather than a destination for mastery.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">🎯 Strategic Response</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Gold Standard Accreditation ⭐ (Pillar 3):</strong> Implement PQF-aligned WorldSkills Mastery Program with CSC salary grade linkage to create retention incentives.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="archetypeModal8" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArchetypeModal(8)">×</span>
+            <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">8. The Credibility Gap</h2>
+            <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Fast industry partnerships collide with slow MOA approvals, eroding partner trust over time.</p>
+
+            <div class="cd-diagram">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem; text-align: center;">🔄 The Trust Erosion Loop</h3>
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #f59e0b; margin-bottom: 1rem;">
+                    <h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 0.75rem;">⚠️ The Speed Mismatch Cycle</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-warning">Industry Speed ↑</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-warning">MOA Delays</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Partner Frustration</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Trust Erosion</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Fewer Partnerships</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-symptom">Reduced Credibility</span>
+                        <span class="cd-arrow">↻</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Tension:</strong> Private sector operates at market speed; public sector at bureaucratic pace.</p>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 0.5rem; border: 1px solid #10b981;">
+                    <h4 style="color: #86efac; font-weight: 600; margin-bottom: 0.75rem;">✓ Administrative Decoupling Path</h4>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span class="cd-element cd-fundamental">MOA Fast-Track Unit</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">3-Month Lead Time</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Reliable Delivery</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">Partner Trust</span>
+                        <span class="cd-arrow">→</span>
+                        <span class="cd-element cd-fundamental">More Partnerships</span>
+                    </div>
+                    <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Result:</strong> Streamlined processes match private-sector responsiveness, rebuilding credibility.</p>
+                </div>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Pace Paradox</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;">Partners are attracted by WSP’s speed and vision but repelled by administrative delays. Bridging this gap requires process innovation, not just goodwill.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">🎯 Strategic Response</h4>
+                <p style="color: #cbd5e1; font-size: 0.875rem;"><strong>Operational Lead-Time Compliance (Pillar 6):</strong> Ensure 100% of MOAs are signed 3+ months before events via dedicated fast-track unit.</p>
             </div>
         </div>
     </div>
@@ -811,11 +1399,11 @@
                 'Access to established Regional Training Centers and skilled experts'
             ],
             weaknesses: [
-                '<strong>1. Fixes that Fail (Governance Dynamics)</strong><br>Rapid JO mobilization solves short-term needs but causes institutional memory loss.<br><div class="archetype-diagram"><h5>Causal Loop:</h5>Event Pressure → Hire JOs → Short-Term Success → Memory Loss → Higher Future Pressure</div>',
-                '<strong>2. Support vs. Priority Paradox</strong><br>WSP duties seen as "additional workload," diluting operational focus.<br><div class="archetype-diagram"><h5>Dynamic:</h5>Leadership Mandate ≠ Departmental KPIs → Role Conflict → Burnout</div>',
-                '<strong>3. Generalist Trap</strong><br>Blurred role boundaries prevent deep expertise development.<br><div class="archetype-diagram"><h5>Loop:</h5>Ambiguity → Ad-hoc Roles → Agility Illusion → Expertise Deficit → More Ambiguity</div>',
-                '<strong>4. Mobilization Trap</strong><br>Capability spikes during events followed by sharp declines.<br><div class="archetype-diagram"><h5>Pattern:</h5>Event Cycle → Train JOs → Event Success → JO Exit → Restart Learning Curve</div>',
-                '<strong>7. Human Capital Leak (Shifting the Burden)</strong><br>Experts leave for industry; retraining new staff drains resources.<br><div class="archetype-diagram"><h5>Archetype:</h5>Attrition → Retrain → Temporary Fix → No Career Path → More Attrition</div>'
+                {text: '1. Fixes that Fail (Governance Dynamics)<br>Rapid JO mobilization solves short-term needs but causes institutional memory loss.', modal: 1},
+                {text: '2. Support vs. Priority Paradox<br>WSP duties seen as "additional workload," diluting operational focus.', modal: 2},
+                {text: '3. Generalist Trap<br>Blurred role boundaries prevent deep expertise development.', modal: 3},
+                {text: '4. Mobilization Trap<br>Capability spikes during events followed by sharp declines.', modal: 4},
+                {text: '7. Human Capital Leak (Shifting the Burden)<br>Experts leave for industry; retraining new staff drains resources.', modal: 7}
             ],
             opportunities: [
                 'Positioning the PH as a SE Asian hub for technical excellence',
@@ -825,9 +1413,9 @@
                 'Companies open to co-developing standards and assessments'
             ],
             threats: [
-                '<strong>5. Red Queen Effect (Drifting Goals)</strong><br>Industry 4.0 outpaces TR updates; standards risk downward drift.<br><div class="archetype-diagram"><h5>Dynamic:</h5>Global Benchmark ↑ → Bureaucratic Delay → Local Standard ↓ → Competitiveness Erosion</div>',
-                '<strong>6. Elite Silo Dynamic (Success to the Successful)</strong><br>Resources concentrate in HRDC, neglecting provincial integration.<br><div class="archetype-diagram"><h5>Loop:</h5>HRDC Success → More Investment → Provincial Neglect → Two-Tier System</div>',
-                '<strong>8. Credibility Gap</strong><br>Slow MOA processing erodes partner trust despite rapid engagement.<br><div class="archetype-diagram"><h5>Tension:</h5>Industry Speed ↑ vs. Admin Speed ↓ → Trust Erosion → Fewer Partnerships</div>',
+                {text: '5. Red Queen Effect (Drifting Goals)<br>Industry 4.0 outpaces TR updates; standards risk downward drift.', modal: 5},
+                {text: '6. Elite Silo Dynamic (Success to the Successful)<br>Resources concentrate in HRDC, neglecting provincial integration.', modal: 6},
+                {text: '8. Credibility Gap<br>Slow MOA processing erodes partner trust despite rapid engagement.', modal: 8},
                 'Sustainability Risk: Changes in organizational hierarchy',
                 'Risk of WS integration being "pilot-only" without long-term commitment'
             ]
@@ -865,7 +1453,8 @@
         let state = {
             expandedPerspective: null,
             selectedStrategy: null,
-            currentTab: 'strategy-map'
+            currentTab: 'strategy-map',
+            viewMode: 'all' // 'all' or 'core'
         };
 
         function switchTab(tabName) {
@@ -879,20 +1468,25 @@
         }
 
         function filterCore() {
-            document.querySelectorAll('.strategy-item').forEach(item => {
-                const kpiText = item.querySelector('.strategy-kpi').textContent;
-                if (kpiText.includes('⭐')) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+            state.viewMode = 'core';
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('button[onclick="filterCore()"]').classList.add('active');
+            render();
         }
 
         function showAll() {
-            document.querySelectorAll('.strategy-item').forEach(item => {
-                item.style.display = '';
-            });
+            state.viewMode = 'all';
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('button[onclick="showAll()"]').classList.add('active');
+            render();
+        }
+
+        function openArchetypeModal(modalId) {
+            document.getElementById(`archetypeModal${modalId}`).classList.add('active');
+        }
+
+        function closeArchetypeModal(modalId) {
+            document.getElementById(`archetypeModal${modalId}`).classList.remove('active');
         }
 
         function renderVisionItems(items) {
@@ -900,10 +1494,19 @@
         }
 
         function renderStrategies(strategies, perspectiveId) {
-            return strategies.map(function(strategy, idx) {
+            // Filter strategies based on view mode
+            const filteredStrategies = state.viewMode === 'core' 
+                ? strategies.filter(s => s.kpi.includes('⭐'))
+                : strategies;
+
+            if (filteredStrategies.length === 0 && state.viewMode === 'core') {
+                return '<div class="strategy-item" style="background:rgba(255,255,255,0.05);"><em>No core drivers in this perspective</em></div>';
+            }
+
+            return filteredStrategies.map(function(strategy, idx) {
                 const strategyId = perspectiveId + '-' + idx;
                 const isSelected = state.selectedStrategy === strategyId;
-                return '<div class="strategy-item ' + (isSelected ? 'selected' : '') + '" data-strategy-id="' + strategyId + '"><div class="strategy-meta"><span class="strategy-pillar">' + strategy.pillar + '</span><span class="strategy-target">Target: ' + strategy.target + '</span></div><h4 class="strategy-action">' + strategy.action + '</h4><p class="strategy-kpi">' + strategy.kpi + '</p>' + (isSelected ? '<div class="strategy-contributes"><p class="contributes-title">Contributes to:</p><div class="contributes-list">' + strategy.contributes.map(contrib => '<div class="contributes-item"><div class="dot"></div>' + contrib + '</div>').join('') + '</div></div>' : '') + '<div class="tooltip">' + strategy.tooltip + '</div></div>';
+                return '<div class="strategy-item ' + (isSelected ? 'selected' : '') + '" data-strategy-id="' + strategyId + '"><div class="strategy-meta"><span class="strategy-pillar">' + strategy.pillar + '</span><span class="strategy-target">Target: ' + strategy.target + '</span></div><h4 class="strategy-action">' + strategy.action + '</h4><p class="strategy-kpi">' + strategy.kpi + '</p>' + (isSelected ? '<div class="strategy-contributes"><p class="contributes-title">Contributes to:</p><div class="contributes-list">' + strategy.contributes.map(contrib => '<div class="contributes-item"><div class="dot"></div>' + contrib + '</div>').join('') + '</div></div>' : '') + '<div class="tooltip">' + (strategy.tooltip || '') + '</div></div>';
             }).join('');
         }
 
@@ -942,9 +1545,18 @@
 
         function renderSWOT() {
             document.getElementById('strengths-list').innerHTML = swotData.strengths.map(item => '<div class="swot-item">' + item + '</div>').join('');
-            document.getElementById('weaknesses-list').innerHTML = swotData.weaknesses.map(item => '<div class="swot-item">' + item + '</div>').join('');
+            
+            document.getElementById('weaknesses-list').innerHTML = swotData.weaknesses.map(item => 
+                '<div class="swot-item" onclick="openArchetypeModal(' + item.modal + ')">' + item.text + '</div>'
+            ).join('');
+            
             document.getElementById('opportunities-list').innerHTML = swotData.opportunities.map(item => '<div class="swot-item">' + item + '</div>').join('');
-            document.getElementById('threats-list').innerHTML = swotData.threats.map(item => '<div class="swot-item">' + item + '</div>').join('');
+            
+            document.getElementById('threats-list').innerHTML = swotData.threats.map(item => 
+                typeof item === 'string' 
+                    ? '<div class="swot-item">' + item + '</div>'
+                    : '<div class="swot-item" onclick="openArchetypeModal(' + item.modal + ')">' + item.text + '</div>'
+            ).join('');
         }
 
         function renderBSC() {
