@@ -1,506 +1,453 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EQUIP PEA: Interactive Tools</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EQUIP PEA Platform - Interactive Tools</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Space Grotesk', sans-serif; box-sizing: border-box; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
     
-    <style>
-        :root {
-            --primary-navy: #0B1120;
-            --accent-copper: #c2410c;
-            --light-bg: #f8f9fa;
-        }
+    .layer-card, .tool-card {
+      backdrop-filter: blur(12px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .layer-card:hover, .tool-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3); }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    .fade-in { animation: fade-in 0.6s ease-out forwards; }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(100,100,100,0.4); border-radius: 3px; }
+    
+    /* Form Elements */
+    textarea, input, select {
+      background: rgba(255,255,255,0.05) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      color: white !important;
+      border-radius: 0.5rem !important;
+      padding: 0.75rem !important;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    
+    textarea:focus, input:focus, select:focus {
+      outline: none !important;
+      border-color: rgba(99, 102, 241, 0.5) !important;
+      background: rgba(255,255,255,0.08) !important;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0.4) 100%);
+      color: #e0e7ff;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.4) 0%, rgba(99, 102, 241, 0.6) 100%);
+      transform: translateY(-2px);
+    }
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--light-bg);
-            color: #333;
-        }
-
-        h1, h2, h3, h4 {
-            font-family: 'Merriweather', serif;
-            color: var(--primary-navy);
-        }
-
-        /* --- Process Arrow Navigation --- */
-        .process-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 40px;
-            padding: 20px 0;
-            overflow-x: auto;
-        }
-
-        .process-step {
-            flex: 1;
-            position: relative;
-            background: var(--primary-navy);
-            color: white;
-            padding: 20px 15px 20px 40px;
-            margin-right: 5px;
-            clip-path: polygon(90% 0, 100% 50%, 90% 100%, 0% 100%, 10% 50%, 0% 0%);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 120px;
-        }
-
-        .process-step:first-child {
-            clip-path: polygon(90% 0, 100% 50%, 90% 100%, 0% 100%, 0% 50%, 0% 0%);
-            padding-left: 15px;
-        }
-
-        .process-step:last-child {
-            clip-path: polygon(100% 0, 100% 50%, 100% 100%, 0% 100%, 10% 50%, 0% 0%);
-            margin-right: 0;
-        }
-
-        .process-step h5 {
-            font-size: 1.1rem;
-            margin: 0;
-            font-weight: 700;
-        }
-
-        .process-step small {
-            opacity: 0.8;
-            font-size: 0.85rem;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .process-step.active {
-            background: var(--accent-copper);
-            transform: scale(1.02);
-            z-index: 10;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .process-step:hover:not(.active) {
-            background-color: #1e293b;
-        }
-
-        /* --- Content Cards --- */
-        .tool-card {
-            border: none;
-            border-left: 5px solid var(--accent-copper);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-            transition: transform 0.2s;
-        }
-        
-        .tool-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-
-        .tool-header {
-            background: white;
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: center;
-        }
-
-        .tool-icon {
-            background: var(--primary-navy);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-        }
-
-        .badge-method {
-            background-color: #e2e8f0;
-            color: #475569;
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        /* --- Matrix Visualization --- */
-        .matrix-box {
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 8px;
-            height: 100%;
-            border: 1px dashed #cbd5e1;
-        }
-        .matrix-title {
-            font-weight: bold;
-            color: var(--accent-copper);
-            margin-bottom: 10px;
-            display: block;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .process-container {
-                flex-direction: column;
-                clip-path: none;
-            }
-            .process-step {
-                clip-path: none !important;
-                margin-bottom: 10px;
-                border-radius: 8px;
-                padding: 20px;
-                text-align: left;
-                align-items: flex-start;
-                min-height: auto;
-            }
-        }
-    </style>
+    /* Iceberg Visualization Specifics */
+    .iceberg-water {
+        background: linear-gradient(to bottom, rgba(56, 189, 248, 0.1) 0%, rgba(30, 58, 138, 0.6) 100%);
+        border-top: 2px solid rgba(56, 189, 248, 0.5);
+    }
+  </style>
 </head>
-<body>
-
-<div class="container py-5">
+<body class="h-full text-slate-200">
+  <div id="app" class="h-full w-full overflow-hidden flex flex-col" style="background: linear-gradient(135deg, #0a0f1c 0%, #111827 50%, #0d1220 100%);">
     
-    <div class="row mb-5 text-center">
-        <div class="col-12">
-            <h1 class="display-5 fw-bold">The Methodology: A Four-Stage Execution Plan</h1>
-            <p class="lead text-muted">EQUIP Political Economy Analysis (PEA) Diagnostic Suite</p>
-        </div>
-    </div>
-
-    <div class="process-container" id="processNav">
-        <div class="process-step active" onclick="showStage('stage1', this)">
-            <h5>Stage 1</h5>
-            <span>Mobilization</span>
-            <small>(Inception & System Mapping)</small>
+    <header class="sticky top-0 z-40 px-6 py-4 border-b border-white/10 backdrop-blur-xl bg-slate-900/80">
+      <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="showView('overview')">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center animate-float shadow-lg shadow-indigo-500/20" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-white tracking-tight">EQUIP PEA Platform</h1>
+            <p class="text-xs text-indigo-300 font-medium tracking-wide uppercase">Systems Diagnostic Suite</p>
+          </div>
         </div>
         
-        <div class="process-step" onclick="showStage('stage2', this)">
-            <h5>Stage 2</h5>
-            <span>Fieldwork</span>
-            <small>(Data Collection)</small>
+        <nav class="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/5">
+          <button onclick="showView('overview')" id="nav-overview" class="nav-btn px-4 py-2 rounded-md text-sm font-medium transition-all hover:bg-white/5">Overview</button>
+          <button onclick="showView('tools')" id="nav-tools" class="nav-btn px-4 py-2 rounded-md text-sm font-medium transition-all hover:bg-white/5">Tools</button>
+          <button onclick="showView('workflow')" id="nav-workflow" class="nav-btn px-4 py-2 rounded-md text-sm font-medium transition-all hover:bg-white/5">Methodology</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto relative scroll-smooth">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-24">
+        
+        <div id="view-overview" class="fade-in space-y-12">
+          <div class="text-center py-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6 bg-indigo-500/10 border border-indigo-500/30">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-xs font-bold text-indigo-300 tracking-wider">PROJECT STATUS: ACTIVE</span>
+            </div>
+            <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">Political Economy Analysis</h2>
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              A comprehensive framework for diagnosing Education-to-Employment systems, analyzing power structures, and designing politically feasible reform pathways.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="p-6 rounded-2xl bg-white/5 border border-white/10 text-center hover:bg-white/10 transition-colors">
+              <div class="text-4xl font-bold text-indigo-400 mb-1">4</div>
+              <div class="text-xs text-slate-500 font-mono uppercase">Stages</div>
+            </div>
+            <div class="p-6 rounded-2xl bg-white/5 border border-white/10 text-center hover:bg-white/10 transition-colors">
+              <div class="text-4xl font-bold text-violet-400 mb-1">6</div>
+              <div class="text-xs text-slate-500 font-mono uppercase">Target Regions</div>
+            </div>
+            <div class="p-6 rounded-2xl bg-white/5 border border-white/10 text-center hover:bg-white/10 transition-colors">
+              <div class="text-4xl font-bold text-pink-400 mb-1">9</div>
+              <div class="text-xs text-slate-500 font-mono uppercase">Diagnostic Tools</div>
+            </div>
+            <div class="p-6 rounded-2xl bg-white/5 border border-white/10 text-center hover:bg-white/10 transition-colors">
+              <div class="text-4xl font-bold text-emerald-400 mb-1">AII</div>
+              <div class="text-xs text-slate-500 font-mono uppercase">Framework</div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6">
+             <div class="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 cursor-pointer hover:bg-indigo-500/10 transition-all group" onclick="showView('tools'); showStage(1)">
+                <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors">Start Diagnostics</h3>
+                    <svg class="w-6 h-6 text-indigo-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </div>
+                <p class="mt-2 text-slate-400">Launch the interactive tool suite starting with System Mapping.</p>
+             </div>
+             <div class="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 cursor-pointer hover:bg-emerald-500/10 transition-all group">
+                <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold text-white group-hover:text-emerald-300 transition-colors">View Reports</h3>
+                    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <p class="mt-2 text-slate-400">Access synthesized desk reviews and readiness assessments.</p>
+             </div>
+          </div>
         </div>
 
-        <div class="process-step" onclick="showStage('stage3', this)">
-            <h5>Stage 3</h5>
-            <span>Analysis & Drafting</span>
-            <small>(Synthesizing Findings)</small>
+        <div id="view-tools" class="hidden fade-in">
+          <div class="mb-8">
+            <h2 class="text-3xl font-bold text-white mb-2">Interactive Diagnostics</h2>
+            <p class="text-slate-400">Select a stage to access specific tools.</p>
+          </div>
+
+          <div class="flex gap-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+            <button onclick="showStage(1)" id="stage-btn-1" class="stage-btn px-6 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all border border-transparent">
+              <span class="block text-xs opacity-70 uppercase tracking-wider mb-1">Stage 1</span>
+              System Mapping
+            </button>
+            <button onclick="showStage(2)" id="stage-btn-2" class="stage-btn px-6 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all border border-transparent">
+              <span class="block text-xs opacity-70 uppercase tracking-wider mb-1">Stage 2</span>
+              Field Data
+            </button>
+            <button onclick="showStage(3)" id="stage-btn-3" class="stage-btn px-6 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all border border-transparent">
+              <span class="block text-xs opacity-70 uppercase tracking-wider mb-1">Stage 3</span>
+              Analysis
+            </button>
+            <button onclick="showStage(4)" id="stage-btn-4" class="stage-btn px-6 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all border border-transparent">
+              <span class="block text-xs opacity-70 uppercase tracking-wider mb-1">Stage 4</span>
+              Validation
+            </button>
+          </div>
+
+          <div id="tool-interface" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
         </div>
 
-        <div class="process-step" onclick="showStage('stage4', this)">
-            <h5>Stage 4</h5>
-            <span>Validation</span>
-            <small>(Refinement & Finalization)</small>
+        <div id="view-workflow" class="hidden fade-in">
+           <div class="max-w-3xl mx-auto space-y-8">
+               <div class="text-center mb-10">
+                   <h2 class="text-3xl font-bold text-white">Methodology Framework</h2>
+                   <p class="text-slate-400 mt-2">The 4-stage execution plan for E2E system reform.</p>
+               </div>
+               
+               <div class="relative pl-8 border-l-2 border-indigo-500/30 pb-8">
+                   <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50"></div>
+                   <h3 class="text-xl font-bold text-white mb-2">1. Mobilization & Mapping</h3>
+                   <div class="bg-white/5 p-4 rounded-lg border border-white/5">
+                       <p class="text-slate-300 text-sm">Categorize stakeholders using the Regime-Niche-Landscape framework. Identify macro trends and status quo actors.</p>
+                   </div>
+               </div>
+
+               <div class="relative pl-8 border-l-2 border-violet-500/30 pb-8">
+                   <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-violet-500 shadow-lg shadow-violet-500/50"></div>
+                   <h3 class="text-xl font-bold text-white mb-2">2. Field Data Collection</h3>
+                   <div class="bg-white/5 p-4 rounded-lg border border-white/5">
+                       <p class="text-slate-300 text-sm">Deploy "Readiness Templates" and Conflict-Sensitive KII guides. Decode informal rules and partnership potential.</p>
+                   </div>
+               </div>
+
+               <div class="relative pl-8 border-l-2 border-pink-500/30 pb-8">
+                   <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-pink-500 shadow-lg shadow-pink-500/50"></div>
+                   <h3 class="text-xl font-bold text-white mb-2">3. Analysis & Drafting</h3>
+                   <div class="bg-white/5 p-4 rounded-lg border border-white/5">
+                       <p class="text-slate-300 text-sm">Synthesize data using the Actors-Institutions-Ideas (AII) matrix. Map the "Iceberg" of systemic constraints.</p>
+                        
+                   </div>
+               </div>
+
+               <div class="relative pl-8 border-l-2 border-emerald-500/30">
+                   <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
+                   <h3 class="text-xl font-bold text-white mb-2">4. Validation</h3>
+                   <div class="bg-white/5 p-4 rounded-lg border border-white/5">
+                       <p class="text-slate-300 text-sm">Iterative workshops to test feasibility. Use Resistance Mapping to ensure political buy-in.</p>
+                   </div>
+               </div>
+           </div>
         </div>
+
+      </div>
+    </main>
+
+    <div id="tool-modal" class="fixed inset-0 z-50 hidden" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
+      <div class="absolute inset-0 overflow-y-auto py-8 px-4">
+        <div class="min-h-full flex items-center justify-center">
+            <div id="modal-content" class="w-full max-w-5xl rounded-2xl bg-[#0f1422] border border-white/10 shadow-2xl transform transition-all p-6 md:p-8 relative">
+                </div>
+        </div>
+      </div>
     </div>
 
-    <div class="tab-content" id="methodologyContent">
+  </div>
 
-        <div id="stage1" class="stage-section">
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <h3><i class="fas fa-map-marked-alt me-2 text-primary"></i>Stage 1: Mobilization & System Mapping</h3>
-                    <p>Rapid desk review (Regime-Niche framework) and defining 'EQUIP readiness' criteria.</p>
-                </div>
-                
-                <div class="col-lg-6">
-                    <div class="card tool-card h-100">
-                        <div class="tool-header">
-                            <div class="tool-icon"><i class="fas fa-chess-board"></i></div>
-                            <div>
-                                <h5 class="m-0">Regime-Niche-Landscape Matrix</h5>
-                                <span class="badge-method">Digital / Manual</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">Categorizes stakeholders to understand regional dynamics of change vs. stability.</p>
-                            <div class="row g-2">
-                                <div class="col-12">
-                                    <div class="matrix-box">
-                                        <span class="matrix-title">Landscape (External Context)</span>
-                                        Macro-level pressures: Economic shifts, political trends, and labor market demands pressuring the system.
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="matrix-box">
-                                        <span class="matrix-title">Regime (Status Quo)</span>
-                                        <strong>Actors:</strong> RDCs, DepEd/TESDA Regional Offices, Business Chambers.<br>
-                                        <strong>Role:</strong> Maintain existing institutional habits.
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="matrix-box">
-                                        <span class="matrix-title">Niche (Innovators)</span>
-                                        <strong>Actors:</strong> Outliers, localized NGO initiatives.<br>
-                                        <strong>Role:</strong> Operating outside dominant rules; ready to champion transformation.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <script>
+    // State Management
+    let currentStage = 1;
+    const appData = {
+        stage1: { landscape: [], regime: [], niche: [] },
+        stage2: { interviews: [] },
+        stage3: { aii: [], constraints: [] },
+        stage4: { feedback: [] }
+    };
 
-                <div class="col-lg-6">
-                    <div class="card tool-card h-100">
-                        <div class="tool-header">
-                            <div class="tool-icon"><i class="fas fa-file-contract"></i></div>
-                            <div>
-                                <h5 class="m-0">Rapid Desk Review Synthesis</h5>
-                                <span class="badge-method">Template</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">Designed to bridge the gap between national data and regional realities.</p>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><i class="fas fa-chart-line me-2 text-secondary"></i> <strong>National E2E Trends:</strong> Summary of curriculum gaps and labor market failures.</li>
-                                <li class="list-group-item"><i class="fas fa-city me-2 text-secondary"></i> <strong>Regional Contexts:</strong> Sensitive data on political settlements and governance structures.</li>
-                                <li class="list-group-item"><i class="fas fa-tachometer-alt me-2 text-secondary"></i> <strong>Baseline Readiness:</strong> Preliminary indicators of political will in the 6 target regions.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    // Navigation Logic
+    function showView(viewName) {
+        ['overview', 'tools', 'workflow'].forEach(v => {
+            const el = document.getElementById(`view-${v}`);
+            const btn = document.getElementById(`nav-${v}`);
+            
+            if (v === viewName) {
+                el.classList.remove('hidden');
+                el.classList.add('fade-in');
+                btn.classList.add('bg-white/10', 'text-white');
+                btn.classList.remove('text-slate-400');
+            } else {
+                el.classList.add('hidden');
+                btn.classList.remove('bg-white/10', 'text-white');
+                btn.classList.add('text-slate-400');
+            }
+        });
+        
+        if (viewName === 'tools') showStage(currentStage);
+    }
 
-        <div id="stage2" class="stage-section d-none">
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <h3><i class="fas fa-hiking me-2 text-primary"></i>Stage 2: Field Data Collection</h3>
-                    <p>Testing hypotheses on actor incentives. Focus on informal rules and local policy dynamics.</p>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="card tool-card h-100">
-                        <div class="tool-header">
-                            <div class="tool-icon"><i class="fas fa-thermometer-half"></i></div>
-                            <div>
-                                <h5 class="m-0">Systemic Readiness Template</h5>
-                                <span class="badge-method">Qualitative Diagnostic</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p class="small text-muted">Filters for "partnership potential" vs technical capacity.</p>
-                            <div class="d-flex align-items-start mb-2">
-                                <i class="fas fa-check-circle text-success mt-1 me-2"></i>
-                                <div><strong>Political Will:</strong> Willingness to challenge norms and pilot solutions.</div>
-                            </div>
-                            <div class="d-flex align-items-start mb-2">
-                                <i class="fas fa-check-circle text-success mt-1 me-2"></i>
-                                <div><strong>Partnership Capacity:</strong> Ability to work with LGUs & Industry.</div>
-                            </div>
-                            <div class="d-flex align-items-start">
-                                <i class="fas fa-check-circle text-success mt-1 me-2"></i>
-                                <div><strong>Niche Potential:</strong> Existence of pre-conditions for prototyping.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="card tool-card h-100">
-                        <div class="tool-header">
-                            <div class="tool-icon"><i class="fas fa-users-cog"></i></div>
-                            <div>
-                                <h5 class="m-0">KII & FGD Guides</h5>
-                                <span class="badge-method">Semi-Structured</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p class="small text-muted">Decodes informal rules and implementation dynamics.</p>
-                            <ul class="list-unstyled">
-                                <li class="mb-2"><strong>1. Power Probes:</strong> Uncover elite capture and power structures.</li>
-                                <li class="mb-2"><strong>2. Incentive Alignment:</strong> Why is private sector hesitant?</li>
-                                <li class="mb-2"><strong>3. Conflict Sensitivity:</strong> Navigating regional political settlements safely.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="card tool-card h-100">
-                        <div class="tool-header">
-                            <div class="tool-icon"><i class="fas fa-microphone-alt"></i></div>
-                            <div>
-                                <h5 class="m-0">Transcription Services</h5>
-                                <span class="badge-method">Digital Strategy</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p>Essential for the 6-region scope. Captures the <strong>nuance of regional narratives</strong> and "informal institutional habits" often revealed through subtle storytelling, preserving them for the AII Matrix.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="stage3" class="stage-section d-none">
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <h3><i class="fas fa-project-diagram me-2 text-primary"></i>Stage 3: Analysis & Drafting</h3>
-                    <p>Synthesizing findings. Identifying Ecosystem Enablers using 'Actors-Institutions-Ideas' framework.</p>
-                </div>
-
-                <div class="col-lg-7">
-                    <div class="card tool-card h-100">
-                        <div class="tool-header">
-                            <div class="tool-icon"><i class="fas fa-network-wired"></i></div>
-                            <div>
-                                <h5 class="m-0">Actors-Institutions-Ideas (AII) Matrix</h5>
-                                <span class="badge-method">Analytical Framework</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Component</th>
-                                        <th>Analysis Focus</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="fw-bold text-primary">Actors</td>
-                                        <td>Interests and incentives of state/non-state stakeholders.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold text-primary">Institutions</td>
-                                        <td>Formal rules vs. Informal norms ("Rules of the Game").</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold text-primary">Ideas</td>
-                                        <td>Narratives and habits justifying the status quo.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-5">
-                    <div class="card tool-card h-100">
-                        <div class="tool-header">
-                            <div class="tool-icon"><i class="fas fa-icicles"></i></div>
-                            <div>
-                                <h5 class="m-0">Systemic Constraint Map</h5>
-                                <span class="badge-method">The "Iceberg" Model</span>
-                            </div>
-                        </div>
-                        <div class="card-body text-center">
-                            <div class="p-3 mb-2 bg-light border rounded">
-                                <strong class="d-block text-secondary">Visible Symptoms (Above Water)</strong>
-                                <small>Curriculum gaps, lack of facilities.</small>
-                            </div>
-                            <i class="fas fa-arrow-down text-muted my-2"></i>
-                            <div class="p-3 bg-primary text-white border rounded">
-                                <strong class="d-block">Hidden Lock-ins (Underwater)</strong>
-                                <small>Informal power structures, elite capture, political settlements.</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="stage4" class="stage-section d-none">
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <h3><i class="fas fa-check-double me-2 text-primary"></i>Stage 4: Validation & Finalization</h3>
-                    <p>Iterative Workshop to test findings, build ownership, and refine the path forward.</p>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="card tool-card h-100">
-                        <div class="tool-header">
-                            <div class="tool-icon"><i class="fas fa-laptop-house"></i></div>
-                            <div>
-                                <h5 class="m-0">Stakeholder Validation Workshop</h5>
-                                <span class="badge-method">Online Platform</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">Iterative political engagement mechanism for regional actors.</p>
-                            <div class="list-group">
-                                <div class="list-group-item">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1 fw-bold">Feedback Loops</h6>
-                                    </div>
-                                    <small>Confirms if analysis of power structures resonates with local experience.</small>
-                                </div>
-                                <div class="list-group-item">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1 fw-bold">Feasibility Testing</h6>
-                                    </div>
-                                    <small>Discusses if policy pathways are politically viable for implementers.</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="card tool-card h-100">
-                        <div class="tool-header">
-                            <div class="tool-icon"><i class="fas fa-clipboard-check"></i></div>
-                            <div>
-                                <h5 class="m-0">Consensus-Building Tracker</h5>
-                                <span class="badge-method">Management Tool</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p>Refines recommendations by addressing conflicting viewpoints.</p>
-                            <div class="row mt-4">
-                                <div class="col-6 text-center border-end">
-                                    <i class="fas fa-shield-alt fa-2x text-danger mb-2"></i>
-                                    <h6 class="fw-bold">Resistance Mapping</h6>
-                                    <small>Tracks risks & triggers for status-quo actors.</small>
-                                </div>
-                                <div class="col-6 text-center">
-                                    <i class="fas fa-handshake fa-2x text-success mb-2"></i>
-                                    <h6 class="fw-bold">Ownership Indicator</h6>
-                                    <small>Records consensus points to build reform ownership.</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div> </div>
-
-<script>
-    function showStage(stageId, element) {
-        // Hide all stage sections
-        const sections = document.querySelectorAll('.stage-section');
-        sections.forEach(section => {
-            section.classList.add('d-none');
-            section.classList.remove('fade-in');
+    // Stage Selection Logic
+    function showStage(stageNum) {
+        currentStage = stageNum;
+        
+        // Reset buttons
+        document.querySelectorAll('.stage-btn').forEach(btn => {
+            btn.className = 'stage-btn px-6 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all border border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5';
         });
 
-        // Show selected stage
-        const selectedStage = document.getElementById(stageId);
-        selectedStage.classList.remove('d-none');
+        // Activate specific button
+        const activeBtn = document.getElementById(`stage-btn-${stageNum}`);
+        const colors = {
+            1: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
+            2: 'bg-violet-500/10 text-violet-300 border-violet-500/30',
+            3: 'bg-pink-500/10 text-pink-300 border-pink-500/30',
+            4: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+        };
+        activeBtn.className = `stage-btn px-6 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all border ${colors[stageNum]}`;
         
-        // Simple fade in effect
-        setTimeout(() => {
-            selectedStage.classList.add('fade-in');
-        }, 10);
-
-        // Update Nav Active State
-        const steps = document.querySelectorAll('.process-step');
-        steps.forEach(step => step.classList.remove('active'));
-        element.classList.add('active');
+        renderTools(stageNum);
     }
-</script>
 
+    // Render Tool Cards
+    function renderTools(stage) {
+        const container = document.getElementById('tool-interface');
+        let html = '';
+
+        if (stage === 1) {
+            html += createToolCard('RNL Matrix', 'Landscape, Regime, Niche', 'Map regional dynamics of change vs stability.', 'openTool("rnl")', 'indigo');
+            html += createToolCard('Desk Review Synthesis', 'Template', 'Bridge national data with regional political realities.', 'openTool("desk")', 'indigo');
+        } else if (stage === 2) {
+            html += createToolCard('Systemic Readiness', 'Diagnostic', 'Filter for partnership potential and political will.', 'openTool("readiness")', 'violet');
+            html += createToolCard('KII & FGD Guides', 'Semi-Structured', 'Questions to decode informal rules and power.', 'openTool("kii")', 'violet');
+            html += createToolCard('Transcription Service', 'Utility', 'Capture nuance and informal institutional habits.', 'openTool("transcribe")', 'violet');
+        } else if (stage === 3) {
+            html += createToolCard('AII Analysis Matrix', 'Synthesis', 'Analyze Actors, Institutions, and Ideas.', 'openTool("aii")', 'pink');
+            html += createToolCard('Systemic Constraint Map', 'Iceberg Model', 'Visualize visible symptoms vs hidden lock-ins.', 'openTool("iceberg")', 'pink');
+        } else if (stage === 4) {
+            html += createToolCard('Validation Workshop', 'Online Platform', 'Iterative feedback loops with stakeholders.', 'openTool("validation")', 'emerald');
+            html += createToolCard('Consensus Tracker', 'Management', 'Map resistance and build ownership.', 'openTool("consensus")', 'emerald');
+        }
+
+        container.innerHTML = html;
+        // Trigger generic animations for new cards
+        document.querySelectorAll('.tool-card').forEach((el, i) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                el.style.transition = 'all 0.4s ease';
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, i * 100);
+        });
+    }
+
+    function createToolCard(title, subtitle, desc, onclick, color) {
+        return `
+        <div class="tool-card p-6 rounded-2xl bg-white/5 border border-white/10 cursor-pointer group hover:border-${color}-500/50" onclick='${onclick}'>
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-lg bg-${color}-500/20 flex items-center justify-center text-${color}-400 group-hover:bg-${color}-500 group-hover:text-white transition-all">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-lg">${title}</h3>
+                    <span class="text-xs uppercase tracking-wider text-${color}-400 font-bold">${subtitle}</span>
+                </div>
+            </div>
+            <p class="text-sm text-slate-400 leading-relaxed">${desc}</p>
+            <div class="mt-4 flex items-center text-${color}-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                Launch Tool <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </div>
+        </div>`;
+    }
+
+    // Modal System
+    function openTool(type) {
+        const modal = document.getElementById('tool-modal');
+        const content = document.getElementById('modal-content');
+        modal.classList.remove('hidden');
+        
+        let html = `<div class="flex justify-between items-center mb-6 pb-4 border-b border-white/10">
+            <h2 class="text-2xl font-bold text-white">Tool Workspace</h2>
+            <button onclick="document.getElementById('tool-modal').classList.add('hidden')" class="text-slate-400 hover:text-white"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>`;
+
+        if(type === 'rnl') {
+            html += `
+            <div class="grid grid-cols-3 gap-6 h-[600px]">
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-white/10 flex flex-col">
+                    <h4 class="text-indigo-400 font-bold mb-2 uppercase text-sm">Landscape (Context)</h4>
+                    <p class="text-xs text-slate-500 mb-4">Macro-level factors, economic shifts, political trends.</p>
+                    <textarea class="flex-1 resize-none bg-black/20" placeholder="Add factor..."></textarea>
+                </div>
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-white/10 flex flex-col">
+                    <h4 class="text-indigo-400 font-bold mb-2 uppercase text-sm">Regime (Status Quo)</h4>
+                    <p class="text-xs text-slate-500 mb-4">Established actors (RDCs, DepEd) maintaining habits.</p>
+                    <textarea class="flex-1 resize-none bg-black/20" placeholder="Add actor..."></textarea>
+                </div>
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-white/10 flex flex-col">
+                    <h4 class="text-indigo-400 font-bold mb-2 uppercase text-sm">Niche (Innovators)</h4>
+                    <p class="text-xs text-slate-500 mb-4">Outliers and localized initiatives ready for change.</p>
+                    <textarea class="flex-1 resize-none bg-black/20" placeholder="Add innovator..."></textarea>
+                </div>
+            </div>`;
+        } 
+        else if (type === 'iceberg') {
+             html += `
+            <div class="relative w-full h-[600px] rounded-xl overflow-hidden border border-white/10 bg-slate-900">
+                <div class="absolute inset-0 p-8 flex flex-col items-center z-10">
+                    <div class="w-full max-w-2xl text-center mb-10">
+                        <h3 class="text-white font-bold text-lg">Visible Symptoms</h3>
+                        <p class="text-sm text-slate-400">Curriculum gaps, lack of facilities, poor outcomes.</p>
+                        <textarea class="mt-2 w-full h-24 text-sm" placeholder="List visible issues..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="absolute top-[35%] left-0 right-0 bottom-0 iceberg-water backdrop-blur-sm z-0"></div>
+                
+                <div class="absolute bottom-0 inset-x-0 top-[40%] p-8 flex flex-col items-center z-10">
+                    <div class="w-full max-w-2xl text-center mt-8">
+                        <h3 class="text-white font-bold text-lg">Hidden Lock-ins</h3>
+                        <p class="text-sm text-blue-200">Informal power structures, elite capture, political settlements.</p>
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <textarea class="h-32 text-sm bg-blue-900/40 border-blue-500/30" placeholder="Institutional Habits..."></textarea>
+                            <textarea class="h-32 text-sm bg-blue-900/40 border-blue-500/30" placeholder="Power Dynamics..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+        else if (type === 'aii') {
+            html += `
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-white/10">
+                            <th class="p-4 text-pink-400 font-bold">Component</th>
+                            <th class="p-4 text-slate-300">Analysis Focus</th>
+                            <th class="p-4 text-slate-300 w-1/2">Field Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <tr class="bg-white/5">
+                            <td class="p-4 font-bold text-white">Actors</td>
+                            <td class="p-4 text-slate-400 text-sm">Interests and incentives of state and non-state stakeholders.</td>
+                            <td class="p-4"><textarea rows="2" placeholder="Who wins? Who loses?" class="text-sm"></textarea></td>
+                        </tr>
+                        <tr class="bg-white/5">
+                            <td class="p-4 font-bold text-white">Institutions</td>
+                            <td class="p-4 text-slate-400 text-sm">Formal rules and informal norms ("rules of the game").</td>
+                            <td class="p-4"><textarea rows="2" placeholder="Written vs Unwritten rules..." class="text-sm"></textarea></td>
+                        </tr>
+                        <tr class="bg-white/5">
+                            <td class="p-4 font-bold text-white">Ideas</td>
+                            <td class="p-4 text-slate-400 text-sm">Narratives and entrenched habits justifying the status quo.</td>
+                            <td class="p-4"><textarea rows="2" placeholder="Dominant narratives..." class="text-sm"></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>`;
+        }
+        else {
+            html += `<div class="text-center py-20 text-slate-500">
+                <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <p>Tool interface placeholder for ${type}.</p>
+            </div>`;
+        }
+        
+        html += `<div class="mt-6 flex justify-end gap-3 pt-4 border-t border-white/10">
+            <button class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white" onclick="document.getElementById('tool-modal').classList.add('hidden')">Cancel</button>
+            <button class="btn-primary" onclick="document.getElementById('tool-modal').classList.add('hidden')">Save Analysis</button>
+        </div>`;
+
+        content.innerHTML = html;
+    }
+
+    // Initialize
+    showView('overview');
+  </script>
 </body>
 </html>
