@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EQUIP PEA Platform - Comprehensive Suite</title>
+  <title>EQUIP PEA Platform - Fully Integrated Suite</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     * { font-family: 'Space Grotesk', sans-serif; box-sizing: border-box; }
     .mono { font-family: 'JetBrains Mono', monospace; }
     
-    /* Glassmorphism & Animations */
     .glass-panel {
       background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(16px);
@@ -18,9 +17,7 @@
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
     
-    .tool-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    .tool-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .tool-card:hover { 
       transform: translateY(-4px); 
       border-color: rgba(99, 102, 241, 0.4);
@@ -30,40 +27,14 @@
     .fade-in { animation: fadeIn 0.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Custom Form Elements */
-    input, textarea, select {
-      background: rgba(0, 0, 0, 0.3) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      color: #e2e8f0 !important;
-      transition: all 0.2s;
-    }
-    input:focus, textarea:focus {
-      border-color: #6366f1 !important;
-      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
-      outline: none;
-    }
-
-    /* Iceberg Visualization */
     .iceberg-container {
         position: relative;
         overflow: hidden;
         background: linear-gradient(180deg, #bae6fd 0%, #7dd3fc 45%, #0c4a6e 50%, #082f49 100%);
     }
-    .iceberg-water-line {
-        position: absolute;
-        top: 48%;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: rgba(255,255,255,0.4);
-        box-shadow: 0 0 10px rgba(255,255,255,0.5);
-    }
 
-    /* Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
   </style>
 </head>
 <body class="h-full bg-[#0f111a] text-slate-200 overflow-hidden">
@@ -74,15 +45,15 @@
       <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
         <div class="flex items-center gap-3 cursor-pointer" onclick="showView('overview')">
           <div class="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
           </div>
-          <span class="font-bold text-lg tracking-tight text-white">EQUIP <span class="text-indigo-400">PEA</span></span>
+          <span class="font-bold text-lg tracking-tight text-white uppercase">EQUIP <span class="text-indigo-400">PEA</span></span>
         </div>
 
         <nav class="flex items-center gap-1 bg-white/5 p-1 rounded-lg">
           <button onclick="showView('overview')" id="nav-overview" class="px-4 py-1.5 text-sm font-medium rounded-md transition-all text-slate-400 hover:text-white">Overview</button>
           <button onclick="showView('ai-arch')" id="nav-ai-arch" class="px-4 py-1.5 text-sm font-medium rounded-md transition-all text-slate-400 hover:text-white">AI-PEA Architecture</button>
-          <button onclick="showView('tools')" id="nav-tools" class="px-4 py-1.5 text-sm font-medium rounded-md transition-all bg-indigo-500/10 text-indigo-300 shadow-sm border border-indigo-500/20">Workbench</button>
+          <button onclick="showView('tools')" id="nav-tools" class="px-4 py-1.5 text-sm font-medium rounded-md transition-all text-slate-400 hover:text-white">Workbench</button>
         </nav>
       </div>
     </header>
@@ -92,32 +63,42 @@
 
         <div id="view-overview" class="hidden fade-in space-y-8">
           <div class="text-center py-12">
-            <h1 class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-white to-indigo-300 mb-6">Systems Innovation Framework</h1>
-            <p class="text-xl text-slate-400 max-w-2xl mx-auto">
-              A 35-day diagnostic sprint to map Education-to-Employment (E2E) systems, identifying political lock-ins and viable innovation niches.
+            <h1 class="text-5xl font-bold text-white mb-6">Systems Innovation Framework</h1>
+            <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-8">
+              [cite_start]A 35-day, 4-Stage diagnostic sprint [cite: 203, 341] [cite_start]to unlock E2E pathways across 6 priority regions[cite: 201, 340].
             </p>
+            <div class="max-w-4xl mx-auto glass-panel p-4 rounded-2xl border-indigo-500/30">
+                            </div>
           </div>
           
           <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer" onclick="showStage(1); showView('tools')">
-              <div class="text-indigo-400 font-mono text-xs mb-2 uppercase tracking-widest">Stage 1</div>
-              <h3 class="text-xl font-bold text-white mb-2">Mobilization</h3>
-              <p class="text-sm text-slate-400">Regime-Niche mapping & Readiness Criteria.</p>
+            <div class="glass-panel p-6 rounded-2xl">
+              <div class="w-10 h-10 mb-4 flex items-center justify-center bg-indigo-500/10 rounded-lg text-indigo-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-2">The Goal</h3>
+              [cite_start]<p class="text-sm text-slate-400">Unlock E2E pathways by identifying 'EQUIP Ready' locations[cite: 200, 201].</p>
             </div>
-            <div class="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer" onclick="showStage(2); showView('tools')">
-              <div class="text-violet-400 font-mono text-xs mb-2 uppercase tracking-widest">Stage 2</div>
-              <h3 class="text-xl font-bold text-white mb-2">Field Data</h3>
-              <p class="text-sm text-slate-400">Decoding political settlements & "ground-truthing".</p>
+            <div class="glass-panel p-6 rounded-2xl">
+              <div class="w-10 h-10 mb-4 flex items-center justify-center bg-violet-500/10 rounded-lg text-violet-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-2">The Approach</h3>
+              [cite_start]<p class="text-sm text-slate-400">A hybrid 35-day arc [cite: 341] [cite_start]distinguishing Regime, Niche, and Landscape[cite: 203].</p>
             </div>
-            <div class="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer" onclick="showStage(3); showView('tools')">
-              <div class="text-pink-400 font-mono text-xs mb-2 uppercase tracking-widest">Stage 3</div>
-              <h3 class="text-xl font-bold text-white mb-2">Analysis</h3>
-              <p class="text-sm text-slate-400">AII Matrix & Systemic Constraint (Iceberg) mapping.</p>
+            <div class="glass-panel p-6 rounded-2xl">
+              <div class="w-10 h-10 mb-4 flex items-center justify-center bg-pink-500/10 rounded-lg text-pink-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-2">The Problem</h3>
+              [cite_start]<p class="text-sm text-slate-400">Curriculum reform alone fails due to deep-seated political lock-ins[cite: 206].</p>
             </div>
-            <div class="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer" onclick="showStage(4); showView('tools')">
-              <div class="text-emerald-400 font-mono text-xs mb-2 uppercase tracking-widest">Stage 4</div>
-              <h3 class="text-xl font-bold text-white mb-2">Validation</h3>
-              <p class="text-sm text-slate-400">Consensus building & Strategic Annex finalization.</p>
+            <div class="glass-panel p-6 rounded-2xl">
+              <div class="w-10 h-10 mb-4 flex items-center justify-center bg-emerald-500/10 rounded-lg text-emerald-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-2">The Output</h3>
+              [cite_start]<p class="text-sm text-slate-400">A PEA Report and Annex identifying specific schools for interventions[cite: 207, 208].</p>
             </div>
           </div>
         </div>
@@ -127,33 +108,26 @@
             <div class="flex items-center justify-between mb-8">
               <div>
                 <h2 class="text-3xl font-bold text-white">AI-PEA Architecture</h2>
-                <p class="text-slate-400 mt-1">Integrating Artificial Intelligence into Political Economy Analysis</p>
+                <p class="text-slate-400 mt-1">Accelerating the sprint to insight using AI-assisted analysis.</p>
               </div>
-              <a href="https://cognitioplus.github.io/strategic-planner/ai-pea.html" target="_blank" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-                Open External Diagram <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-              </a>
+              <a href="https://cognitioplus.github.io/strategic-planner/ai-pea.html" target="_blank" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold">External Diagram</a>
             </div>
-
-            <div class="glass-panel p-8 rounded-2xl mb-8 border-l-4 border-indigo-500">
-              <h3 class="text-xl font-bold text-white mb-4">Strategic Integration</h3>
+            <div class="glass-panel p-8 rounded-2xl border-l-4 border-indigo-500">
               <p class="text-slate-300 leading-relaxed mb-6">
-                The AI-PEA architecture leverages Large Language Models (LLMs) to accelerate the "sprint to insight." By ingesting transcription data from Stage 2, the AI assists in identifying pattern matches across the <strong>Actors-Institutions-Ideas (AII)</strong> framework, flagging "lock-ins" that might be missed by manual review alone.
+                [cite_start]Integrating LLMs to process field data (KIIs/FGDs) [cite: 372, 380] [cite_start]and identify systemic patterns within the <strong>Actors-Institutions-Ideas (AII)</strong> framework[cite: 234, 286].
               </p>
               <div class="grid md:grid-cols-3 gap-4">
                 <div class="bg-black/20 p-4 rounded-lg border border-white/5">
-                  <div class="font-mono text-xs text-indigo-400 mb-1">INPUT LAYER</div>
-                  <div class="font-bold text-white">Unstructured Data</div>
-                  <div class="text-xs text-slate-500 mt-1">KII Transcripts, Desk Reviews, PDF Reports</div>
+                  <div class="font-mono text-xs text-indigo-400 mb-1">INPUT</div>
+                  [cite_start]<div class="font-bold text-white">Transcription nuance [cite: 372]</div>
                 </div>
                 <div class="bg-black/20 p-4 rounded-lg border border-white/5">
-                  <div class="font-mono text-xs text-indigo-400 mb-1">PROCESSING LAYER</div>
-                  <div class="font-bold text-white">Pattern Recognition</div>
-                  <div class="text-xs text-slate-500 mt-1">Sentiment Analysis, Entity Extraction (Actors)</div>
+                  <div class="font-mono text-xs text-indigo-400 mb-1">PROCESS</div>
+                  <div class="font-bold text-white">"Lock-in" detection</div>
                 </div>
                 <div class="bg-black/20 p-4 rounded-lg border border-white/5">
-                  <div class="font-mono text-xs text-indigo-400 mb-1">OUTPUT LAYER</div>
-                  <div class="font-bold text-white">Structured Matrix</div>
-                  <div class="text-xs text-slate-500 mt-1">Draft AII Matrix, Constraint Map Coordinates</div>
+                  <div class="font-mono text-xs text-indigo-400 mb-1">OUTPUT</div>
+                  <div class="font-bold text-white">Draft AII Matrix</div>
                 </div>
               </div>
             </div>
@@ -161,16 +135,13 @@
         </div>
 
         <div id="view-tools" class="hidden fade-in">
-          
-          <div class="flex overflow-x-auto pb-4 gap-2 mb-6 no-scrollbar">
+          <div class="flex overflow-x-auto pb-4 gap-2 mb-6">
             <button onclick="showStage(1)" id="btn-stage-1" class="stage-pill px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border border-transparent">Stage 1: Mobilization</button>
             <button onclick="showStage(2)" id="btn-stage-2" class="stage-pill px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border border-transparent">Stage 2: Field Data</button>
             <button onclick="showStage(3)" id="btn-stage-3" class="stage-pill px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border border-transparent">Stage 3: Analysis</button>
             <button onclick="showStage(4)" id="btn-stage-4" class="stage-pill px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border border-transparent">Stage 4: Validation</button>
           </div>
-
-          <div id="tool-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            </div>
+          <div id="tool-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
 
       </div>
@@ -178,112 +149,63 @@
 
     <div id="modal-overlay" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div id="modal-container" class="w-full max-w-5xl bg-[#131620] border border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
-        <div class="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-[#131620]">
+        <div class="px-6 py-4 border-b border-white/10 flex justify-between items-center">
           <div>
-            <h2 id="modal-title" class="text-xl font-bold text-white">Tool Title</h2>
-            <p id="modal-subtitle" class="text-sm text-slate-400">Tool Subtitle</p>
+            <h2 id="modal-title" class="text-xl font-bold text-white"></h2>
+            <p id="modal-subtitle" class="text-sm text-slate-400"></p>
           </div>
-          <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2 hover:bg-white/5 rounded-lg transition-colors">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-white">&times;</button>
         </div>
-        
-        <div id="modal-body" class="p-6 overflow-y-auto custom-scrollbar flex-1">
-          </div>
-
-        <div class="px-6 py-4 border-t border-white/10 flex justify-end gap-3 bg-[#131620]">
-          <button onclick="closeModal()" class="px-4 py-2 text-sm text-slate-400 hover:text-white font-medium">Cancel</button>
-          <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg shadow-lg shadow-indigo-500/20 transition-all">Save to Database</button>
+        <div id="modal-body" class="p-6 overflow-y-auto flex-1"></div>
+        <div class="px-6 py-4 border-t border-white/10 flex justify-end gap-3">
+          <button onclick="closeModal()" class="px-4 py-2 text-sm text-slate-400">Close</button>
         </div>
       </div>
     </div>
-
   </div>
 
   <script>
-    /* --- NAVIGATION LOGIC --- */
     function showView(viewId) {
-      // Hide all views
       ['overview', 'ai-arch', 'tools'].forEach(id => {
         document.getElementById(`view-${id}`).classList.add('hidden');
-        document.getElementById(`nav-${id}`).classList.remove('bg-indigo-500/10', 'text-indigo-300', 'border-indigo-500/20');
-        document.getElementById(`nav-${id}`).classList.add('text-slate-400');
+        document.getElementById(`nav-${id}`).className = "px-4 py-1.5 text-sm font-medium rounded-md transition-all text-slate-400 hover:text-white";
       });
-
-      // Show selected view
       document.getElementById(`view-${viewId}`).classList.remove('hidden');
-      
-      // Highlight Nav
-      const navBtn = document.getElementById(`nav-${viewId}`);
-      navBtn.classList.remove('text-slate-400');
-      navBtn.classList.add('bg-indigo-500/10', 'text-indigo-300', 'border', 'border-indigo-500/20');
-
-      if(viewId === 'tools') showStage(1); // Default to Stage 1
+      document.getElementById(`nav-${viewId}`).className = "px-4 py-1.5 text-sm font-medium rounded-md transition-all bg-indigo-500/10 text-indigo-300 border border-indigo-500/20";
+      if(viewId === 'tools') showStage(1);
     }
 
-    /* --- STAGE LOGIC --- */
     function showStage(stageNum) {
-      // Reset Pills
-      for(let i=1; i<=4; i++) {
-        const btn = document.getElementById(`btn-stage-${i}`);
-        btn.className = `stage-pill px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border border-transparent text-slate-500 hover:bg-white/5`;
-      }
-
-      // Highlight Active Pill
-      const activeBtn = document.getElementById(`btn-stage-${stageNum}`);
-      const colorMap = {
-        1: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40',
-        2: 'bg-violet-500/20 text-violet-300 border-violet-500/40',
-        3: 'bg-pink-500/20 text-pink-300 border-pink-500/40',
-        4: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-      };
-      activeBtn.className = `stage-pill px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border ${colorMap[stageNum]}`;
-
+      for(let i=1; i<=4; i++) document.getElementById(`btn-stage-${i}`).className = "stage-pill px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap text-slate-500";
+      document.getElementById(`btn-stage-${stageNum}`).className = "stage-pill px-6 py-2 rounded-full text-sm font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40";
       renderStageTools(stageNum);
     }
 
-    /* --- RENDER TOOLS --- */
     function renderStageTools(stage) {
       const grid = document.getElementById('tool-grid');
       let html = '';
-
       if (stage === 1) {
-        html += createCard('Regime-Niche Mapping', 'RNL Matrix', 'Categorize regional actors by their influence on systemic transformation.', 'launchRNL()', 'indigo');
-        html += createCard('Desk Review Synthesis', 'Context & Trends', 'Balance national data with regional political realities and lock-ins.', 'launchDeskReview()', 'indigo');
-        html += createCard('EQUIP Readiness Criteria', 'Selection Tool', 'Filter schools based on Political Will, Partnership Capacity, and Incentive Alignment.', 'launchReadiness()', 'indigo');
+        [cite_start]html += createCard('Regime-Niche Matrix', 'Mapping', 'Categorize stakeholders based on position relative to change[cite: 353, 359].', 'launchRNL()', 'indigo');
+        [cite_start]html += createCard('Readiness Criteria', 'Site Selection', 'Evaluate political will and incentive alignment[cite: 214, 262].', 'launchReadiness()', 'indigo');
       } else if (stage === 2) {
-        html += createCard('Systemic Readiness Template', 'Field Diagnostic', 'Qualitative assessment: "Partnership Potential" vs Technical Capacity.', 'launchSystemicReadiness()', 'violet');
-        html += createCard('KII & FGD Guides', 'Decoding Power', 'Lines of inquiry for political settlements, institutional lock-ins, and elite capture.', 'launchKII()', 'violet');
-        html += createCard('Transcription Strategy', 'Data Management', 'Capture narrative nuance for AII Matrix synthesis.', 'launchTranscription()', 'violet');
+        [cite_start]html += createCard('KII/FGD Guides', 'Decoding Power', 'Lines of inquiry regarding informal "political settlements"[cite: 374, 381].', 'launchKII()', 'violet');
       } else if (stage === 3) {
-        html += createCard('AII Analysis Matrix', 'Synthesis Framework', 'Map Actors, Institutions, and Ideas to identify enablers and constraints.', 'launchAII()', 'pink');
-        html += createCard('Systemic Constraint Map', 'Iceberg Model', 'Visualize visible technical problems vs. hidden political lock-ins.', 'launchIceberg()', 'pink');
-        html += createCard('Cross-Regional Matrix', 'Comparative Analysis', 'Compare lock-ins across the 6 priority regions (NCR, 4B, 7, etc).', 'launchCrossReg()', 'pink');
+        [cite_start]html += createCard('Systemic Constraint Map', 'Iceberg Model', 'Visualizing technical problems vs systemic lock-ins[cite: 244, 251].', 'launchIceberg()', 'pink');
+        [cite_start]html += createCard('AII Analysis', 'Synthesis', 'Map Actors, Institutions, and Ideas to find enablers[cite: 234, 286].', 'launchAII()', 'pink');
       } else if (stage === 4) {
-        html += createCard('Validation Workshop', 'Online Platform', 'Present findings to Regime/Niche actors for "Political Viability Check".', 'launchWorkshop()', 'emerald');
-        html += createCard('Consensus Tracker', 'Feedback Loop', 'Manage resistance and document conflicting regional narratives.', 'launchConsensus()', 'emerald');
-        html += createCard('Strategic Final Outputs', 'Reporting', 'Generate Annexes, Briefing Notes, and Final PEA Reports.', 'launchOutputs()', 'emerald');
+        [cite_start]html += createCard('Validation Workshop', 'Consensus', 'Test findings and build regional ownership[cite: 235, 287].', 'launchWorkshop()', 'emerald');
       }
-
       grid.innerHTML = html;
     }
 
     function createCard(title, subtitle, desc, func, color) {
-      return `
-        <div class="glass-panel p-6 rounded-2xl tool-card cursor-pointer group" onclick="${func}">
-          <div class="flex items-center justify-between mb-4">
-            <div class="p-3 rounded-lg bg-${color}-500/20 text-${color}-400 group-hover:text-white group-hover:bg-${color}-500 transition-colors">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
-            </div>
-            <span class="text-xs font-mono text-${color}-400 border border-${color}-500/30 px-2 py-1 rounded bg-${color}-500/5">${subtitle}</span>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2 group-hover:text-${color}-300 transition-colors">${title}</h3>
-          <p class="text-sm text-slate-400 leading-relaxed">${desc}</p>
-        </div>
-      `;
+      return `<div class="glass-panel p-6 rounded-2xl tool-card cursor-pointer" onclick="${func}">
+                <div class="text-xs font-mono text-${color}-400 border border-${color}-500/30 px-2 py-1 rounded inline-block mb-4">${subtitle}</div>
+                <h3 class="text-lg font-bold text-white mb-2">${title}</h3>
+                <p class="text-sm text-slate-400">${desc}</p>
+              </div>`;
     }
 
-    /* --- MODAL LAUNCHERS & CONTENT BUILDERS --- */
     function openModal(title, subtitle, contentHtml) {
       document.getElementById('modal-title').innerText = title;
       document.getElementById('modal-subtitle').innerText = subtitle;
@@ -291,215 +213,47 @@
       document.getElementById('modal-overlay').classList.remove('hidden');
     }
 
-    function closeModal() {
-      document.getElementById('modal-overlay').classList.add('hidden');
+    function closeModal() { document.getElementById('modal-overlay').classList.add('hidden'); }
+
+    /* TOOL CONTENT WITH PDF VISUALS */
+    function launchRNL() {
+      openModal('Regime-Niche-Landscape Matrix', 'Stage 1: Decoding Complexity', `
+        <div class="mb-6 bg-indigo-900/20 p-4 rounded-xl border border-indigo-500/30">
+                    [cite_start]<p class="mt-4 text-xs text-slate-400">Landscape pressures forcing change vs Regime actors holding power [cite: 291-307].</p>
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+          <textarea class="p-3 bg-black/40 rounded border border-white/10 text-sm" placeholder="Landscape (Context)"></textarea>
+          <textarea class="p-3 bg-black/40 rounded border border-white/10 text-sm" placeholder="Regime (Status Quo)"></textarea>
+          <textarea class="p-3 bg-black/40 rounded border border-white/10 text-sm" placeholder="Niche (Innovators)"></textarea>
+        </div>
+      `);
     }
 
-    // --- STAGE 1 TOOLS ---
-    function launchRNL() {
-      openModal('Regime-Niche-Landscape Matrix', 'Stage 1: System Mapping', `
-        <div class="mb-6 bg-blue-900/20 p-4 rounded-lg border border-blue-500/30 text-sm text-blue-200">
-           <strong>Guidance:</strong> . Use this to move beyond traditional lists. Categorize based on influence on systemic transformation.
-        </div>
-        <div class="grid grid-cols-3 gap-6 h-full">
-          <div class="flex flex-col gap-2">
-            <label class="font-bold text-indigo-400">LANDSCAPE (Context)</label>
-            <p class="text-xs text-slate-500 mb-2">Macro-level pressures (economic shifts, labor trends).</p>
-            <textarea class="flex-1 p-3 rounded-lg bg-black/30 resize-none focus:border-indigo-500" placeholder="e.g., Rise of BPO in Region 7..."></textarea>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label class="font-bold text-indigo-400">REGIME (Status Quo)</label>
-            <p class="text-xs text-slate-500 mb-2">RDCs, DepEd Regional Offices, Chambers protecting habits.</p>
-            <textarea class="flex-1 p-3 rounded-lg bg-black/30 resize-none focus:border-indigo-500" placeholder="e.g., Regional Development Council habits..."></textarea>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label class="font-bold text-indigo-400">NICHE (Innovators)</label>
-            <p class="text-xs text-slate-500 mb-2">Outliers prototyping new E2E models.</p>
-            <textarea class="flex-1 p-3 rounded-lg bg-black/30 resize-none focus:border-indigo-500" placeholder="e.g., Localized NGO initiative..."></textarea>
-          </div>
+    function launchIceberg() {
+      openModal('Systemic Constraint Map', 'Stage 3: Beyond Technical Fixes', `
+        <div class="mb-6 rounded-xl overflow-hidden border border-blue-500/30">
+                  </div>
+        <div class="space-y-4">
+          [cite_start]<h4 class="font-bold text-white">Above the Surface (Technical) [cite: 240]</h4>
+          [cite_start]<p class="text-sm text-slate-400">Curriculum gaps, facilities, skills mismatch[cite: 239, 246, 247].</p>
+          [cite_start]<h4 class="font-bold text-white">Below the Surface (Political) [cite: 244]</h4>
+          [cite_start]<p class="text-sm text-slate-400">Elite capture, informal power, institutional habits[cite: 241, 245, 252].</p>
         </div>
       `);
     }
 
     function launchReadiness() {
-      openModal('EQUIP Readiness Criteria', 'Stage 1: Site Selection', `
-        <div class="space-y-6">
-          <p class="text-slate-400 mb-4">Evaluate potential schools/divisions for the first 18 months of prototypes.</p>
-          
-          <div class="glass-panel p-6 rounded-xl">
-            <div class="flex justify-between mb-2">
-              <label class="font-bold text-white">1. Political Will</label>
-              <span class="text-xs text-indigo-300">Willingness to challenge Regime norms?</span>
-            </div>
-            <input type="range" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mb-2">
-            <textarea class="w-full h-20 p-3 rounded text-sm" placeholder="Evidence of will..."></textarea>
-          </div>
-
-          <div class="glass-panel p-6 rounded-xl">
-            <div class="flex justify-between mb-2">
-              <label class="font-bold text-white">2. Partnership Capacity</label>
-              <span class="text-xs text-indigo-300">Collaboration with LGU/Industry?</span>
-            </div>
-            <input type="range" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mb-2">
-            <textarea class="w-full h-20 p-3 rounded text-sm" placeholder="Evidence of capacity..."></textarea>
-          </div>
-
-          <div class="glass-panel p-6 rounded-xl">
-            <div class="flex justify-between mb-2">
-              <label class="font-bold text-white">3. Incentive Alignment</label>
-              <span class="text-xs text-indigo-300">Interest in demand-driven skills?</span>
-            </div>
-            <input type="range" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mb-2">
-            <textarea class="w-full h-20 p-3 rounded text-sm" placeholder="Analysis of incentives..."></textarea>
-          </div>
+      openModal('Stage 1 Mapping Radar', 'Objective: Identify Change Agents', `
+        <div class="mb-6 p-4 glass-panel flex flex-col items-center">
+                    [cite_start]<p class="mt-4 text-sm text-slate-300">Identify actors seeking change (Niche) vs Status Quo (Regime)[cite: 351].</p>
         </div>
       `);
     }
 
-    // --- STAGE 2 TOOLS ---
-    function launchKII() {
-      openModal('Semi-Structured KII Guide', 'Stage 2: Decoding Power', `
-        <div class="grid md:grid-cols-2 gap-8">
-          <div>
-            <h4 class="text-violet-400 font-bold mb-4 uppercase text-xs tracking-wider">Line of Inquiry 1: Political Settlements</h4>
-            <div class="glass-panel p-4 rounded-lg mb-4">
-              <p class="text-sm font-semibold text-white mb-2">"What informal rules among elites dictate how SHS resources are ACTUALLY allocated?"</p>
-              <textarea class="w-full h-24 p-3 rounded text-sm bg-black/20" placeholder="Respondent answer..."></textarea>
-            </div>
-            
-            <h4 class="text-violet-400 font-bold mb-4 uppercase text-xs tracking-wider">Line of Inquiry 2: Institutional Lock-ins</h4>
-            <div class="glass-panel p-4 rounded-lg">
-              <p class="text-sm font-semibold text-white mb-2">"What specific habits prevent the system from co-evolving with industry needs?"</p>
-              <textarea class="w-full h-24 p-3 rounded text-sm bg-black/20" placeholder="Respondent answer..."></textarea>
-            </div>
-          </div>
+    [cite_start]function launchKII() { openModal('KII Guide', 'Stage 2', '<p class="text-slate-400">Analyze informal rules dictated by regional elites[cite: 374, 381].</p>'); }
+    [cite_start]function launchAII() { openModal('AII Matrix', 'Stage 3', '<p class="text-slate-400">Synthesize Findings: Actors, Institutions, and Ideas[cite: 286].</p>'); }
+    [cite_start]function launchWorkshop() { openModal('Validation', 'Stage 4', '<p class="text-slate-400">Conduct iterative workshops to build path ownership[cite: 235].</p>'); }
 
-          <div>
-            <h4 class="text-violet-400 font-bold mb-4 uppercase text-xs tracking-wider">Line of Inquiry 3: Private Sector Barriers</h4>
-            <div class="glass-panel p-4 rounded-lg mb-4">
-              <p class="text-sm font-semibold text-white mb-2">"Why is the private sector hesitant to collaborate with local DepEd divisions?"</p>
-              <textarea class="w-full h-24 p-3 rounded text-sm bg-black/20" placeholder="Respondent answer..."></textarea>
-            </div>
-
-            <h4 class="text-violet-400 font-bold mb-4 uppercase text-xs tracking-wider">Line of Inquiry 4: Elite Capture</h4>
-            <div class="glass-panel p-4 rounded-lg">
-              <p class="text-sm font-semibold text-white mb-2">"Does elite capture maintain the non-responsive status quo?"</p>
-              <textarea class="w-full h-24 p-3 rounded text-sm bg-black/20" placeholder="Respondent answer..."></textarea>
-            </div>
-          </div>
-        </div>
-      `);
-    }
-
-    // --- STAGE 3 TOOLS ---
-    function launchIceberg() {
-      openModal('Systemic Constraint Map', 'Stage 3: The Iceberg Model', `
-        <div class="iceberg-container w-full h-[600px] rounded-xl border border-white/20 relative flex flex-col">
-          
-          <div class="flex-1 p-8 text-center relative z-20">
-            <div class="inline-block bg-white/10 backdrop-blur-md px-4 py-1 rounded-full text-sm font-bold text-white mb-4">ABOVE THE SURFACE: Technical Problems</div>
-            <p class="text-slate-200 text-sm mb-4">Curriculum gaps, skills mismatches, lack of facilities.</p>
-             <div class="grid grid-cols-2 gap-4 max-w-3xl mx-auto">
-               <div class="bg-white/10 p-3 rounded text-left text-sm border border-white/20">Gap: Outdated equipment in SHS.</div>
-               <div class="bg-white/10 p-3 rounded text-left text-sm border border-white/20">Gap: Misalignment with BPO needs.</div>
-             </div>
-          </div>
-
-          <div class="iceberg-water-line z-10"></div>
-
-          <div class="flex-1 p-8 text-center relative z-20 bg-gradient-to-t from-[#082f49] to-transparent">
-             <div class="mt-8 inline-block bg-blue-900/40 backdrop-blur-md px-4 py-1 rounded-full text-sm font-bold text-blue-200 mb-4 border border-blue-500/30">BELOW THE SURFACE: Political Lock-ins</div>
-             <p class="text-blue-100 text-sm mb-4">
-
-[Image of the iceberg model of systems thinking]
-. Informal power structures, elite capture, vested interests.</p>
-             <div class="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
-               <textarea class="bg-black/40 border-blue-500/30 rounded p-3 h-32 text-sm text-blue-100 placeholder-blue-300/50" placeholder="Informal Rule: Only political allies get resource allocation..."></textarea>
-               <textarea class="bg-black/40 border-blue-500/30 rounded p-3 h-32 text-sm text-blue-100 placeholder-blue-300/50" placeholder="Vested Interest: Training centers owned by local elites..."></textarea>
-               <textarea class="bg-black/40 border-blue-500/30 rounded p-3 h-32 text-sm text-blue-100 placeholder-blue-300/50" placeholder="Mental Model: 'Vocational tracks are for failures' narrative..."></textarea>
-             </div>
-          </div>
-        </div>
-      `);
-    }
-
-    function launchAII() {
-      openModal('Actors-Institutions-Ideas (AII) Matrix', 'Stage 3: Synthesis', `
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="border-b border-white/10">
-                <th class="p-4 text-pink-400 font-bold uppercase text-xs tracking-wider w-1/4">Component</th>
-                <th class="p-4 text-slate-300 text-sm w-1/4">Definition</th>
-                <th class="p-4 text-slate-300 text-sm">Synthesis Input</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-white/5">
-              <tr class="bg-white/5">
-                <td class="p-4 align-top"><span class="font-bold text-white block mb-1">ACTORS</span><span class="text-xs text-slate-500">Interests & Incentives</span></td>
-                <td class="p-4 align-top text-xs text-slate-400">Motivations of DepEd, LGU, TESDA, and Non-state actors.</td>
-                <td class="p-4"><textarea rows="3" class="w-full text-sm p-2 rounded" placeholder="Who are the Ecosystem Enablers vs Blockers?"></textarea></td>
-              </tr>
-              <tr class="bg-white/5">
-                <td class="p-4 align-top"><span class="font-bold text-white block mb-1">INSTITUTIONS</span><span class="text-xs text-slate-500">Formal & Informal Rules</span></td>
-                <td class="p-4 align-top text-xs text-slate-400">Official regulations vs. hidden norms ("Rules of the Game").</td>
-                <td class="p-4"><textarea rows="3" class="w-full text-sm p-2 rounded" placeholder="Identify the political settlements..."></textarea></td>
-              </tr>
-              <tr class="bg-white/5">
-                <td class="p-4 align-top"><span class="font-bold text-white block mb-1">IDEAS</span><span class="text-xs text-slate-500">Institutional Habits</span></td>
-                <td class="p-4 align-top text-xs text-slate-400">Entrenched narratives justifying the status quo.</td>
-                <td class="p-4"><textarea rows="3" class="w-full text-sm p-2 rounded" placeholder="What narratives prevent co-evolution with industry?"></textarea></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      `);
-    }
-
-    // --- STAGE 4 TOOLS ---
-    function launchConsensus() {
-      openModal('Consensus-Building Tracker', 'Stage 4: Feedback Management', `
-        <div class="grid md:grid-cols-2 gap-6 h-[500px]">
-          <div class="flex flex-col h-full bg-red-900/10 border border-red-500/20 rounded-xl overflow-hidden">
-             <div class="p-4 bg-red-900/20 border-b border-red-500/20">
-               <h4 class="font-bold text-red-300">Resistance & Conflict</h4>
-               <p class="text-xs text-red-400/70">Risks triggering status-quo actors.</p>
-             </div>
-             <div class="p-4 flex-1 overflow-y-auto space-y-3">
-               <div class="p-3 bg-black/40 rounded border border-red-500/10 text-sm text-slate-300">"RDC members feel bypassed by direct industry links."</div>
-               <div class="p-3 bg-black/40 rounded border border-red-500/10 text-sm text-slate-300">"DepEd Division fears loss of budget control."</div>
-             </div>
-             <div class="p-4">
-               <input type="text" placeholder="Log resistance point..." class="w-full text-sm p-2 rounded bg-black/50 border-red-500/30">
-             </div>
-          </div>
-
-          <div class="flex flex-col h-full bg-emerald-900/10 border border-emerald-500/20 rounded-xl overflow-hidden">
-             <div class="p-4 bg-emerald-900/20 border-b border-emerald-500/20">
-               <h4 class="font-bold text-emerald-300">Ownership & Consensus</h4>
-               <p class="text-xs text-emerald-400/70">Points of agreement to build upon.</p>
-             </div>
-             <div class="p-4 flex-1 overflow-y-auto space-y-3">
-               <div class="p-3 bg-black/40 rounded border border-emerald-500/10 text-sm text-slate-300">"Universal agreement on skills mismatch crisis."</div>
-               <div class="p-3 bg-black/40 rounded border border-emerald-500/10 text-sm text-slate-300">"LGU willing to co-fund pilot if localized."</div>
-             </div>
-             <div class="p-4">
-               <input type="text" placeholder="Log consensus point..." class="w-full text-sm p-2 rounded bg-black/50 border-emerald-500/30">
-             </div>
-          </div>
-        </div>
-      `);
-    }
-
-    /* --- PLACEHOLDER FUNCTIONS FOR OTHER TOOLS --- */
-    function launchDeskReview() { openModal('Rapid Desk Review', 'Stage 1', '<div class="p-10 text-center text-slate-500">Placeholder for National Trends & Regional Context tool.</div>'); }
-    function launchSystemicReadiness() { openModal('Systemic Readiness', 'Stage 2', '<div class="p-10 text-center text-slate-500">Placeholder for Field Diagnostic inputs.</div>'); }
-    function launchTranscription() { openModal('Transcription Services', 'Stage 2', '<div class="p-10 text-center text-slate-500">Upload interface for KII/FGD audio files. Integrates with AI-PEA processing layer.</div>'); }
-    function launchCrossReg() { openModal('Cross-Regional Matrix', 'Stage 3', '<div class="p-10 text-center text-slate-500">Comparative view: NCR vs Region 4-B vs Region 7.</div>'); }
-    function launchWorkshop() { openModal('Validation Workshop', 'Stage 4', '<div class="p-10 text-center text-slate-500">Online Platform interface for presenting findings.</div>'); }
-    function launchOutputs() { openModal('Strategic Outputs', 'Stage 4', '<div class="p-10 text-center text-slate-500">Template generator for Final PEA Report and Strategic Annex.</div>'); }
-
-    // Init
     showView('overview');
   </script>
 </body>
