@@ -1562,16 +1562,24 @@ if (tabName === 'swot-analysis') renderSWOT();
 if (tabName === 'bsc-matrix') renderBSC();
 }
 function filterCore() {
-state.viewMode = 'core';
-document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-document.querySelector('button[onclick="filterCore()"]').classList.add('active');
-render();
+  state.viewMode = 'core';
+  // Remove active from all tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  // Add active to this button (use text content or index)
+  const coreBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => 
+    btn.textContent.trim() === '⭐ Core Drivers Only'
+  );
+  if (coreBtn) coreBtn.classList.add('active');
+  render();
 }
 function showAll() {
-state.viewMode = 'all';
-document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-document.querySelector('button[onclick="showAll()"]').classList.add('active');
-render();
+  state.viewMode = 'all';
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  const showAllBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => 
+    btn.textContent.trim() === '👁️ Show All'
+  );
+  if (showAllBtn) showAllBtn.classList.add('active');
+  render();
 }
 function openArchetypeModal(modalId) {
 document.getElementById(`archetypeModal${modalId}`).classList.add('active');
@@ -1668,7 +1676,7 @@ const manifest = {
 name: 'WSP Strategy Map 2026-2030',
 short_name: 'WSP StratMap',
 description: 'WorldSkills Philippines Interactive Strategy Map',
-start_url: '.',
+start_url: 'https://asilvainnovations.com/strategy-map-cld',
 display: 'standalone',
 background_color: '#0f172a',
 theme_color: '#1e3a8a',
