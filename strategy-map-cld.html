@@ -452,119 +452,16 @@ transition: color 0.2s ease;
 .close-btn:hover {
 color: #06b6d4;
 }
-
-/* Enhanced Causal Loop Diagram Styles */
-.cld-container {
-background: #0f172a;
-border-radius: 1rem;
-padding: 1.5rem;
-border: 1px solid #0ea5e9;
+.cld-image-container {
+text-align: center;
 margin: 1.5rem 0;
-position: relative;
 }
-.cld-title {
-text-align: center;
-color: #0ea5e9;
-font-weight: bold;
-margin-bottom: 1.5rem;
-font-size: 1.25rem;
-}
-.cld-loop {
-margin-bottom: 1.5rem;
-padding: 1rem;
+.cld-image {
+max-width: 100%;
+height: auto;
 border-radius: 0.75rem;
-border: 1px solid;
-}
-.cld-loop.balancing {
-border-color: #f59e0b;
-background: rgba(245, 158, 11, 0.1);
-}
-.cld-loop.reinforcing {
-border-color: #dc2626;
-background: rgba(220, 38, 38, 0.1);
-}
-.cld-loop.fundamental {
-border-color: #10b981;
-background: rgba(16, 185, 129, 0.1);
-}
-.loop-header {
-display: flex;
-align-items: center;
-gap: 0.5rem;
-margin-bottom: 1rem;
-font-weight: bold;
-}
-.loop-header .icon-balancing {
-color: #f59e0b;
-}
-.loop-header .icon-reinforcing {
-color: #dc2626;
-}
-.loop-header .icon-fundamental {
-color: #10b981;
-}
-.cld-nodes {
-display: flex;
-flex-wrap: wrap;
-justify-content: center;
-align-items: center;
-gap: 0.75rem;
-margin: 1rem 0;
-}
-.cld-node {
-background: rgba(15, 23, 42, 0.7);
+box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
 border: 1px solid #334155;
-border-radius: 0.5rem;
-padding: 0.5rem 0.75rem;
-text-align: center;
-min-width: 120px;
-font-size: 0.875rem;
-position: relative;
-}
-.cld-node.s {
-color: #86efac;
-}
-.cld-node.o {
-color: #f87171;
-}
-.cld-arrow {
-color: #cbd5e1;
-font-weight: bold;
-margin: 0 0.5rem;
-font-size: 1.25rem;
-}
-.cld-delay {
-position: absolute;
-top: -8px;
-right: -8px;
-background: #f59e0b;
-color: #000;
-font-size: 0.6rem;
-width: 16px;
-height: 16px;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-font-weight: bold;
-}
-.bot-graph {
-background: rgba(15, 23, 42, 0.5);
-border-radius: 0.75rem;
-padding: 1rem;
-margin-top: 1.5rem;
-border: 1px solid #334155;
-}
-.bot-title {
-color: #0ea5e9;
-font-weight: bold;
-margin-bottom: 0.75rem;
-text-align: center;
-}
-.bot-description {
-color: #cbd5e1;
-font-size: 0.875rem;
-line-height: 1.5;
 }
 .term-definition {
 background: rgba(15, 23, 42, 0.5);
@@ -614,10 +511,6 @@ overflow-x: auto;
 .tab-btn {
 white-space: nowrap;
 }
-.cld-nodes {
-flex-direction: column;
-gap: 0.5rem;
-}
 }
 .install-container {
 position: fixed;
@@ -665,7 +558,7 @@ transform: translateY(-2px);
 <p class="priority-desc"><a href="wsp-secretariat-orgchart.html" style="color:#60a5fa; text-decoration:underline;">Permanent organizational structure</a></p>
 </div>
 <div class="priority-item">
-<h4 class="priority-title">National Integration</h4>
+<h4 class="priority-title">National Integration</h4> href="strategic-diagnostic.html" style="color:#60a5fa; text-decoration:underline;">Strategic Planner</a></p>
 <p class="priority-desc">WSOS into Philippine TVET system</p>
 </div>
 <div class="priority-item">
@@ -722,70 +615,18 @@ transform: translateY(-2px);
 </div>
 </div>
 
-<!-- Archetype Modals with Enhanced CLD Visualization -->
+<!-- Archetype Modals with Image-Based CLD Visualization -->
 <div id="archetypeModal1" class="modal">
 <div class="modal-content">
 <span class="close-btn" onclick="closeArchetypeModal(1)">×</span>
 <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">1. Fixes that Fail: Governance Dynamics</h2>
 <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Rapid mobilization of Job Order personnel creates short-term success but undermines long-term institutional capacity.</p>
-<div class="cld-container">
-<h3 class="cld-title">🔄 Causal Loop Diagram: Fixes that Fail</h3>
-
-<div class="cld-loop balancing">
-<div class="loop-header">
-<span class="icon-balancing">⚖️</span>
-<span>Balancing Loop (B): The Quick Fix</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/db60500d543d_742_1097.png" alt="Causal Loop Diagram: Fixes that Fail in Governance Dynamics" class="cld-image">
 </div>
-<div class="cld-nodes">
-<span class="cld-node">Competition Demands ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Hire JO Personnel ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Event Success ↑</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/b4b3595fa8b3_831_1097.png" alt="Behavior Over Time Graph: Fixes that Fail in Governance Dynamics" class="cld-image">
 </div>
-</div>
-
-<div class="cld-loop reinforcing">
-<div class="loop-header">
-<span class="icon-reinforcing">🔁</span>
-<span>Reinforcing Loop (R): The Unintended Cycle</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Hire JO Personnel ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Memory Loss ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Future Pressure ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">More JO Hiring ↑</span>
-</div>
-<span class="cld-delay" style="position: absolute; top: -8px; right: 10px;">DELAY</span>
-</div>
-
-<div class="cld-loop fundamental">
-<div class="loop-header">
-<span class="icon-fundamental">✓</span>
-<span>Fundamental Solution Path</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Competition Demands ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Build Plantilla Structure ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Permanent Capacity ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Institutional Memory ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Reduced Pressure ↓</span>
-</div>
-</div>
-
-<div class="bot-graph">
-<h4 class="bot-title">📊 Behavior Over Time (BOT) Pattern</h4>
-<p class="bot-description">Oscillating peaks and declines: Performance spikes during events followed by sharp crashes as temporary staff leave. Long-term baseline remains flat or declines due to lack of permanent capacity.</p>
-</div>
-</div>
-
 <div class="term-definition">
 <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Addiction Trap</h4>
 <p style="color: #cbd5e1; font-size: 0.875rem;">Like an addiction, JO mobilization provides immediate relief but creates long-term dependency. Each "fix" removes pressure to implement permanent solutions, making the fundamental solution seem less urgent.</p>
@@ -802,64 +643,9 @@ transform: translateY(-2px);
 <span class="close-btn" onclick="closeArchetypeModal(2)">×</span>
 <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">2. Support vs. Priority Paradox</h2>
 <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Systemic tension where borrowed staff face conflicting accountability between WSP duties and original departmental KPIs.</p>
-<div class="cld-container">
-<h3 class="cld-title">🔄 Causal Loop Diagram: Support vs. Priority Paradox</h3>
-
-<div class="cld-loop balancing">
-<div class="loop-header">
-<span class="icon-balancing">⚖️</span>
-<span>Balancing Loop (B): Bureaucratic Inertia</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/e231448de69c_943_1097.png" alt="Dynamics of Support vs. Priority Paradox" class="cld-image">
 </div>
-<div class="cld-nodes">
-<span class="cld-node">Leadership Mandate ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Borrow Staff ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Dept KPI Conflict ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Operational Dilution ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Effectiveness ↓</span>
-</div>
-</div>
-
-<div class="cld-loop reinforcing">
-<div class="loop-header">
-<span class="icon-reinforcing">🔁</span>
-<span>Reinforcing Loop (R): Erosion of Priority</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Perceived Workload ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Burnout ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">WSP Priority ↓</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Fragile Dependence ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Workload ↑</span>
-</div>
-</div>
-
-<div class="cld-loop fundamental">
-<div class="loop-header">
-<span class="icon-fundamental">✓</span>
-<span>Resolution Path</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Create WSP Plantilla ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Dedicated Staff ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Aligned KPIs ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Core Function Status ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Full Priority ↑</span>
-</div>
-</div>
-</div>
-
 <div class="term-definition">
 <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: Cultural Resistance</h4>
 <p style="color: #cbd5e1; font-size: 0.875rem;">This paradox reflects cultural resistance within TESDA's bureaucracy. While leadership support is strong, institutional culture treats WSP as peripheral because staff incentives remain tied to original departments.</p>
@@ -876,64 +662,9 @@ transform: translateY(-2px);
 <span class="close-btn" onclick="closeArchetypeModal(3)">×</span>
 <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">3. The Generalist Trap</h2>
 <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Absence of permanent roles forces categorical overlaps where admin, technical, and support functions blur.</p>
-<div class="cld-container">
-<h3 class="cld-title">🔄 Causal Loop Diagram: The Generalist Trap</h3>
-
-<div class="cld-loop balancing">
-<div class="loop-header">
-<span class="icon-balancing">⚖️</span>
-<span>Balancing Loop (B1): Agile Quick Fix</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/dc41df7d3e33_381_1097.png" alt="Dynamics of Generalist Trap" class="cld-image">
 </div>
-<div class="cld-nodes">
-<span class="cld-node">Functional Voids ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Categorical Overlaps ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Agile Flexibility ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Functional Voids ↓</span>
-</div>
-</div>
-
-<div class="cld-loop reinforcing">
-<div class="loop-header">
-<span class="icon-reinforcing">🔁</span>
-<span>Reinforcing Loop (R1): Expertise Erosion</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Categorical Overlaps ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Structural Ambiguity ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node s">Deep Expertise ↓</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Perceived Burden ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node s">Specialized Capacity ↓</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Functional Voids ↑</span>
-</div>
-</div>
-
-<div class="cld-loop fundamental">
-<div class="loop-header">
-<span class="icon-fundamental">✓</span>
-<span>Specialization Path</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Define 3 Groups ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Shield/Core/Nervous System ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Clear Mandates ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Deep Expertise ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Accountability ↑</span>
-</div>
-</div>
-</div>
-
 <div class="term-definition">
 <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: False Efficiency</h4>
 <p style="color: #cbd5e1; font-size: 0.875rem;">What appears as "agile flexibility" is actually structural inefficiency. Generalists can respond quickly but cannot build the specialized competencies needed for world-class standards.</p>
@@ -950,66 +681,12 @@ transform: translateY(-2px);
 <span class="close-btn" onclick="closeArchetypeModal(4)">×</span>
 <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">4. The Mobilization Trap</h2>
 <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Speed vs. Sustainability dilemma where rapid deployment enables events but prevents lasting capacity.</p>
-<div class="cld-container">
-<h3 class="cld-title">🔄 Causal Loop Diagram: Mobilization Trap</h3>
-
-<div class="cld-loop balancing">
-<div class="loop-header">
-<span class="icon-balancing">⚖️</span>
-<span>Balancing Loop (B): The Quick Fix</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/74aa78586832_370_1097.png" alt="Dynamics of 'Fixes that Fail' Mobilization Trap" class="cld-image">
 </div>
-<div class="cld-nodes">
-<span class="cld-node">Event Announced ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Rapid JO Training ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Capability Spike ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Event Success ↑</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/4960b7fa13fb_10_1097.png" alt="BOT Graph of Mobilization Trap" class="cld-image">
 </div>
-</div>
-
-<div class="cld-loop reinforcing">
-<div class="loop-header">
-<span class="icon-reinforcing">🔁</span>
-<span>Reinforcing Loop (R): Capability Decline</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Contracts End ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Capability Decline ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Restart Learning Curve ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Event Announced ↑</span>
-</div>
-<span class="cld-delay" style="position: absolute; top: -8px; right: 10px;">DELAY</span>
-</div>
-
-<div class="cld-loop fundamental">
-<div class="loop-header">
-<span class="icon-fundamental">✓</span>
-<span>Sustained Capacity Path</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Permanent Staff ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Continuous Learning ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Capability Baseline ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Event Excellence ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Higher Baseline ↑</span>
-</div>
-</div>
-
-<div class="bot-graph">
-<h4 class="bot-title">📊 Behavior Over Time (BOT) Pattern</h4>
-<p class="bot-description">Sharp capability spikes during events followed by immediate crashes as contracts end. Overall trend shows failure to build stable institutional baseline.</p>
-</div>
-</div>
-
 <div class="term-definition">
 <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: Training Investment Leak</h4>
 <p style="color: #cbd5e1; font-size: 0.875rem;">Technical training invested in JO personnel "leaks out" when contracts end, forcing the organization to restart the learning curve for every event cycle.</p>
@@ -1026,65 +703,12 @@ transform: translateY(-2px);
 <span class="close-btn" onclick="closeArchetypeModal(5)">×</span>
 <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">5. Red Queen Effect (Drifting Goals)</h2>
 <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Industry 4.0 evolution outpaces bureaucratic TR updates, risking downward drift of quality standards.</p>
-<div class="cld-container">
-<h3 class="cld-title">🔄 Causal Loop Diagram: Red Queen Effect</h3>
-
-<div class="cld-loop balancing">
-<div class="loop-header">
-<span class="icon-balancing">⚖️</span>
-<span>Balancing Loop (B1): Corrective Action</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/e0ecb7375ea7_477_1097.png" alt="Dynamics of Drifting Goal in Red Queen Effect" class="cld-image">
 </div>
-<div class="cld-nodes">
-<span class="cld-node">Global Benchmark ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Local Gap Widens ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Rapid TR Updates ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Standards Alignment ↑</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/3bc4bc45d1e5_788_1097.png" alt="BOT Graph of Drifting Goal in Red Queen Effect" class="cld-image">
 </div>
-</div>
-
-<div class="cld-loop balancing">
-<div class="loop-header">
-<span class="icon-balancing">⚖️</span>
-<span>Balancing Loop (B2): Goal Erosion</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Bureaucratic Delay ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Pressure to Lower Standards ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node s">Local Standard ↓</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Gap Reduction ↑</span>
-</div>
-</div>
-
-<div class="cld-loop fundamental">
-<div class="loop-header">
-<span class="icon-fundamental">✓</span>
-<span>Continuous Alignment Path</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">WSOS Monitoring ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Rapid TR Updates ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Standards Alignment ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Global Competitiveness ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Upward Pressure ↑</span>
-</div>
-</div>
-
-<div class="bot-graph">
-<h4 class="bot-title">📊 Behavior Over Time (BOT) Pattern</h4>
-<p class="bot-description">Declining quality ceiling: Desired goal (WSP standards) gradually slopes downward to meet actual performance (local capacity), resulting in permanent erosion of credibility.</p>
-</div>
-</div>
-
 <div class="term-definition">
 <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Quality Ceiling</h4>
 <p style="color: #cbd5e1; font-size: 0.875rem;">Global benchmarks represent a moving "quality ceiling." Without active alignment mechanisms, local standards naturally drift downward relative to this ceiling due to bureaucratic inertia.</p>
@@ -1101,62 +725,9 @@ transform: translateY(-2px);
 <span class="close-btn" onclick="closeArchetypeModal(6)">×</span>
 <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">6. Elite Silo Dynamic (Success to the Successful)</h2>
 <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Resource concentration in high-performing centers creates two-tiered system neglecting provincial integration.</p>
-<div class="cld-container">
-<h3 class="cld-title">🔄 Causal Loop Diagram: Elite Silo Dynamic</h3>
-
-<div class="cld-loop reinforcing">
-<div class="loop-header">
-<span class="icon-reinforcing">🔁</span>
-<span>Reinforcing Loop (R1): Elite Dominance</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/e238e12a1530_721_1097.png" alt="Dynamics of Success to the Successful in Elite Silo" class="cld-image">
 </div>
-<div class="cld-nodes">
-<span class="cld-node">HRDC Success ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Medal Visibility ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">More Investment ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Greater HRDC Success ↑</span>
-</div>
-</div>
-
-<div class="cld-loop reinforcing">
-<div class="loop-header">
-<span class="icon-reinforcing">🔁</span>
-<span>Reinforcing Loop (R2): Systemic Underdevelopment</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Provincial RTCs ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Resource Neglect ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node s">Lower Performance ↓</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Less Visibility ↓</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Further Neglect ↑</span>
-</div>
-</div>
-
-<div class="cld-loop fundamental">
-<div class="loop-header">
-<span class="icon-fundamental">✓</span>
-<span>National Integration Path</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Rural Inclusion Index ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">≥30% Provincial Participation ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Distributed Excellence ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">National Coverage ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Broad-Based Success ↑</span>
-</div>
-</div>
-</div>
-
 <div class="term-definition">
 <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Matthew Effect</h4>
 <p style="color: #cbd5e1; font-size: 0.875rem;">"To those who have, more will be given." Without explicit countermeasures, excellence programs naturally concentrate in already-successful centers, leaving the periphery behind.</p>
@@ -1173,63 +744,12 @@ transform: translateY(-2px);
 <span class="close-btn" onclick="closeArchetypeModal(7)">×</span>
 <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">7. Human Capital Leak (Shifting the Burden)</h2>
 <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Experts leave for industry; retraining new staff drains resources without solving root cause.</p>
-<div class="cld-container">
-<h3 class="cld-title">🔄 Causal Loop Diagram: Human Capital Leak</h3>
-
-<div class="cld-loop balancing">
-<div class="loop-header">
-<span class="icon-balancing">⚖️</span>
-<span>Balancing Loop (B1): Symptomatic Solution</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/3d3f478d3c95_661_1097.png" alt="Dynamics of Shifting the Burden in Human Capital Leak" class="cld-image">
 </div>
-<div class="cld-nodes">
-<span class="cld-node">Expert Trained ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Industry Offer ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Expert Leaves ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Retrain New Staff ↑</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/f924cd1aaf0c_5_1097.png" alt="BOT Graph of Human Capital Leak" class="cld-image">
 </div>
-</div>
-
-<div class="cld-loop balancing">
-<div class="loop-header">
-<span class="icon-balancing">⚖️</span>
-<span>Balancing Loop (B2): Fundamental Solution</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">WSMP Certification ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Salary Grade Linkage ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Career Path ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Retention ↑</span>
-</div>
-</div>
-
-<div class="cld-loop reinforcing">
-<div class="loop-header">
-<span class="icon-reinforcing">🔁</span>
-<span>Reinforcing Loop (R3): The Addiction Loop</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Retrain New Staff ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Resource Drain ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node s">Fundamental Solution ↓</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">More Retraining ↑</span>
-</div>
-</div>
-
-<div class="bot-graph">
-<h4 class="bot-title">📊 Behavior Over Time (BOT) Pattern</h4>
-<p class="bot-description">Classic "X" pattern: Symptomatic solution (retraining) rises in wavering pattern while attention to fundamental solution (career pathways) gradually drops, worsening the human capital leak over time.</p>
-</div>
-</div>
-
 <div class="term-definition">
 <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Expertise Sinkhole</h4>
 <p style="color: #cbd5e1; font-size: 0.875rem;">Without career pathways, WSP becomes a "talent pipeline" for industry rather than a destination for mastery.</p>
@@ -1246,62 +766,9 @@ transform: translateY(-2px);
 <span class="close-btn" onclick="closeArchetypeModal(8)">×</span>
 <h2 style="color: white; font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1rem;">8. The Credibility Gap</h2>
 <p style="color: #cbd5e1; margin-bottom: 1.5rem;">Fast industry partnerships collide with slow MOA approvals, eroding partner trust over time.</p>
-<div class="cld-container">
-<h3 class="cld-title">🔄 Causal Loop Diagram: Credibility Gap</h3>
-
-<div class="cld-loop reinforcing">
-<div class="loop-header">
-<span class="icon-reinforcing">🔁</span>
-<span>Reinforcing Loop (R): Industry Enthusiasm</span>
+<div class="cld-image-container">
+<img src="https://appimize.app/assets/apps/user_1097/images/aec4a3fc9128_675_1097.png" alt="Dynamics of Credibility Gap" class="cld-image">
 </div>
-<div class="cld-nodes">
-<span class="cld-node">Industry Engagement Speed ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Partnership Opportunities ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Faster Engagement ↑</span>
-</div>
-</div>
-
-<div class="cld-loop balancing">
-<div class="loop-header">
-<span class="icon-balancing">⚖️</span>
-<span>Balancing Loop (B): Bureaucratic Inertia</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">Partnership Opportunities ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Slow MOA Processing ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Administrative Bottlenecks ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node s">Partner Trust ↓</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node s">Institutional Credibility ↓</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node s">Lost Opportunities ↓</span>
-</div>
-</div>
-
-<div class="cld-loop fundamental">
-<div class="loop-header">
-<span class="icon-fundamental">✓</span>
-<span>Administrative Decoupling Path</span>
-</div>
-<div class="cld-nodes">
-<span class="cld-node">MOA Fast-Track Unit ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">3-Month Lead Time ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Reliable Delivery ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">Partner Trust ↑</span>
-<span class="cld-arrow">→</span>
-<span class="cld-node">More Partnerships ↑</span>
-</div>
-</div>
-</div>
-
 <div class="term-definition">
 <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight: The Pace Paradox</h4>
 <p style="color: #cbd5e1; font-size: 0.875rem;">Partners are attracted by WSP’s speed and vision but repelled by administrative delays. Bridging this gap requires process innovation, not just goodwill.</p>
@@ -1562,24 +1029,24 @@ if (tabName === 'swot-analysis') renderSWOT();
 if (tabName === 'bsc-matrix') renderBSC();
 }
 function filterCore() {
-  state.viewMode = 'core';
-  // Remove active from all tab buttons
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  // Add active to this button (use text content or index)
-  const coreBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => 
-    btn.textContent.trim() === '⭐ Core Drivers Only'
-  );
-  if (coreBtn) coreBtn.classList.add('active');
-  render();
+state.viewMode = 'core';
+// Remove active from all tab buttons
+document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+// Add active to this button (use text content or index)
+const coreBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn =>
+btn.textContent.trim() === '⭐ Core Drivers Only'
+);
+if (coreBtn) coreBtn.classList.add('active');
+render();
 }
 function showAll() {
-  state.viewMode = 'all';
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  const showAllBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => 
-    btn.textContent.trim() === '👁️ Show All'
-  );
-  if (showAllBtn) showAllBtn.classList.add('active');
-  render();
+state.viewMode = 'all';
+document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+const showAllBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn =>
+btn.textContent.trim() === '👁️ Show All'
+);
+if (showAllBtn) showAllBtn.classList.add('active');
+render();
 }
 function openArchetypeModal(modalId) {
 document.getElementById(`archetypeModal${modalId}`).classList.add('active');
