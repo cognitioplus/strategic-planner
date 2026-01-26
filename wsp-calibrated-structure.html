@@ -158,36 +158,29 @@ animation: pulse 2s infinite;
 0%, 100% { opacity: 1; }
 50% { opacity: 0.6; }
 }
-.cd-diagram {
-background: #0f172a;
-border-radius: 1rem;
-padding: 1.5rem;
-border: 1px solid #0ea5e9;
+.archetype-image {
+width: 100%;
+height: auto;
+border-radius: 0.75rem;
+box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+border: 1px solid #334155;
 margin: 1rem 0;
 }
-.cd-element {
-font-size: 0.875rem;
-font-weight: 500;
-padding: 0.5rem;
-border-radius: 0.5rem;
-margin: 0.5rem;
-display: inline-block;
-text-align: center;
+.bot-graph-container {
+margin-top: 1.5rem;
+padding-top: 1.5rem;
+border-top: 1px solid #334155;
 }
-.cd-symptom {
-background: #b91c1c;
-color: white;
-border: 1px solid #dc2626;
-}
-.cd-fundamental {
-background: #059669;
-color: white;
-border: 1px solid #10b981;
-}
-.cd-arrow {
+.bot-title {
 color: #0ea5e9;
 font-weight: bold;
-margin: 0 0.5rem;
+margin-bottom: 0.75rem;
+text-align: center;
+}
+.bot-description {
+color: #cbd5e1;
+font-size: 0.875rem;
+line-height: 1.5;
 }
 .close-btn {
 float: right;
@@ -267,9 +260,9 @@ color: #0ea5e9;
 <p><strong>Systemic Logic:</strong> The underlying reasoning that shows how interconnected elements of the system create outcomes. It addresses root causes rather than symptoms.</p>
 </div>
 </div></h3>
-<p class="text-slate-300 text-sm leading-relaxed">Disrupting the <span class="jargon-tooltip text-red-400 font-semibold tooltip-wrapper" data-term="Shifting the Burden"> "Shifting the Burden" Archetype </span></p>
+<p class="text-slate-300 text-sm leading-relaxed">Disrupting five critical archetypes: <span class="jargon-tooltip text-red-400 font-semibold tooltip-wrapper" data-term="Fixes that Fail"> "Fixes that Fail" </span>, <span class="jargon-tooltip text-red-400 font-semibold tooltip-wrapper" data-term="Support vs Priority"> "Support vs. Priority Paradox" </span>, <span class="jargon-tooltip text-red-400 font-semibold tooltip-wrapper" data-term="Generalist Trap"> "Generalist Trap" </span>, <span class="jargon-tooltip text-red-400 font-semibold tooltip-wrapper" data-term="Mobilization Trap"> "Mobilization Trap" </span>, and <span class="jargon-tooltip text-red-400 font-semibold tooltip-wrapper" data-term="Human Capital Leak"> "Human Capital Leak" </span>.</p>
 <div class="tooltip">
-<p><strong>Shifting the Burden:</strong> A systems archetype where a problem is addressed through symptomatic, short-term fixes (temporary staff) rather than fundamental solutions, creating growing dependence on the fix.</p>
+<p><strong>Five Critical Archetypes:</strong> These represent the core systemic barriers preventing WSP from achieving sustainable institutional excellence.</p>
 </div> by replacing temporary Job Orders and "borrowed" staff with a <span class="text-emerald-400 font-semibold">permanent structural backbone</span>.
 <p></p>
 </div>
@@ -290,75 +283,106 @@ color: #0ea5e9;
 <!-- Learn More Button -->
 <div class="flex justify-center mt-6"><button class="btn-learn-more" onclick="openArchetypeModal()">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-</svg> Learn More About "Shifting the Burden" </button>
+</svg> Explore All Five System Archetypes </button>
 </div>
 </div>
 </div>
 <!-- Archetype Modal -->
 <div id="archetypeModal" class="modal">
 <div class="modal-content"><span class="close-btn" onclick="closeArchetypeModal()">×</span>
-<h2 class="text-3xl font-bold text-white mb-4 mt-4">Understanding "Shifting the Burden" Archetype</h2>
-<p class="text-slate-300 mb-6">A systems dynamics archetype showing how problem-solving through symptomatic fixes can create dependency and prevent fundamental solutions.</p>
-<!-- Causal Loop Diagram -->
-<div class="cd-diagram">
-<h3 class="text-cyan-400 font-bold mb-4 text-center">🔄 The Causal Loop: From Symptom to Dependency</h3>
-<div class="space-y-4">
-<!-- Loop 1: Symptomatic Fix -->
-<div class="bg-slate-800/50 p-4 rounded-lg border border-red-500/30">
-<h4 class="text-red-400 font-semibold mb-2">⚠️ Reinforcing Loop (Symptomatic Fix)</h4>
-<div class="flex flex-wrap items-center justify-center gap-2 mb-3"><span class="cd-element cd-symptom">Problem Appears</span> <span class="cd-arrow">→</span> <span class="cd-element cd-symptom">Apply Temporary Fix (JO/Borrowed)</span> <span class="cd-arrow">→</span> <span class="cd-element cd-symptom">Problem Subsides (Short-term)</span> <span class="cd-arrow">→</span> <span class="cd-element cd-symptom">Pressure Reduces</span> <span class="cd-arrow">↻</span>
-</div>
-<p class="text-slate-300 text-xs"><strong>Result:</strong> Growing dependency on temporary fixes. The underlying cause remains unaddressed, so the problem inevitably returns with greater urgency.</p>
-</div>
-<!-- Loop 2: Fundamental Solution -->
-<div class="bg-slate-800/50 p-4 rounded-lg border border-emerald-500/30">
-<h4 class="text-emerald-400 font-semibold mb-2">✓ Balancing Loop (Fundamental Solution)</h4>
-<div class="flex flex-wrap items-center justify-center gap-2 mb-3"><span class="cd-element cd-fundamental">Problem Appears</span> <span class="cd-arrow">→</span> <span class="cd-element cd-fundamental">Build System (Plantilla)</span> <span class="cd-arrow">→</span> <span class="cd-element cd-fundamental">Root Cause Resolved</span> <span class="cd-arrow">→</span> <span class="cd-element cd-fundamental">Permanent Stability</span>
-</div>
-<p class="text-slate-300 text-xs"><strong>Result:</strong> Sustainable resolution. Initial investment in permanent structure yields long-term stability and institutional resilience.</p>
-</div>
-<!-- WSP Context -->
-<div class="bg-slate-800/50 p-4 rounded-lg border border-amber-500/30">
-<h4 class="text-amber-400 font-semibold mb-2">📊 WSP's Current State: Caught in the Symptom Loop</h4>
-<div class="space-y-2 text-slate-300 text-sm">
-<div>
-<strong>The Problem:</strong> Inconsistent technical expertise and institutional memory loss due to staff turnover
-</div>
-<div>
-<strong>Current Symptomatic Fix:</strong> Hiring temporary Job Orders (JOs) and borrowing staff from other TESDA units
-</div>
-<div>
-<strong>Short-term Result:</strong> Problems temporarily managed, but expertise leaves when contract ends
-</div>
-<div>
-<strong>Long-term Cost:</strong> Loss of institutional knowledge, repeated hiring cycles, dependency on "borrowed" capacity
-</div>
-</div>
-</div>
-</div>
-<!-- The Shift -->
-<div class="mt-6 text-center">
-<p class="text-cyan-400 font-bold mb-3">🎯 WSP's Path Forward</p>
-<div class="flex items-center justify-center gap-3 flex-wrap"><span class="cd-element cd-symptom">Temporary JOs</span> <span class="cd-arrow text-3xl">⟹</span> <span class="cd-element cd-fundamental">Permanent Plantilla + MOP</span>
-</div>
-<p class="text-slate-300 text-sm mt-3">By implementing a permanent Secretariat with documented systems (MOP), WSP shifts from treating symptoms to solving the fundamental problem of institutional continuity.</p>
-</div>
-</div>
-<!-- Key Insights -->
-<div class="mt-6 space-y-4">
-<div class="term-definition">
-<h4 class="text-cyan-400 font-bold mb-2">💡 Key Insight #1: The "Shifting the Burden" Trap</h4>
-<p class="text-slate-300 text-sm">Organizations that continually rely on temporary staff are actually experiencing a <strong>reinforcing feedback loop</strong>. Each temporary fix removes pressure to implement permanent solutions, deepening the dependency.</p>
+<h2 class="text-3xl font-bold text-white mb-4 mt-4">Understanding WSP's Five Critical System Archetypes</h2>
+<p class="text-slate-300 mb-6">These interconnected dynamics represent the core systemic barriers preventing sustainable institutional excellence.</p>
+
+<!-- Archetype 1: Fixes that Fail - Governance Dynamics -->
+<div class="archetype-card">
+<h3 class="text-xl font-bold text-white mb-3">1. Fixes that Fail: Governance Dynamics</h3>
+<p class="text-slate-300 mb-4">Rapid mobilization of Job Order personnel creates short-term success but undermines long-term institutional capacity.</p>
+<img src="https://appimize.app/assets/apps/user_1097/images/db60500d543d_742_1097.png" alt="Causal Loop Diagram: Fixes that Fail in Governance Dynamics" class="archetype-image">
+<div class="bot-graph-container">
+<div class="bot-title">📊 Behavior Over Time (BOT) Graph</div>
+<img src="https://appimize.app/assets/apps/user_1097/images/b4b3595fa8b3_831_1097.png" alt="BOT Graph of Fixes that Fail in Governance Dynamics" class="archetype-image">
+<p class="bot-description">Oscillating peaks and declines: Performance spikes during events followed by sharp crashes as temporary staff leave. Long-term baseline remains flat or declines due to lack of permanent capacity.</p>
 </div>
 <div class="term-definition">
-<h4 class="text-cyan-400 font-bold mb-2">💡 Key Insight #2: Institutional Memory as a Strategic Asset</h4>
-<p class="text-slate-300 text-sm">Institutional memory (embodied in people and documented in systems) is what allows organizations to learn from experience and improve over time. When knowledge leaves with departing staff, the organization "forgets" and must relearn lessons.</p>
+<h4 class="text-cyan-400 font-bold mb-2">💡 Key Insight: The Addiction Trap</h4>
+<p class="text-slate-300 text-sm">Like an addiction, JO mobilization provides immediate relief but creates long-term dependency. Each "fix" removes pressure to implement permanent solutions.</p>
 </div>
 <div class="term-definition">
-<h4 class="text-cyan-400 font-bold mb-2">💡 Key Insight #3: System vs. Process Dependency</h4>
-<p class="text-slate-300 text-sm"><strong>Process-Dependent:</strong> Success depends on individual skill and effort (fragile, person-dependent)<br><strong>System-Dependent:</strong> Success depends on documented workflows and permanent roles (resilient, scalable)</p>
+<h4 class="text-cyan-400 font-bold mb-2">🎯 Strategic Response</h4>
+<p class="text-slate-300 text-sm"><strong>Structural Integrity Ratio:</strong> Achieve 20:0 Plantilla-to-JO ratio through permanent national-regional structure.</p>
 </div>
 </div>
+
+<!-- Archetype 2: Support vs. Priority Paradox -->
+<div class="archetype-card">
+<h3 class="text-xl font-bold text-white mb-3">2. Support vs. Priority Paradox</h3>
+<p class="text-slate-300 mb-4">Borrowed staff face conflicting accountability between WSP duties and original departmental KPIs.</p>
+<img src="https://appimize.app/assets/apps/user_1097/images/e231448de69c_943_1097.png" alt="Dynamics of Support vs. Priority Paradox" class="archetype-image">
+<div class="term-definition">
+<h4 class="text-cyan-400 font-bold mb-2">💡 Key Insight: Cultural Resistance</h4>
+<p class="text-slate-300 text-sm">This paradox reflects cultural resistance within TESDA's bureaucracy. While leadership support is strong, institutional culture treats WSP as peripheral because staff incentives remain tied to original departments.</p>
+</div>
+<div class="term-definition">
+<h4 class="text-cyan-400 font-bold mb-2">🎯 Strategic Response</h4>
+<p class="text-slate-300 text-sm"><strong>MOP Compliance Rate:</strong> Formalize WSP roles through Manual of Operations, creating legal clarity and departmental legitimacy.</p>
+</div>
+</div>
+
+<!-- Archetype 3: Generalist Trap -->
+<div class="archetype-card">
+<h3 class="text-xl font-bold text-white mb-3">3. The Generalist Trap</h3>
+<p class="text-slate-300 mb-4">Absence of permanent roles forces categorical overlaps where admin, technical, and support functions blur.</p>
+<img src="https://appimize.app/assets/apps/user_1097/images/dc41df7d3e33_381_1097.png" alt="Dynamics of Generalist Trap" class="archetype-image">
+<div class="term-definition">
+<h4 class="text-cyan-400 font-bold mb-2">💡 Key Insight: False Efficiency</h4>
+<p class="text-slate-300 text-sm">What appears as "agile flexibility" is actually structural inefficiency. Generalists can respond quickly but cannot build the specialized competencies needed for world-class standards.</p>
+</div>
+<div class="term-definition">
+<h4 class="text-cyan-400 font-bold mb-2">🎯 Strategic Response</h4>
+<p class="text-slate-300 text-sm"><strong>Functional Calibration:</strong> Establish three specialized groups (Shield, Core, Nervous System) with distinct mandates, clients, and value streams.</p>
+</div>
+</div>
+
+<!-- Archetype 4: Mobilization Trap -->
+<div class="archetype-card">
+<h3 class="text-xl font-bold text-white mb-3">4. The Mobilization Trap</h3>
+<p class="text-slate-300 mb-4">Speed vs. Sustainability dilemma where rapid deployment enables events but prevents lasting capacity.</p>
+<img src="https://appimize.app/assets/apps/user_1097/images/74aa78586832_370_1097.png" alt="Dynamics of Fixes that Fail in Mobilization Trap" class="archetype-image">
+<div class="bot-graph-container">
+<div class="bot-title">📊 Behavior Over Time (BOT) Graph</div>
+<img src="https://appimize.app/assets/apps/user_1097/images/4960b7fa13fb_10_1097.png" alt="BOT Graph of Mobilization Trap" class="archetype-image">
+<p class="bot-description">Sharp capability spikes during events followed by immediate crashes as contracts end. Overall trend shows failure to build stable institutional baseline.</p>
+</div>
+<div class="term-definition">
+<h4 class="text-cyan-400 font-bold mb-2">💡 Key Insight: Training Investment Leak</h4>
+<p class="text-slate-300 text-sm">Technical training invested in JO personnel "leaks out" when contracts end, forcing the organization to restart the learning curve for every event cycle.</p>
+</div>
+<div class="term-definition">
+<h4 class="text-cyan-400 font-bold mb-2">🎯 Strategic Response</h4>
+<p class="text-slate-300 text-sm"><strong>Institutional Memory Coverage:</strong> Implement LMS to preserve knowledge independent of personnel changes, achieving 100% digital coverage of critical expertise.</p>
+</div>
+</div>
+
+<!-- Archetype 5: Human Capital Leak -->
+<div class="archetype-card">
+<h3 class="text-xl font-bold text-white mb-3">5. Human Capital Leak (Shifting the Burden)</h3>
+<p class="text-slate-300 mb-4">Experts leave for industry; retraining new staff drains resources without solving root cause.</p>
+<img src="https://appimize.app/assets/apps/user_1097/images/3d3f478d3c95_661_1097.png" alt="Dynamics of Shifting the Burden in Human Capital Leak" class="archetype-image">
+<div class="bot-graph-container">
+<div class="bot-title">📊 Behavior Over Time (BOT) Graph</div>
+<img src="https://appimize.app/assets/apps/user_1097/images/f924cd1aaf0c_5_1097.png" alt="BOT Graph of Human Capital Leak" class="archetype-image">
+<p class="bot-description">Classic "X" pattern: Symptomatic solution (retraining) rises in wavering pattern while attention to fundamental solution (career pathways) gradually drops, worsening the human capital leak over time.</p>
+</div>
+<div class="term-definition">
+<h4 class="text-cyan-400 font-bold mb-2">💡 Key Insight: The Expertise Sinkhole</h4>
+<p class="text-slate-300 text-sm">Without career pathways, WSP becomes a "talent pipeline" for industry rather than a destination for mastery.</p>
+</div>
+<div class="term-definition">
+<h4 class="text-cyan-400 font-bold mb-2">🎯 Strategic Response</h4>
+<p class="text-slate-300 text-sm"><strong>Gold Standard Accreditation:</strong> Implement PQF-aligned WorldSkills Mastery Program with CSC salary grade linkage to create retention incentives.</p>
+</div>
+</div>
+
 <!-- Technical Reference -->
 <div class="mt-6 p-4 bg-slate-900/50 rounded-lg border border-slate-700">
 <p class="text-slate-400 text-xs"><strong>Source:</strong> Systems Dynamics modeling based on Senge (1990) &amp; Kim &amp; Anderson (2011). <br><strong>Further Reading:</strong> <a href="https://asilvainnovations.com/strategic-diagnostic/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 underline"> ASilva Innovations Strategic Diagnostic Framework </a></p>
@@ -491,52 +515,47 @@ color: #0ea5e9;
 </div>
 </div>
 </div>
-
 <!-- CORRECTED OVERSIGHT HIERARCHY -->
 <!-- DDG for Operations (Top) -->
 <div class="flex justify-center mb-4 animate-card delay-3">
-  <div class="org-card tooltip-trigger relative">
-    <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-5 shadow-xl shadow-indigo-500/20 border border-indigo-500/30 text-center min-w-[220px]">
-      <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-indigo-400/20 flex items-center justify-center">
-        <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-      </div>
-      <p class="text-indigo-200 text-xs font-medium uppercase tracking-wider mb-1">Strategic Oversight</p>
-      <h3 class="text-white font-bold text-sm">DDG for Operations</h3>
-      <p class="text-indigo-300 text-xs mt-1">Reports to Secretary, TESDA</p>
-    </div>
-    <div class="tooltip">
-      Provides strategic direction and policy alignment for WorldSkills within the national TVET framework
-    </div>
-  </div>
+<div class="org-card tooltip-trigger relative">
+<div class="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-5 shadow-xl shadow-indigo-500/20 border border-indigo-500/30 text-center min-w-[220px]">
+<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-indigo-400/20 flex items-center justify-center">
+<svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
 </div>
-
+<p class="text-indigo-200 text-xs font-medium uppercase tracking-wider mb-1">Strategic Oversight</p>
+<h3 class="text-white font-bold text-sm">DDG for Operations</h3>
+<p class="text-indigo-300 text-xs mt-1">Reports to Secretary, TESDA</p>
+</div>
+<div class="tooltip">
+Provides strategic direction and policy alignment for WorldSkills within the national TVET framework
+</div>
+</div>
+</div>
 <!-- Connector: DDG → ROMO/ED -->
 <svg class="mx-auto mb-4" width="200" height="30" viewbox="0 0 200 30">
-  <path class="connector-line" d="M100 0 L100 15 L100 30" stroke="#6366f1" stroke-width="2" fill="none" />
+<path class="connector-line" d="M100 0 L100 15 L100 30" stroke="#6366f1" stroke-width="2" fill="none" />
 </svg>
-
 <!-- ROMO / Executive Director (Below DDG) -->
 <div class="flex justify-center mb-6 animate-card delay-3">
-  <div class="org-card tooltip-trigger relative">
-    <div class="bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl p-5 shadow-xl shadow-violet-500/20 border border-violet-500/30 text-center min-w-[220px]">
-      <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-violet-400/20 flex items-center justify-center">
-        <svg class="w-6 h-6 text-violet-200" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-      </div>
-      <p class="text-violet-200 text-xs font-medium uppercase tracking-wider mb-1">Functional Management</p>
-      <h3 class="text-white font-bold text-sm">ROMO / Executive Director</h3>
-      <p class="text-violet-300 text-xs mt-1">Reports functionally to DDG</p>
-    </div>
-    <div class="tooltip">
-      Coordinates regional implementation and synchronizes WSP with TESDA field operations
-    </div>
-  </div>
+<div class="org-card tooltip-trigger relative">
+<div class="bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl p-5 shadow-xl shadow-violet-500/20 border border-violet-500/30 text-center min-w-[220px]">
+<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-violet-400/20 flex items-center justify-center">
+<svg class="w-6 h-6 text-violet-200" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
 </div>
-
+<p class="text-violet-200 text-xs font-medium uppercase tracking-wider mb-1">Functional Management</p>
+<h3 class="text-white font-bold text-sm">ROMO / Executive Director</h3>
+<p class="text-violet-300 text-xs mt-1">Reports functionally to DDG</p>
+</div>
+<div class="tooltip">
+Coordinates regional implementation and synchronizes WSP with TESDA field operations
+</div>
+</div>
+</div>
 <!-- Connector: ROMO/ED → WS Unit Head -->
 <svg class="mx-auto mb-4" width="400" height="40" viewbox="0 0 400 40">
-  <path class="connector-line" d="M200 0 L200 20 L200 40" stroke="#8b5cf6" stroke-width="2" fill="none" />
+<path class="connector-line" d="M200 0 L200 20 L200 40" stroke="#8b5cf6" stroke-width="2" fill="none" />
 </svg>
-
 <!-- WS Unit Head -->
 <div class="flex justify-center mb-8 animate-card delay-4">
 <div class="org-card tooltip-trigger relative">
@@ -884,11 +903,11 @@ Real-time dashboard showing KPIs, strategic progress, and operational metrics en
 <div class="mt-12 text-center animate-card delay-8">
 <div class="bg-gradient-to-r from-amber-900/20 to-orange-900/20 rounded-xl p-4 border border-amber-500/20 max-w-2xl mx-auto">
 <p class="text-amber-400 text-xs font-bold mb-2">🎯 STRATEGIC INTENT</p>
-<p class="text-slate-300 text-sm leading-relaxed">No technical progress is sustainable without a permanent structural "backbone." This path replaces ad-hoc "borrowed" staff with a <span class="font-semibold">System-Dependent Institution</span>, moving from <span class="text-red-400 font-semibold">Shifting the Burden</span> (symptomatic fixes) to <span class="text-emerald-400 font-semibold">Fundamental Solutions</span> (permanent structure &amp; documented systems).</p>
+<p class="text-slate-300 text-sm leading-relaxed">No technical progress is sustainable without a permanent structural "backbone." This path replaces ad-hoc "borrowed" staff with a <span class="font-semibold">System-Dependent Institution</span>, moving from <span class="text-red-400 font-semibold">five critical archetypes</span> (Fixes that Fail, Support vs Priority, Generalist Trap, Mobilization Trap, Human Capital Leak) to <span class="text-emerald-400 font-semibold">Fundamental Solutions</span> (permanent structure &amp; documented systems).</p>
 </div>
 <div class="mt-6 flex justify-center"><button class="btn-learn-more" onclick="openArchetypeModal()">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-</svg> Deep Dive: Shifting the Burden Dynamics </button>
+</svg> Deep Dive: All Five System Archetypes </button>
 </div>
 <p class="text-slate-600 text-xs mt-6">Calibrated Organizational Chart • WSP Secretariat • Governance-Led Transformation Path</p>
 </div>
@@ -1014,7 +1033,6 @@ setConfig: (updates) => {
 console.log('Mock setConfig:', updates);
 }
 };
-
 // Mock data_sdk.js (not used in org chart, but safe to include)
 window.dataSdk = window.dataSdk || {
 init: async (handler) => ({ isOk: true }),
