@@ -75,6 +75,87 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Video Button Styles */
+        .video-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #E67E22 0%, #D35400 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+            text-decoration: none;
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+
+        .video-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(230, 126, 34, 0.4);
+            background: linear-gradient(135deg, #D35400 0%, #E67E22 100%);
+        }
+
+        .video-btn i {
+            font-size: 1.5rem;
+            min-width: 28px;
+        }
+
+        .video-btn span {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .video-btn .btn-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .video-btn .btn-subtitle {
+            font-size: 0.875rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        .video-container {
+            background: linear-gradient(135deg, #2D3E50 0%, #34495E 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #E67E22, #F39C12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .move-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #E67E22 0%, #D35400 100%);
+            color: white;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
         /* Print styles for Action Plan */
         @media print {
             body * {
@@ -92,37 +173,15 @@
         }
     </style>
 
-    <!-- 
-    Placeholder Comments:
-    
-    <!-- Chosen Palette: Navy Blue (#2D3E50) as primary, Resilience Orange (#E67E22) as accent, Mist Gray (#ECF0F1) for backgrounds. Matches source requirements. -->
-
-    <!-- Application Structure Plan:
-         Designed as a classic LMS interface. 
-         - Left Sidebar: Linear navigation menu (Modules 0-8) with progress indicators (locked/unlocked states) and a Resource Center.
-         - Top Header: Branding and Course Progress bar.
-         - Main Content Area: Dynamic container that renders specific module content.
-         - Logic: 'Next' logic unlocks subsequent modules. User inputs (Goal, Option Storm, Compass) are stored in a central JS state object to be recalled in the Final Action Plan.
-         - Justification: This structure mimics standard SCORM/LMS players (like Articulate/Rise) familiar to the target audience (SME/NGO leaders), reducing cognitive load and focusing on the content.
-    -->
-
-    <!-- Visualization & Content Choices:
-         - Module 3 (Validation Compass): Radar Chart. Goal: Inform/Compare. Interaction: Sliders update chart. Justification: Visualizes the "shape" of a decision across 3 axes (Values, Impact, Feasibility).
-         - Module 5 (Team Audit): Bar Chart. Goal: Inform. Interaction: Static data visualization of survey results. Justification: Quickly shows gaps in communication flow.
-         - Module 6 (Data Simulation): Line Chart. Goal: Change/Decide. Interaction: Simulates incoming weather data. Justification: Mimics a real-time dashboard (PAGASA style) to force a decision under pressure.
-         - Module 8 (Action Plan): HTML Generation. Goal: Organize/Synthesize. Interaction: Read-only summary of user inputs. Justification: Provides the "takeaway" artifact promised in the course.
-         - No SVG or Mermaid used. All icons are Unicode or CSS shapes. All charts are Chart.js.
-    -->
-
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-    -->
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gray-50 text-slate-800 font-sans h-screen flex flex-col overflow-hidden">
 
     <!-- Header -->
     <header class="bg-navy text-white h-16 flex items-center justify-between px-6 shadow-md z-20 shrink-0">
         <div class="flex items-center gap-3">
-            <div class="h-8 w-8 bg-orange rounded flex items-center justify-center font-bold text-white">R</div>
+            <div class="h-8 w-8 bg-orange rounded flex items-center justify-center font-bold text-white">RTL</div>
             <h1 class="font-header font-bold text-lg md:text-xl tracking-wide">Real-Time Leadership <span class="hidden md:inline font-normal text-gray-300">| Resilient Organizations</span></h1>
         </div>
         <div class="flex items-center gap-4">
@@ -195,7 +254,7 @@
                     elements: [
                         { type: "text", text: "In fast-moving environments, leaders don't need more theory. You need practical, real-time practices to stay calm and make data-informed decisions." },
                         { type: "input", id: "user_intention", label: "Goal Setting: What is your primary leadership intention for this course?", placeholder: "e.g., To remain calm during early-warning phases..." },
-                        { type: "link", text: "Take Pre-Course Assessment (Opens in new tab)", url: "https://asilva777.github.io/realtime-leadership-assessment-/" }
+                        { type: "link", text: "Take Pre-Course Assessment (Opens in new tab)", url: "#assessment.html" }
                     ]
                 }
             },
@@ -206,6 +265,11 @@
                 locked: true,
                 completed: false,
                 type: "lesson",
+                video: {
+                    url: "https://www.facebook.com/share/r/1HotWpbvLd/",
+                    title: "Mastering the Moment",
+                    subtitle: "Learn the power of the pause in high-pressure situations"
+                },
                 content: {
                     heading: "The Power of the Pause",
                     intro: "The 'M' in MOVE stands for Make Sense. It starts with mastering the moment by overcoming the urge to react immediately.",
@@ -217,11 +281,16 @@
             },
             {
                 id: 2,
-                title: "Module 2: Opening Options (O)",
-                shortTitle: "2. Opening Options (O)",
+                title: "Module 2: Generating Options (O)",
+                shortTitle: "2. Generating Options (O)",
                 locked: true,
                 completed: false,
                 type: "activity",
+                video: {
+                    url: "https://www.facebook.com/share/r/18CU3g2sxu/",
+                    title: "Generating Options",
+                    subtitle: "Break free from binary thinking with divergent strategies"
+                },
                 content: {
                     heading: "Divergent Thinking",
                     intro: "Avoid binary 'Do this OR that' thinking. Open options to find Path A, Path B, and Path C.",
@@ -235,11 +304,16 @@
             },
             {
                 id: 3,
-                title: "Module 3: Validating What Matters (V)",
-                shortTitle: "3. Validating (V)",
+                title: "Module 3: Validating Choices (V)",
+                shortTitle: "3. Validating Choices",
                 locked: true,
                 completed: false,
                 type: "tool",
+                video: {
+                    url: "https://www.facebook.com/share/r/1GLjL6v5Kf/",
+                    title: "Validating Choices",
+                    subtitle: "Align decisions with values, impact, and feasibility"
+                },
                 content: {
                     heading: "The Validation Compass",
                     intro: "Validate your best option against your Values, the potential Impact, and Feasibility. Use the sliders below to visualize your decision's profile.",
@@ -250,11 +324,16 @@
             },
             {
                 id: 4,
-                title: "Module 4: Engaging & Executing (E)",
-                shortTitle: "4. Engaging (E)",
+                title: "Module 4: Executing and Evaluating (E)",
+                shortTitle: "4. Execute and Evaluate",
                 locked: true,
                 completed: false,
                 type: "activity",
+                video: {
+                    url: "https://www.facebook.com/share/r/17xXht968i/",
+                    title: "Executing and Evaluating",
+                    subtitle: "Turn validated choices into clear, compassionate action"
+                },
                 content: {
                     heading: "Clarity & Compassion",
                     intro: "Execution fails without engagement. Draft a message to your team regarding the decision you validated in Module 3.",
@@ -399,6 +478,25 @@
                         <span class="text-orange font-bold text-xs uppercase tracking-widest mb-2 block">Module ${index}</span>
                         <h2 class="font-header text-3xl font-bold text-navy mb-4">${mod.content.heading}</h2>
                         <p class="text-slate-600 mb-8 text-lg leading-relaxed border-l-4 border-orange pl-4">${mod.content.intro}</p>
+                        
+                        <!-- Video Button for MOVE Modules -->
+                        ${mod.video ? `
+                        <div class="video-container">
+                            <div class="move-badge">MOVE Framework</div>
+                            <div class="video-icon">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            <a href="${mod.video.url}" target="_blank" class="video-btn" aria-label="Watch ${mod.video.title} video">
+                                <i class="fas fa-video"></i>
+                                <span>
+                                    <span class="btn-title">${mod.video.title}</span>
+                                    <span class="btn-subtitle">${mod.video.subtitle}</span>
+                                </span>
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <p class="text-sm text-gray-300 mt-2">Video opens in Facebook (new tab)</p>
+                        </div>
+                        ` : ''}
                         
                         <div class="space-y-8">
             `;
